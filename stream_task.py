@@ -25,7 +25,8 @@ class StreamTask:
     # --------------------------------------------------------------------------
     def __init__(self,
                  eff, col_done, stream_data, uart5,
-                 time_q, left_pos_q, right_pos_q, left_vel_q, right_vel_q):
+                 time_q, left_pos_q, right_pos_q, left_vel_q, right_vel_q,
+                 control_mode, setpoint, kp, ki):
 
          # Serial interface (Bluetooth UART)
         self.ser = uart5
@@ -33,7 +34,13 @@ class StreamTask:
         # Flags
         self.col_done = col_done
         self.stream_data = stream_data
+        
+        # Control parameters
         self.eff = eff
+        self.control_mode = control_mode
+        self.setpoint = setpoint
+        self.kp = kp
+        self.ki = ki
         
         # Queues
         self.time_q = time_q
@@ -71,8 +78,13 @@ class StreamTask:
                 
                 # Get number of items in queue to determine size
                 _size = self.time_q.num_in()
-                _eff = self.eff.get()
-                line = f"{_eff},{_size}\r\n"
+                mode = "V" if self.control_mode.get() else "E"
+                control_val = self.setpoint.get() if self.control_mode.get() else self.eff.get()
+                
+                if self.control_mode.get():
+                    line = f"{mode},{control_val},{self.kp.get()/100:.2f},{self.ki.get()/100:.2f},{_size}\r\n"
+                else:
+                    line = f"{mode},{control_val},{_size}\r\n"
                 self.ser.write(line.encode())
 
                 yield self.state

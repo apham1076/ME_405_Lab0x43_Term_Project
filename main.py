@@ -74,12 +74,25 @@ def main():
     left_vel_q = task_share.Queue('l', size=MAX_SAMPLES, name= 'Left motor velocity share')
     right_vel_q = task_share.Queue('l', size=MAX_SAMPLES, name= 'Right motor velocity share')
     
-    # Motor effort values
-    eff = task_share.Share('B', name='Requested Effort')
+    # Motor control values
+    eff = task_share.Share('b', name='Requested Effort')  # Changed to 'b' for signed 8-bit to handle negative values
+    setpoint = task_share.Share('h', name='Velocity Setpoint')  # 'h' for signed 16-bit to handle larger velocity values
+    kp = task_share.Share('h', name='Proportional Gain')  # 'h' for signed 16-bit to store Kp*100
+    ki = task_share.Share('h', name='Integral Gain')  # 'h' for signed 16-bit to store Ki*100
 
-    # Driving Mode: straight line, pivot, or arc
-    driving_mode = task_share.Share('B', name='Driving Mode')
+    # Initialize control parameters
+    kp.put(0)  # Start with zero gains
+    ki.put(0)
+    setpoint.put(0)  # Start with zero setpoint
+    eff.put(0)  # Start with zero effort
 
+    # Mode settings
+    driving_mode = task_share.Share('B', name='Driving Mode')  # straight line, pivot, or arc
+    control_mode = task_share.Share('B', name='Control Mode')  # 0: effort mode, 1: velocity mode
+    
+    # Initialize modes
+    control_mode.put(0)  # Start in effort (open-loop) mode
+    
     # Boolean flags
     col_start = task_share.Share('B', name='Start Collection Flag')
     col_done = task_share.Share('B', name='Collection Done Flag')
@@ -92,12 +105,12 @@ def main():
 
     # Create Task Objects (since tasks are classes)
     ui_task_obj = UITask(col_start, col_done, mtr_enable, stream_data,
-                         uart5, abort, eff, driving_mode,
+                         uart5, abort, eff, driving_mode, setpoint, kp, ki, control_mode,
                          time_q, left_pos_q, right_pos_q, left_vel_q, right_vel_q)
     
     motor_task_obj = MotorControlTask(left_motor, right_motor,
                                       left_encoder, right_encoder,
-                                      eff, mtr_enable, abort, driving_mode,
+                                      eff, mtr_enable, abort, driving_mode, setpoint, kp, ki, control_mode,
                                       time_sh, left_pos_sh, right_pos_sh, left_vel_sh, right_vel_sh)
         
     data_task_obj = DataCollectionTask(col_start, col_done,
@@ -106,7 +119,8 @@ def main():
                                        time_sh, left_pos_sh, right_pos_sh, left_vel_sh, right_vel_sh)
     
     stream_task_obj = StreamTask(eff, col_done, stream_data, uart5,
-                                 time_q, left_pos_q, right_pos_q, left_vel_q, right_vel_q)
+                                 time_q, left_pos_q, right_pos_q, left_vel_q, right_vel_q,
+                                 control_mode, setpoint, kp, ki)
 
 	# Create costask.Task WRAPPERS. (If trace is enabled for any task, memory will be allocated for state transition tracing, and the application will run out of memory after a while and quit. Therefore, use tracing only for debugging and set trace to False when it's not needed)
     _motor_task = cotask.Task(motor_task_obj.run, name='Motor Control Task', priority=3, period=10, profile=True, trace=False)

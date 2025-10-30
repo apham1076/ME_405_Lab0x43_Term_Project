@@ -27,14 +27,18 @@ run_count = 0               # Number of runs
 override = False            # Set if user wants to overwrite existing run
 _continue = False           # Second option, if user doesn't want to overwrite
 question = False           # Set when option to override is presented
+effort_mode = True         # True for effort mode, False for velocity mode
 current_setpoint = 0       # Current velocity setpoint in ticks/second
 first = True
 done = False
 mode = 1                    # 1, 2, 3 = straight, pivot, arc
 
 user_prompt = '''\r\nCommand keys:
-    0-9,a  : Set effort (0-100%) for open-loop control
-    p      : Set velocity setpoint (ticks/s) for closed-loop control
+    e      : Toggle between Effort mode and Velocity mode
+    0-9,a  : Set effort (0-100%) for open-loop control [Effort mode]
+    t      : Set velocity setpoint (ticks/s) for closed-loop control [Velocity mode]
+    p      : Set proportional gain (Kp) for controller [Velocity mode]
+    i      : Set integral gain (Ki) for controller [Velocity mode]
     g      : GO (start test)
     k      : Kill (stop) motors
     r      : Run automated sequence (0 to 100% by 10%)
@@ -47,22 +51,24 @@ user_prompt = '''\r\nCommand keys:
     ctrl-c : Interrupt this program\r\n'''
 
 # Function to create dictionary for storing data from one run
-def create_run(eff, size):
+def create_run(control_val, size):
     time = np.zeros(size)
     p1 = np.zeros(size)
     p2 = np.zeros(size)
     v1 = np.zeros(size)
     v2 = np.zeros(size)
+    ctrl = np.zeros(size)  # Store control value (effort or setpoint)
 
     df = pd.DataFrame({
         "_time": time,
+        "_control": ctrl,
         "_left_pos": p1,
         "_right_pos": p2,
         "_left_vel": v1,
         "_right_vel": v2
     })
 
-    return {"eff:": eff, "size": size, "motor_data": df}
+    return {"control_val": control_val, "size": size, "motor_data": df}
 
 # Function to check if run has been created for a particular effort value
 def has_eff(runs, eff_value):
@@ -242,7 +248,7 @@ def auto_run_sequence(efforts):
 # Create 'runs' directory if it doesn't exist
 try:
     os.makedirs('runs', exist_ok=True)
-    print("Output directory 'runs' is ready")
+    # print("Output directory 'runs' is ready")
 except Exception as e:
     print(f"Warning: Could not create 'runs' directory: {e}")
 
@@ -288,8 +294,6 @@ while True:
                     # Kill motors
                     ser.write(b'k')
                     print("End test. Stop motors")
-                    # print(user_prompt)
-                    # running = False
                 else:
                     print("Motors are already off")
             elif key == 's':
@@ -334,31 +338,72 @@ while True:
                         mode = 1
                         print("Romi will follow an arc.")
 
-            elif key == 'o':
-                if streaming:
-                    override = True
-                else:
-                    print("Option not available")
-
-            elif key == 'p':
+            elif key == 'e':
                 if running:
-                    print("Cannot set setpoint while test is running")
+                    print("Cannot change control mode while test is running")
                 elif streaming:
-                    print("Cannot set setpoint while streaming")
+                    print("Cannot change control mode while streaming")
+                else:
+                    ser.write(b'e')
+                    effort_mode = not effort_mode
+                    mode_str = "effort" if effort_mode else "velocity"
+                    print(f"Switched to {mode_str} control mode")
+
+            elif key == 't':
+                if running:
+                    print("Cannot set velocity setpoint while test is running")
+                elif streaming:
+                    print("Cannot set velocity setpoint while streaming")
+                elif effort_mode:
+                    print("Must be in velocity mode to set setpoint")
                 else:
                     try:
                         # Get setpoint from user
                         setpoint = input("Enter velocity setpoint (ticks/s): ")
                         setpoint = int(setpoint)
-                        current_setpoint = setpoint
-                        # Send setpoint to Romi - format: 'pXXXX' where XXXX is setpoint
-                        # Negative values are handled by sending 'n' instead of 'p'
-                        if setpoint < 0:
-                            cmd = f"n{abs(setpoint):04d}"
-                        else:
-                            cmd = f"p{setpoint:04d}"
+                        # Format: 'pXXXX' for positive, 'nXXXX' for negative
+                        cmd = 'p' if setpoint >= 0 else 'n'  # 'p' for positive, 'n' for negative
+                        cmd += f"{abs(setpoint):04d}"  # Always send magnitude as 4 digits
                         ser.write(cmd.encode())
-                        print(f"Setpoint set to {setpoint} ticks/s. Enter 'g' to begin test.")
+                        current_setpoint = setpoint
+                        sign_str = "+" if setpoint >= 0 else "-"
+                        print(f"Velocity setpoint set to {sign_str}{abs(setpoint)} ticks/s")
+                    except ValueError:
+                        print("Invalid input. Please enter an integer.")
+
+            elif key == 'i':
+                if running:
+                    print("Cannot set Ki while test is running")
+                elif streaming:
+                    print("Cannot set Ki while streaming")
+                else:
+                    try:
+                        # Get Ki from user
+                        ki = input("Enter integral gain (Ki): ")
+                        ki = float(ki)
+                        # Send Ki to Romi - format: 'iXXXX' where XXXX is Ki*100
+                        ki_int = int(ki * 100)  # Scale up by 100 to send as integer
+                        cmd = f"i{abs(ki_int):04d}"
+                        ser.write(cmd.encode())
+                        print(f"Integral gain set to {ki}")
+                    except ValueError:
+                        print("Invalid input. Please enter a number.")
+
+            elif key == 'p':
+                if running:
+                    print("Cannot set Kp while test is running")
+                elif streaming:
+                    print("Cannot set Kp while streaming")
+                else:
+                    try:
+                        # Get Kp from user
+                        kp = input("Enter proportional gain (Kp): ")
+                        kp = float(kp)
+                        # Send Kp to Romi - format: 'pXXXX' where XXXX is Kp*100
+                        kp_int = int(kp * 100)  # Scale up by 100 to send as integer
+                        cmd = f"p{abs(kp_int):04d}"
+                        ser.write(cmd.encode())
+                        print(f"Proportional gain set to {kp}")
                     except ValueError:
                         print("Invalid input. Please enter a number.")
 
@@ -415,13 +460,24 @@ while True:
                         df_clean, removed = clean_data(df, mode='all')
                         if removed:
                             print(f"Removed {removed} all-zero rows from {run_name} before plotting")
-                        eff_val = meta.get('eff', meta.get('eff:', 'unknown'))
-                        plt.plot(df_clean["_time"], df_clean["_left_vel"], label=f"{run_name} eff={eff_val}")
+                            
+                        mode = meta.get('mode', 'E')  # Default to effort mode for backward compatibility
+                        control_val = meta.get('control_val', 'unknown')
+                        
+                        if mode == 'V':  # Velocity mode
+                            kp = meta.get('params', {}).get('kp', 0)
+                            ki = meta.get('params', {}).get('ki', 0)
+                            label = f"{run_name} (V) sp={control_val} Kp={kp:.2f} Ki={ki:.2f}"
+                        else:  # Effort mode
+                            label = f"{run_name} (E) eff={control_val}"
+                            
+                        plt.plot(df_clean["_time"], df_clean["_left_vel"], label=label)
+                        
                     plt.xlabel("Time")
                     plt.ylabel("Left velocity")
                     plt.legend()
                     # instead of plt.show()
-                    plt.savefig(f"runs/{run_name}_left_vel.png")
+                    plt.savefig(f"runs/{run_name}_velocity_response.png")
                     plt.close()
             
             elif key == 'h':
@@ -447,16 +503,29 @@ while True:
                 elif streaming:
                     # print("ve r streeming")
                     if first:
-                        # print("ve r reading")
-                        # Get sample size and effort
-                        eff, size = ser.readline().decode().strip().split(",")
-                        eff = int(eff)
-                        size = int(size)
-                        # Create the dict, no run with this effort has been made yet
+                        # Read and parse header line
+                        header = ser.readline().decode().strip().split(",")
+                        mode = header[0]  # 'E' for effort, 'V' for velocity
+                        
+                        if mode == 'E':
+                            control_val = int(header[1])  # effort value
+                            size = int(header[2])
+                            params = None
+                        else:  # Velocity mode
+                            control_val = float(header[1])  # setpoint value
+                            kp = float(header[2])
+                            ki = float(header[3])
+                            size = int(header[4])
+                            params = {'kp': kp, 'ki': ki}
+                        
+                        # Create new run
                         run_count += 1
                         run_name = f'run{run_count}'
-                        runs[run_name] = create_run(eff, size)
-                        print("Run successfully created")
+                        runs[run_name] = create_run(control_val, size)
+                        if params:
+                            runs[run_name]['params'] = params
+                        runs[run_name]['mode'] = mode
+                        print(f"Run {run_name} created in {mode} mode")
                         # print(size)
                         line_num = 0
                         first = False
@@ -469,16 +538,10 @@ while True:
                             # Read line by line
                             try:
                                 spam = ser.readline().decode().strip().split(",")
-                                time, left_pos, right_pos, left_vel, right_vel = spam
+                                time, control, left_pos, right_pos, left_vel, right_vel = spam
 
-                                # print(type(time))
-                                # print(type(left_pos))
-                                # print(type(right_pos))
-                                # print(type(left_vel))
-                                # print(type(right_vel))
-                                # print(runs[run_name]["data"])
-                            
                                 runs[run_name]["motor_data"].loc[line_num,"_time"] = float(time)
+                                runs[run_name]["motor_data"].loc[line_num,"_control"] = float(control)
                                 runs[run_name]["motor_data"].loc[line_num, "_left_pos"] = float(left_pos)
                                 runs[run_name]["motor_data"].loc[line_num, "_right_pos"] = float(right_pos)
                                 runs[run_name]["motor_data"].loc[line_num, "_left_vel"] = float(left_vel)

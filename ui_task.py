@@ -32,7 +32,7 @@ class UITask:
     # --------------------------------------------------------------------------
     def __init__(self,
                  col_start, col_done, mtr_enable, stream_data,
-                 uart5, abort, eff, mode,
+                 uart5, abort, eff, mode, setpoint, kp, ki, control_mode,
                  time_q, left_pos_q, right_pos_q, left_vel_q, right_vel_q):
         
         # Flags
@@ -40,12 +40,16 @@ class UITask:
         self.col_done = col_done
         self.mtr_enable = mtr_enable
         self.stream_data = stream_data
-        # Abort falg
+        # Abort flag
         self.abort = abort
         
         # Shares
         self.eff = eff
         self.mode = mode
+        self.setpoint = setpoint  # Share for velocity setpoint
+        self.kp = kp  # Share for proportional gain
+        self.ki = ki  # Share for integral gain
+        self.control_mode = control_mode  # Share for control mode (effort/velocity)
 
         # Queues
         self.time_q = time_q
@@ -114,8 +118,23 @@ class UITask:
             ### 2: PROCESS COMMAND STATE ---------------------------------------
             elif self.state == self.S2_PROCESS_COMMAND:
                 cmd = self.cmd_buf
-                # Digits or 'a' set the effort
-                if cmd.isdigit() or cmd == 'a':
+                # Handle setpoint commands ('p' or 'n' followed by 4 digits)
+                if cmd in ['p', 'n'] and self.ser.in_waiting >= 4:
+                    # Read the 4 digits for setpoint value
+                    value_str = self.ser.read(4).decode()
+                    try:
+                        value = int(value_str)
+                        if cmd == 'n':
+                            value = -value
+                        if self.mtr_enable.get():
+                            pass  # Cannot change setpoint mid-test
+                        else:
+                            self.setpoint.put(value)
+                    except ValueError:
+                        pass  # Invalid setpoint format
+                
+                # Digits or 'a' set the effort (open-loop control)
+                elif cmd.isdigit() or cmd == 'a':
                     val = 10 * (int(cmd) if cmd.isdigit() else 10)  # 0-9 → 0–90%, a→100%
                     if self.mtr_enable.get():
                         pass
@@ -143,6 +162,31 @@ class UITask:
 
                         self.state = self.S3_MONITOR_TEST
 
+                # 'p' → Set Kp (when followed by 4 digits)
+                elif cmd == 'p' and self.ser.any() >= 4:
+                    # Read the 4 digits for Kp value
+                    value_str = self.ser.read(4).decode()
+                    try:
+                        kp_int = int(value_str)
+                        kp = kp_int / 100.0  # Scale back down from integer
+                        if not self.mtr_enable.get():
+                            self.kp.put(kp)
+                    except ValueError:
+                        pass  # Invalid Kp format
+
+                # 't' → Set target/setpoint (when followed by 4 digits)
+                elif cmd == 't' and self.ser.any() >= 4:
+                    # Read the 4 digits for setpoint value
+                    value_str = self.ser.read(4).decode()
+                    try:
+                        setpoint = int(value_str)
+                        print("Setpoint received:")
+                        print(setpoint)
+                        if not self.mtr_enable.get():
+                            self.setpoint.put(setpoint)
+                    except ValueError:
+                        pass  # Invalid setpoint format
+
                 # 'k' → KILL (STOP)
                 elif cmd == 'k':
                     self.abort.put(1)  # Set abort flag first
@@ -150,6 +194,26 @@ class UITask:
                     self.col_start.put(0)  # Stop data collection
                     self.ser.write(b'q')  # Tell PC test is done
 
+                # 'i' → Set Ki (when followed by 4 digits)
+                elif cmd == 'i' and self.ser.any() >= 4:
+                    # Read the 4 digits for Ki value
+                    value_str = self.ser.read(4).decode()
+                    try:
+                        ki_int = int(value_str)
+                        ki = ki_int / 100.0  # Scale back down from integer
+                        if not self.mtr_enable.get():
+                            self.ki.put(ki)
+                    except ValueError:
+                        pass  # Invalid Ki format
+
+                # 'e' → Toggle control mode
+                elif cmd == 'e':
+                    if not self.mtr_enable.get():  # Only allow mode change when motors are off
+                        current_mode = self.control_mode.get()
+                        new_mode = 0 if current_mode else 1  # Toggle between 0 and 1
+                        print("Switching control mode to:", "Velocity" if new_mode else "Effort")
+                        self.control_mode.put(new_mode)
+                
                 # 's' → STREAM
                 elif cmd == 's':
                     self.stream_data.put(1)
