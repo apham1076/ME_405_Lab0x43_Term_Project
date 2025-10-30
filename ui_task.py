@@ -118,18 +118,19 @@ class UITask:
             ### 2: PROCESS COMMAND STATE ---------------------------------------
             elif self.state == self.S2_PROCESS_COMMAND:
                 cmd = self.cmd_buf
-                # Handle setpoint commands ('p' or 'n' followed by 4 digits)
-                if cmd in ['p', 'n'] and self.ser.in_waiting >= 4:
+                # Handle setpoint commands ('m' or 'n' followed by 4 digits)
+                if cmd in ['y', 'z'] and self.ser.any() >= 4:
                     # Read the 4 digits for setpoint value
                     value_str = self.ser.read(4).decode()
                     try:
                         value = int(value_str)
-                        if cmd == 'n':
+                        if cmd == 'z':
                             value = -value
                         if self.mtr_enable.get():
                             pass  # Cannot change setpoint mid-test
                         else:
                             self.setpoint.put(value)
+                            print("Setpoint value set to:", value)
                     except ValueError:
                         pass  # Invalid setpoint format
                 
@@ -150,6 +151,7 @@ class UITask:
                         pass
                         # Test already running
                     else:
+                        print("Starting new test")
                         self.abort.put(0)
                         self.mtr_enable.put(1)
                         self.col_start.put(1)
@@ -171,6 +173,7 @@ class UITask:
                         kp = kp_int / 100.0  # Scale back down from integer
                         if not self.mtr_enable.get():
                             self.kp.put(kp)
+                        print("Kp received:", kp)
                     except ValueError:
                         pass  # Invalid Kp format
 
@@ -189,6 +192,7 @@ class UITask:
 
                 # 'k' → KILL (STOP)
                 elif cmd == 'k':
+                    print("Stopping test")
                     self.abort.put(1)  # Set abort flag first
                     self.mtr_enable.put(0)  # Then disable motors
                     self.col_start.put(0)  # Stop data collection
@@ -203,6 +207,7 @@ class UITask:
                         ki = ki_int / 100.0  # Scale back down from integer
                         if not self.mtr_enable.get():
                             self.ki.put(ki)
+                        print("Ki received:", ki)
                     except ValueError:
                         pass  # Invalid Ki format
 

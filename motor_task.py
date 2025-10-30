@@ -104,11 +104,14 @@ class MotorControlTask:
                 pR = self.right_encoder.get_position()
                 vL = self.left_encoder.get_velocity()
                 vR = self.right_encoder.get_velocity()
+                # print(f"Encoder Positions - Left: {pL}, Right: {pR}")
+                # print(f"Encoder Velocities - Left: {vL}, Right: {vR}")
 
                 if self.control_mode.get():  # Velocity mode
+                    # print("Entering velocity mode")
                     # Update controller parameters
-                    kp = self.kp.get() / 100.0  # Convert from fixed-point
-                    ki = self.ki.get() / 100.0
+                    kp = self.kp.get()  # Convert from fixed-point
+                    ki = self.ki.get()
                     setpoint = self.setpoint.get()
                     
                     # Update controller gains if needed
@@ -123,10 +126,14 @@ class MotorControlTask:
                     left_effort = self.left_controller.run(vL)
                     right_effort = self.right_controller.run(vR)
                     
+                    # print(f"Setpoint: {setpoint}, Left Vel: {vL}, Right Vel: {vR}, Left Effort: {left_effort}, Right Effort: {right_effort}")
+
                     # Apply efforts
                     self.left_motor.set_effort(left_effort)
                     self.right_motor.set_effort(right_effort)
+                    # print("Leaving velocity mode")
                 else:  # Effort mode (direct control)
+                    # print("In effort mode")
                     effort = self.eff.get()
                     self.left_motor.set_effort(effort)
                     self.right_motor.set_effort(effort)
@@ -142,8 +149,11 @@ class MotorControlTask:
                 self.time_sh.put(t)
                 self.left_pos_sh.put(int(pL))
                 self.right_pos_sh.put(int(pR))
-                self.left_vel_sh.put(int(vL))
-                self.right_vel_sh.put(int(vR))
+                self.left_vel_sh.put(float(vL))
+                self.right_vel_sh.put(float(vR))
+                
+                # print(self.left_pos_sh.get())
+                # print(self.right_vel_sh.get())
 
                 # Disable if mtr_enable flag is cleared or abort is triggered
                 if not self.mtr_enable.get() or self.abort.get():

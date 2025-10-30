@@ -49,7 +49,7 @@ from stream_task import StreamTask
 
 
 def main():
-    # print("\r\n=== ME405 Lab 0x02 Scheduler Start ===")
+    print("\r\n=== ME405 Lab 0x02 Scheduler Start ===")
     MAX_SAMPLES = 250
     
     # Hardware Setup:
@@ -64,21 +64,21 @@ def main():
     time_sh = task_share.Share('H', name='Time share')
     left_pos_sh = task_share.Share('l', name= 'Left motor position share')
     right_pos_sh = task_share.Share('l', name= 'Right motor position share')
-    left_vel_sh = task_share.Share('l', name= 'Left motor velocity share')
-    right_vel_sh = task_share.Share('l', name= 'Right motor velocity share')
+    left_vel_sh = task_share.Share('f', name= 'Left motor velocity share')
+    right_vel_sh = task_share.Share('f', name= 'Right motor velocity share')
 
     # Create Queues...
     time_q = task_share.Queue('H', size=MAX_SAMPLES, name='Time share')
     left_pos_q = task_share.Queue('l', size=MAX_SAMPLES, name= 'Left motor position share')
     right_pos_q = task_share.Queue('l', size=MAX_SAMPLES, name= 'Right motor position share')
-    left_vel_q = task_share.Queue('l', size=MAX_SAMPLES, name= 'Left motor velocity share')
-    right_vel_q = task_share.Queue('l', size=MAX_SAMPLES, name= 'Right motor velocity share')
+    left_vel_q = task_share.Queue('f', size=MAX_SAMPLES, name= 'Left motor velocity share')
+    right_vel_q = task_share.Queue('f', size=MAX_SAMPLES, name= 'Right motor velocity share')
     
     # Motor control values
     eff = task_share.Share('b', name='Requested Effort')  # Changed to 'b' for signed 8-bit to handle negative values
     setpoint = task_share.Share('h', name='Velocity Setpoint')  # 'h' for signed 16-bit to handle larger velocity values
-    kp = task_share.Share('h', name='Proportional Gain')  # 'h' for signed 16-bit to store Kp*100
-    ki = task_share.Share('h', name='Integral Gain')  # 'h' for signed 16-bit to store Ki*100
+    kp = task_share.Share('f', name='Proportional Gain')  # 'f' for float to store Kp
+    ki = task_share.Share('f', name='Integral Gain')  # 'f' for float to store Ki
 
     # Initialize control parameters
     kp.put(0)  # Start with zero gains

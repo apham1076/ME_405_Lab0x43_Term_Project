@@ -81,9 +81,12 @@ class StreamTask:
                 mode = "V" if self.control_mode.get() else "E"
                 control_val = self.setpoint.get() if self.control_mode.get() else self.eff.get()
                 
+                # Send header line with control mode and parameters
                 if self.control_mode.get():
+                    # Header line for velocity mode: mode,setpoint,kp,ki,size
                     line = f"{mode},{control_val},{self.kp.get()/100:.2f},{self.ki.get()/100:.2f},{_size}\r\n"
                 else:
+                    # Header line for effort mode: mode,effort,size
                     line = f"{mode},{control_val},{_size}\r\n"
                 self.ser.write(line.encode())
 

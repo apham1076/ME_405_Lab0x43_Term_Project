@@ -47,6 +47,7 @@ user_prompt = '''\r\nCommand keys:
     ----  o      : Override existing run
     m      : Toggle mode (Set to straight by default)
     d      : Print CSV data to Terminal
+    c      : Run automated closed-loop test
     h      : Help / show this menu
     ctrl-c : Interrupt this program\r\n'''
 
@@ -152,6 +153,12 @@ def eff_to_key(eff):
 # streamed data into the global `runs` dict (same format as interactive streaming).
 def auto_run_sequence(efforts):
     global ser, runs, run_count
+
+    # Ensure we are in effort mode
+    if not effort_mode:
+        ser.write(b'e')
+        sleep(0.1)
+
     try:
         for eff in efforts:
             key = eff_to_key(eff)
@@ -164,10 +171,6 @@ def auto_run_sequence(efforts):
             except Exception:
                 pass
             ser.write(key.encode())
-            if key == 'a':
-                sleep(0.5)
-            else:
-                sleep(0.2)
             # start test
             ser.write(b'g')
             print("Test started, waiting for completion signal from Romi...")
@@ -189,26 +192,25 @@ def auto_run_sequence(efforts):
             # Read header line with effort and size
             header = ser.readline().decode().strip()
             try:
-                eff_recv, size = header.split(',')
-                eff_recv = int(eff_recv)
-                size = int(size)
+                _mode_str, _control_val_str, _size_str = header.split(',')
+                _control_val = int(_control_val_str)
+                _size = int(_size_str)
             except Exception as e:
                 print(f"Failed to parse header '{header}': {e}")
                 continue
 
             run_count += 1
             run_name = f'run{run_count}'
-            runs[run_name] = create_run(eff_recv, size)
-            print(f"Created {run_name} (eff={eff_recv}, size={size})")
+            runs[run_name] = create_run(_control_val, _size)
+            print(f"Created {run_name} (eff={_control_val}, size={_size})")
 
             line_num = 0
-            while line_num <= size - 10:
+            while line_num <= _size - 10:
                 line = ser.readline().decode().strip()
                 if not line:
                     continue
-                spam = line.split(',')
                 try:
-                    time_s, left_pos, right_pos, left_vel, right_vel = spam
+                    time_s, left_pos, right_pos, left_vel, right_vel = line.split(',')
                     runs[run_name]["motor_data"].loc[line_num, "_time"] = float(time_s)
                     runs[run_name]["motor_data"].loc[line_num, "_left_pos"] = float(left_pos)
                     runs[run_name]["motor_data"].loc[line_num, "_right_pos"] = float(right_pos)
@@ -216,7 +218,7 @@ def auto_run_sequence(efforts):
                     runs[run_name]["motor_data"].loc[line_num, "_right_vel"] = float(right_vel)
                     line_num += 1
                 except ValueError:
-                    print(f"Line {line_num} rejected. Contents: {spam}")
+                    print(f"Line {line_num} rejected. Contents: {line}")
                     line_num += 1
 
             print(f"Finished streaming for {run_name}")
@@ -244,6 +246,81 @@ def auto_run_sequence(efforts):
             return
 
 
+
+# Function to run an automated closed-loop test
+def run_closed_loop_test():
+    global ser, runs, run_count, current_setpoint, effort_mode, streaming, running
+
+    if effort_mode:
+        print("Switching to velocity mode for closed-loop test...")
+        ser.write(b'e')
+        effort_mode = False
+        sleep(0.1)
+
+    try:
+        # Ensure we are in velocity mode
+        # if not effort_mode:
+        #     print("Switching to velocity mode...")
+        #     ser.write(b'e')
+        #     effort_mode = False
+        #     sleep(0.1)
+
+        # Get test parameters from user
+        kp = float(input("Enter proportional gain (Kp): "))
+        ki = float(input("Enter integral gain (Ki): "))
+        setpoint = int(input("Enter velocity setpoint (ticks/s): "))
+
+        # Send Kp
+        kp_int = int(kp * 100)
+        cmd = f"p{abs(kp_int):04d}"
+        ser.write(cmd.encode())
+        sleep(0.1)
+
+        # Send Ki
+        ki_int = int(ki * 100)
+        cmd = f"i{abs(ki_int):04d}"
+        ser.write(cmd.encode())
+        sleep(0.1)
+
+        # Send setpoint
+        cmd = 'y' if setpoint >= 0 else 'z'
+        cmd += f"{abs(setpoint):04d}"
+        ser.write(cmd.encode())
+        current_setpoint = setpoint
+        sleep(0.1)
+
+        print(f"\nTest parameters set:")
+        print(f"Kp: {kp}")
+        print(f"Ki: {ki}")
+        print(f"Setpoint: {setpoint} ticks/s")
+        input("Press Enter to start the test...")
+
+        # Start test
+        print("Starting test...")
+        ser.write(b'g')
+        running = True
+
+        # Wait for test completion
+        while running:
+            if ser.in_waiting:
+                ch = ser.read().decode()
+                if ch == 'q':
+                    print("Test complete. Starting data stream...")
+                    running = False
+            sleep(0.05)
+
+        # Stream data
+        ser.write(b's')
+        streaming = True
+
+    except ValueError:
+        print("Invalid input. Test aborted.")
+        return
+    except KeyboardInterrupt:
+        print("\nTest interrupted by user.")
+        if ser and ser.is_open:
+            ser.write(b'k')  # Kill motors
+        return
 
 # Create 'runs' directory if it doesn't exist
 try:
@@ -361,8 +438,8 @@ while True:
                         # Get setpoint from user
                         setpoint = input("Enter velocity setpoint (ticks/s): ")
                         setpoint = int(setpoint)
-                        # Format: 'pXXXX' for positive, 'nXXXX' for negative
-                        cmd = 'p' if setpoint >= 0 else 'n'  # 'p' for positive, 'n' for negative
+                        # Format: 'yXXXX' for positive, 'zXXXX' for negative
+                        cmd = 'y' if setpoint >= 0 else 'z'  # 'y' for positive, 'z' for negative
                         cmd += f"{abs(setpoint):04d}"  # Always send magnitude as 4 digits
                         ser.write(cmd.encode())
                         current_setpoint = setpoint
@@ -473,12 +550,23 @@ while True:
                             
                         plt.plot(df_clean["_time"], df_clean["_left_vel"], label=label)
                         
-                    plt.xlabel("Time")
-                    plt.ylabel("Left velocity")
+                    plt.xlabel("Time, ms")
+                    plt.ylabel("Left velocity, counts/s")
                     plt.legend()
                     # instead of plt.show()
-                    plt.savefig(f"runs/{run_name}_velocity_response.png")
+                    plt.savefig(f"runs/all_runs_velocity_response.png")
                     plt.close()
+
+                    print("Saved plot of all runs to 'runs/all_runs_velocity_response.png'")
+                    print(user_prompt)
+            
+            elif key == 'c':
+                if running:
+                    print("Cannot start automated test while test is running")
+                elif streaming:
+                    print("Cannot start automated test while streaming")
+                else:
+                    run_closed_loop_test()
             
             elif key == 'h':
                 # Print helpful prompt
@@ -538,10 +626,10 @@ while True:
                             # Read line by line
                             try:
                                 spam = ser.readline().decode().strip().split(",")
-                                time, control, left_pos, right_pos, left_vel, right_vel = spam
+                                time, left_pos, right_pos, left_vel, right_vel = spam
 
                                 runs[run_name]["motor_data"].loc[line_num,"_time"] = float(time)
-                                runs[run_name]["motor_data"].loc[line_num,"_control"] = float(control)
+                                # runs[run_name]["motor_data"].loc[line_num,"_control"] = float(control)
                                 runs[run_name]["motor_data"].loc[line_num, "_left_pos"] = float(left_pos)
                                 runs[run_name]["motor_data"].loc[line_num, "_right_pos"] = float(right_pos)
                                 runs[run_name]["motor_data"].loc[line_num, "_left_vel"] = float(left_vel)
