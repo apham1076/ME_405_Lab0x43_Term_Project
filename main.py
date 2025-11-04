@@ -20,10 +20,7 @@
 # ==============================================================================
 
 ### TO-DO:
-# Check period and priorty
-# Use Bluetooth module to send commands from Putty and automate data collection and plotting in Python
-# For plotting, save data for plots, and overlay them, check units
-#
+# 
 
 '''
 Bluetooth related changes:
@@ -39,9 +36,10 @@ Motor task will remain unchanged
 import gc
 import cotask
 import task_share
-from pyb import Pin, UART
+from pyb import Pin, Timer, UART, ADC
 from motor import Motor
 from encoder import Encoder
+from IR_sensor import IR_sensor_single, IR_sensor_array
 from motor_task import MotorControlTask
 from data_task import DataCollectionTask
 from ui_task import UITask
@@ -53,12 +51,36 @@ def main():
     MAX_SAMPLES = 250
     
     # Hardware Setup:
+
+    # Initialize Pin and ADC objects
+    tim6 = Timer(6, freq=10)
+
+    PC2 = Pin(Pin.cpu.C2, mode=Pin.IN)
+    PC3 = Pin(Pin.cpu.C3, mode=Pin.IN)
+    PC4 = Pin(Pin.cpu.C4, mode=Pin.IN)
+    PC5 = Pin(Pin.cpu.C5, mode=Pin.IN)
+
+    adc1 = ADC(PC2)
+    adc2 = ADC(PC3)
+    adc3 = ADC(PC4)
+    adc4 = ADC(PC5)
+
+    adcs = [adc1, adc2, adc3, adc4]
+
     # Create motor and encoder objects
     left_motor = Motor(Pin.cpu.B1, Pin.cpu.B5, Pin.cpu.B3, 3, 4)
     right_motor = Motor(Pin.cpu.B0, Pin.cpu.C0, Pin.cpu.C1, 3, 3)
     left_encoder = Encoder(1, Pin.cpu.A8, Pin.cpu.A9)
     right_encoder = Encoder(2, Pin.cpu.A0, Pin.cpu.A1)
-	
+
+    # Create IR sensor objects
+    IR1 = IR_sensor_single(adc1, tim6)
+    IR2 = IR_sensor_single(adc2, tim6)
+    IR3 = IR_sensor_single(adc3, tim6)
+    IR4 = IR_sensor_single(adc4, tim6)
+
+    IR_arr = IR_sensor_array(adcs, tim6)
+
     # Shared Variables: create shares and queues (inter-task communication)
     # Create Shares...
     time_sh = task_share.Share('H', name='Time share')
@@ -110,6 +132,7 @@ def main():
     
     motor_task_obj = MotorControlTask(left_motor, right_motor,
                                       left_encoder, right_encoder,
+                                      IR_arr,
                                       eff, mtr_enable, abort, driving_mode, setpoint, kp, ki, control_mode,
                                       time_sh, left_pos_sh, right_pos_sh, left_vel_sh, right_vel_sh)
         

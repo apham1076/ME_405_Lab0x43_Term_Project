@@ -53,11 +53,13 @@ class IR_sensor_array:
     def __init__(self,
                  adcs,      # List/tuple of ADC objects
                  tim: Timer,
+                 sensor_index,      # List containing indexes of each sensor [1, 2, 3, ... n]
                  samples=100):
                 
         # Initialization
         self.adcs = list(adcs)
         self.tim = tim
+        self.sens_idx = sensor_index
         self.samples = samples
         self.num = len(self.adcs)
         self.black = [0] * self.num
@@ -101,11 +103,13 @@ class IR_sensor_array:
             self.norm.append(n)
         return self.norm
 
-    def get_centroid(self, sens_idx):
-        sum = 0
-        for i, s in enumerate(sens_idx):
-            n += s[i] * self.norm[i]
-            d += self.norm[i]
+    def get_centroid(self):
+        self.read()     # Get normalized ADC reading
+        n_sum = 0
+        d_sum = 0
+        for i, s in enumerate(self.sens_idx):
+            n_sum += s[i] * self.norm[i]
+            d_sum += self.norm[i]
             
-        return n / d
+        return n_sum / d_sum
         
