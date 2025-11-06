@@ -48,7 +48,7 @@ class UITask:
         self.setpoint = setpoint  # Share for velocity setpoint
         self.kp = kp  # Share for proportional gain
         self.ki = ki  # Share for integral gain
-        self.control_mode = control_mode  # Share for control mode (effort/velocity)
+        self.control_mode = control_mode  # Share for control mode (effort/velocity/line-follow)
         self.lf_enable = lf_enable  # Share for line follower enable
         self.ir_cmd = ir_cmd  # Share for IR command
 
@@ -216,8 +216,9 @@ class UITask:
                 elif cmd == 'e':
                     if not self.mtr_enable.get():  # Only allow mode change when motors are off
                         current_mode = self.control_mode.get()
-                        new_mode = 0 if current_mode else 1  # Toggle between 0 and 1
-                        print("Switching control mode to:", "Velocity" if new_mode else "Effort")
+                        current_mode = (current_mode + 1) % 3  # Cycle through 0, 1, 2
+                        new_mode = current_mode
+                        print("Switching control mode to:", "Velocity" if new_mode == 1 else "Effort" if new_mode == 0 else "Line Following")
                         self.control_mode.put(new_mode)
                 
                 # 's' → STREAM
@@ -260,10 +261,10 @@ class UITask:
                 elif cmd == 'b':   # Calibrate on BLACK line
                     if self.ir_cmd: self.ir_cmd.put(2)
 
-                elif cmd == 'l':   # Toggle line-follow (on/off)
-                    if self.lf_enable:
-                        self.lf_enable.put(0 if self.lf_enable.get() else 1)
-                        print("Toggled line-follow to:", self.lf_enable.get())
+                # elif cmd == 'l':   # Toggle line-follow (on/off)
+                #     if self.lf_enable:
+                #         self.lf_enable.put(0 if self.lf_enable.get() else 1)
+                #         print("Toggled line-follow to:", self.lf_enable.get())
 
 
                 # Anything else → ignore, Shouldn't need to worry about other commmands handled by PC

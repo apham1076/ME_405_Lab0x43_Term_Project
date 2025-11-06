@@ -121,7 +121,7 @@ def main():
     control_mode = task_share.Share('B', name='Control Mode')  # 0: effort mode, 1: velocity mode
     # Initialize driving and control mode shares
     driving_mode.put(1)  # Start in straight line mode
-    control_mode.put(1)  # Start in velocity (closed-loop) mode
+    control_mode.put(0)  # Start in effort mode
 
     # Line following shares...
     lf_enable = task_share.Share('B', name='LineFollow Enable'); lf_enable.put(0)
@@ -145,7 +145,7 @@ def main():
     # -----------------------------------------------------------------------
 
     # Create UART object
-    uart5 = UART(1, 115200)
+    uart5 = UART(1, 460800)
 
     # Create Task Objects (since tasks are classes)    
     ui_task_obj = UITask(col_start, col_done, mtr_enable, stream_data, abort,

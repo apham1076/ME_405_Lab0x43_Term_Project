@@ -32,7 +32,7 @@ class SteeringTask:
         self.right_sp_sh = right_sp_sh # share for right motor velocity setpoint
 
         # Tuning parameters
-        self.Kp_line = 2.0 # proportional steering gain (increase if sluggish, reduce if hunting)
+        self.Kp_line = 1.0 # proportional steering gain (increase if sluggish, reduce if hunting)
         self.v_target = 2.0 # forward target [rad/s] (bump up after stable)
 
         # Derived clamp: v_target + Kp_line * half of index span
@@ -105,8 +105,15 @@ class SteeringTask:
                         self.state = self.S3_LOST
                     else:
                         center = self.ir.center_index() # ideal centroid index
-                        error = centroid - center # positive if line is to the right
-                        correction = self.Kp_line * error # steering correction
+                        error_raw = centroid - center # positive if line is to the right
+
+                        # Normalize error to [-1, 1] based on sensor index span
+                        idx_min = min(self.ir.sensor_index)
+                        idx_max = max(self.ir.sensor_index)
+                        half_span = 0.5 * (idx_max - idx_min) if idx_max > idx_min else 1.0
+                        error_norm = error_raw / half_span # -1 (far left) to +1 (far right)
+
+                        correction = self.Kp_line * error_norm # steering correction
 
                         v_left = self.v_target + correction # correct steering
                         v_right = self.v_target - correction # correct steering

@@ -26,16 +26,15 @@ runs = {}                   # Dict to contain runs
 run_count = 0               # Number of runs
 override = False            # Set if user wants to overwrite existing run
 _continue = False           # Second option, if user doesn't want to overwrite
-question = False           # Set when option to override is presented
-control_mode = False         # True for effort mode, False for velocity mode
-current_setpoint = 0       # Current velocity setpoint in rad/s
+question = False            # Set when option to override is presented
+control_mode = 0            # 0 = effort mode, 1 = velocity mode, 2 = line follow mode
+current_setpoint = 0        # Current velocity setpoint in rad/s
 first = True
 done = False
 mode = 1                    # 1, 2, 3 = straight, pivot, arc
-line_following = 0          # Line following Boolean
 
 user_prompt = '''\r\nCommand keys:
-    e      : Toggle between Effort mode and Velocity mode
+    e      : Toggle between Effort, Velocity, and Line Following mode
     0-9,a  : Set effort (0-100%) for open-loop control [Effort mode]
     t      : Set velocity setpoint (rad/s) for closed-loop control [Velocity mode]
     p      : Set proportional gain (Kp) for controller [Velocity mode]
@@ -50,7 +49,6 @@ user_prompt = '''\r\nCommand keys:
     c      : Run automated closed-loop test
     w      : IR white calibration (prints table from Nucleo USB REPL)
     b      : IR black calibration (prints table from Nucleo USB REPL)
-    l      : Toggle line-following (outer loop on/off)
     v      : Query battery voltage (prints to this terminal)
     h      : Help / show this menu
     ctrl-c : Interrupt this program\r\n'''
@@ -347,7 +345,7 @@ except Exception as e:
 
 # Establish Bluetooth connection
 try:
-    ser = Serial('COM3', baudrate=460800, timeout=1)
+    ser = Serial('COM8', baudrate=460800, timeout=1)
 
 except SerialException:
     print("Unable to connect to port")
@@ -427,8 +425,8 @@ while True:
                     print("Cannot change control mode while streaming")
                 else:
                     ser.write(b'e')
-                    control_mode = not control_mode
-                    mode_str = "effort" if control_mode else "velocity"
+                    control_mode = (control_mode + 1) % 3
+                    mode_str = "effort" if control_mode == 0 else "velocity" if control_mode == 1 else "line following"
                     print(f"Switched to {mode_str} control mode")
 
             elif key == 't':
@@ -506,19 +504,15 @@ while True:
                     ser.write(b'b')
                     print("Sent IR BLACK calibration command. Check USB PuTTY for the calibration table.")
 
-            elif key == 'l':
-                # Toggle line-following enable
-                if running:
-                    print("Cannot toggle line-follow while test is running")
-                elif streaming:
-                    print("Cannot toggle line-follow while streaming")
-                else:
-                    ser.write(b'l')
-                    line_following = (line_following + 1) % 2
-                    if line_following:
-                        print("Toggled line-following on")
-                    else:
-                        print("Toggled line-following off")
+            # elif key == 'l':
+            #     # Toggle line-following enable
+            #     if running:
+            #         print("Cannot toggle line-follow while test is running")
+            #     elif streaming:
+            #         print("Cannot toggle line-follow while streaming")
+            #     else:
+            #         ser.write(b'l')
+            #         print("Toggled line-following (outer loop).")
 
             elif key == 'v':
                 # Request battery voltage (firmware will respond with a number and newline)
