@@ -25,6 +25,8 @@ class Battery:
         self.adc = ADC(Pin(adc_pin))
         self.scale = (self.R_1_OHM + self.R_2_OHM) / self.R_2_OHM
         self.warned = False  # flag so we only warn "low battery" once
+        self._cached_voltage = None  # Cache for the last read voltage
+        self._cached_gain = None     # Cache for the last computed droop gain
 
     #---------------------------------------------------------------------------
     def read_voltage(self):
@@ -38,14 +40,22 @@ class Battery:
         return V_batt
     
     #---------------------------------------------------------------------------
-    def droop_gain(self):
-        """Computes the droop compensation gain (V_NOM / V_batt)."""
-        V_batt = self.read_voltage()
-        # Avoid division by zero or very low voltage (ADC may be disconnected)
-        if V_batt <= 0.5:
-            print("Warning: Measured battery voltage VERY low (<0.5). Check connections, or invalid.")
-            return 1.0  # Avoid division by zero, no compensation
-        
-        # Actually compute the droop gain
-        droop_gain = self.V_NOM_TOTAL / V_batt
-        return droop_gain
+    def droop_gain(self, refresh=False):
+        """Return droop gain, caching after first measurement. Set refresh=True to re-measure."""
+        # Only re-measure if requested or no cached value yet
+        if self._cached_gain is not None or refresh:
+            V_batt = self.read_voltage()
+            # Avoid division by zero or very low voltage (ADC may be disconnected)
+            if V_batt <= 0.5:
+                print("Warning: Measured battery voltage VERY low (<0.5). Check connections, or invalid. Using unity gain.")
+                self._cached_gain = 1.0
+            else:
+                self._cached_gain = self.V_NOM_TOTAL / V_batt
+            self._cached_voltage = V_batt
+        return self._cached_gain
+    
+    #---------------------------------------------------------------------------
+    def refresh(self):
+        """Force a new calculation of droop gain."""
+        self._cached_gain = None
+        return self.droop_gain(refresh=True)

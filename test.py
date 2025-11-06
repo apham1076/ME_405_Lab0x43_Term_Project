@@ -34,9 +34,9 @@ done = False
 mode = 1                    # 1, 2, 3 = straight, pivot, arc
 
 user_prompt = '''\r\nCommand keys:
-    e      : Toggle between Effort, Velocity, and Line Following mode
+    e      : Toggle mode: Effort, Velocity, and Line Following
     0-9,a  : Set effort (0-100%) for open-loop control [Effort mode]
-    t      : Set velocity setpoint (rad/s) for closed-loop control [Velocity mode]
+    t      : Set setpoint (rad/s) for closed-loop control [Velocity mode]
     p      : Set proportional gain (Kp) for controller [Velocity mode]
     i      : Set integral gain (Ki) for controller [Velocity mode]
     g      : GO (start test)
@@ -358,7 +358,7 @@ except Exception as e:
 
 # Establish Bluetooth connection
 try:
-    ser = Serial('COM3', baudrate=460800, timeout=1)
+    ser = Serial('COM8', baudrate=460800, timeout=1)
 
 except SerialException:
     print("Unable to connect to port")

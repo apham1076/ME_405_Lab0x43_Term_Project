@@ -30,17 +30,13 @@ class SteeringTask:
         self.ir_cmd = ir_cmd
         self.left_sp_sh = left_sp_sh # share for left motor velocity setpoint
         self.right_sp_sh = right_sp_sh # share for right motor velocity setpoint
-        self.control_mode = control_mode
-
-        # Tuning parameters
-        self.K_line = k_line.get() # proportional steering gain (increase if sluggish, reduce if hunting)
-        self.v_target = lf_target.get() # forward target [rad/s] (bump up after stable)
-
-        # Derived clamp: v_target + K_line * half of index span
-        idx_min = min(self.ir.sensor_index)
-        idx_max = max(self.ir.sensor_index)
-        half_span = 0.5 * (idx_max - idx_min)    # e.g., (11-1)/2 = 5.0
-        self._max_sp = self.v_target + self.K_line * half_span
+        self.control_mode = control_mode # share for control mode (effort/velocity/line-follow)
+        self.k_line_sh = k_line # share for line-following gain
+        self.lf_target_sh = lf_target # share for line-following target speed
+        # Local copies (to be updated on S1-->S2 transition)
+        self.k_line_param = 0.0 # cached line-following gain
+        self.v_target_param = 0.0 # cached nominal translational speed
+        self._have_params = False # flag to indicate if params have been loaded, set true when S2 entered
 
         # Lost-line behavior
         self.search_speed = 0.5 # fraction of v_target to creep forward while searching
@@ -55,13 +51,19 @@ class SteeringTask:
     # --------------------------------------------------------------------------
     ### HELPER FUNCTIONS
     # --------------------------------------------------------------------------
-    def _clamp(self, x, lo, hi):
-        return lo if x < lo else (hi if x > hi else x)
+    def _compute_clamp_bound(self):
+        """Compute the maximum speed clamp based on current parameters."""
+        idx_min = min(self.ir.sensor_index)
+        idx_max = max(self.ir.sensor_index)
+        half_span = 0.5 * (idx_max - idx_min) if idx_max > idx_min else 1.0
+        max_sp = abs(self.v_target_param) + abs(self.k_line_param) * half_span
+        return max(max_sp, 1.0) # avoid zero clamp
 
     # --------------------------------------------------------------------------
     def _publish(self, v_left, v_right):
-        v_left = self._clamp(v_left, -self._max_sp, self._max_sp)
-        v_right = self._clamp(v_right, -self._max_sp, self._max_sp)
+        max_sp = self._compute_clamp_bound()
+        v_left = max(min(v_left, max_sp), -max_sp)
+        v_right = max(min(v_right, max_sp), -max_sp)
         self.left_sp_sh.put(v_left)
         self.right_sp_sh.put(v_right)
 
@@ -96,44 +98,50 @@ class SteeringTask:
 
             # S2: FOLLOW LINE -------------------------------------------------
             elif self.state == self.S2_FOLLOW:
+                # On entry to S2, load parameters
+                if not self._have_params:
+                    self.k_line_param = self.k_line_sh.get()
+                    self.v_target_param = self.lf_target_sh.get()
+                    self._have_params = True
+
                 if self.control_mode.get() != 2: # if line following disabled
                     self._publish(0.0, 0.0) # ensure motors are stopped
+                    self._have_params = False # reset param flag
                     self.state = self.S1_WAIT_ENABLE # go to WAIT ENABLE state
                 else:
+                    # Read gains and recalculate clamp
                     centroid, seen = self.ir.get_centroid() # get line centroid
                     if not seen:
                         # No line detected -> go to LOST
                         self.state = self.S3_LOST
                     else:
                         center = self.ir.center_index() # ideal centroid index
-                        error_raw = centroid - center # positive if line is to the right
-
                         # Normalize error to [-1, 1] based on sensor index span
                         idx_min = min(self.ir.sensor_index)
                         idx_max = max(self.ir.sensor_index)
                         half_span = 0.5 * (idx_max - idx_min) if idx_max > idx_min else 1.0
-                        error_norm = error_raw / half_span # -1 (far left) to +1 (far right)
+                        error_norm = (centroid - center) / half_span # -1 (far left) to +1 (far right)
 
-                        correction = self.K_line * error_norm # steering correction
-
-                        v_left = self.v_target + correction # correct steering
-                        v_right = self.v_target - correction # correct steering
+                        correction = self.k_line_param * error_norm # steering correction
+                        v_left = self.v_target_param + correction # correct steering
+                        v_right = self.v_target_param - correction # correct steering
                         self._publish(v_left, v_right)
 
             # S3: LOST LINE --------------------------------------------------
             elif self.state == self.S3_LOST:
                 if self.control_mode.get() != 2: # if line following disabled
                     self._publish(0.0, 0.0) # ensure motors are stopped
+                    self._have_params = False # reset param flag
                     self.state = self.S1_WAIT_ENABLE # go to WAIT ENABLE state
                 else:
                     # Gentle creep to reacquire (or set both to 0.0 if you prefer a stop)
-                    v = self.search_speed * self.v_target
+                    v = self.search_speed * self.v_target_param
                     self._publish(v, v)
 
                     # Quick check for line reacquisition
                     # (use read() to avoid computing centroid every tick)
                     norm = self.ir.read()
-                    if sum(norm) > self.reacquire_thresh:
-                        self.state = self.S2_FOLLOW
+                    if sum(norm) > 0.05: # reacquire threshold
+                        self.state = self.S2_FOLLOW # consider line reacquired
 
             yield self.state

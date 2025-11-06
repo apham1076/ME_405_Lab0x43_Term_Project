@@ -68,7 +68,7 @@ def main():
     battery = Battery(Pin.cpu.A6)
 
     # Create IR sensor array object
-    tim6 = Timer(6, freq=1000)  # timer for ADC-based calibration reads
+    tim6 = Timer(6, freq=20000)  # timer for ADC-based calibration reads
     # IR ARRAY CONFIGURATION
     # Define the physical pins we are *currently* using, left-to-right order.
     # These are the MCU pins connected to the array.
@@ -115,14 +115,12 @@ def main():
     setpoint.put(0)  # Start with zero setpoint
     kp.put(0)  # Start with zero gains
     ki.put(0)
-
     # Driving mode and control mode shares...
     driving_mode = task_share.Share('B', name='Driving Mode')  # straight line, pivot, or arc
     control_mode = task_share.Share('B', name='Control Mode')  # 0: effort mode, 1: velocity mode
     # Initialize driving and control mode shares
     driving_mode.put(1)  # Start in straight line mode
     control_mode.put(0)  # Start in effort mode
-
     # Line following shares...
     left_sp_sh = task_share.Share('f', name='LF Left Setpoint'); left_sp_sh.put(0.0)
     right_sp_sh = task_share.Share('f', name='LF Right Setpoint'); right_sp_sh.put(0.0)

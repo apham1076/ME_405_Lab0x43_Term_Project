@@ -150,22 +150,26 @@ class UITask:
 
                 # 'g' → GO
                 elif cmd == 'g':
-                    if self.mtr_enable.get():
-                        pass
-                        # Test already running
-                    else:
-                        # print("Starting new test")
+                    if not self.mtr_enable.get():
+                        print("Starting run")
                         self.abort.put(0)
                         self.mtr_enable.put(1)
-                        self.col_start.put(1)
-                        # Clear queues
-                        self.time_q.clear()
-                        self.left_pos_q.clear()
-                        self.right_pos_q.clear()
-                        self.left_vel_q.clear()
-                        self.right_vel_q.clear()
 
-                        self.state = self.S3_MONITOR_TEST
+                        if self.control_mode.get() in (0, 1):
+                            self.col_start.put(1)  # start data collection only for open-loop or velocity control
+                            # Clear queues
+                            self.time_q.clear()
+                            self.left_pos_q.clear()
+                            self.right_pos_q.clear()
+                            self.left_vel_q.clear()
+                            self.right_vel_q.clear()
+                            # Change state to monitor test
+                            self.state = self.S3_MONITOR_TEST
+                        else:
+                            # Line-following mode does not collect data (runs indefinitely until stopped)
+                            self.col_start.put(0)
+                            # remain in WAIT state, don't auto-stop
+                            print("Line-follow mode active; running indefinitely.")
 
                 # 'p' → Set Kp (when followed by 4 digits)
                 elif cmd == 'p' and self.ser.any() >= 4:
@@ -275,25 +279,42 @@ class UITask:
                         ki = int(ki_str) / 100.0
                         k_line = int(kline_str) / 100.0
                         v_target = int(target_str) / 100.0
+
                         self.kp.put(kp)
                         self.ki.put(ki)
                         self.k_line.put(k_line)
                         self.lf_target.put(v_target)
-                        print(f"Line-following gains set to Kp={kp}, Ki={ki}, K_line={k_line}, Target={v_target}")
+                        self.control_mode.put(2)  # switch to line-following mode
+                        print(f"Line-following params set: Kp={kp}, Ki={ki}, K_line={k_line}, Target={v_target} (Mode=Line-Follow)")
                     except ValueError:
-                        print("Invalid line-following gain format received")
+                        print("Invalid line-follow parameter format")
 
                 # Anything else → ignore, Shouldn't need to worry about other commmands handled by PC
                 else:
                     pass
 
-                self.state = self.S1_WAIT_FOR_COMMAND
-                    
+                if self.state == self.S2_PROCESS_COMMAND:
+                    self.state = self.S1_WAIT_FOR_COMMAND
 
             ### 3: MONITOR TEST STATE ------------------------------------------
             elif self.state == self.S3_MONITOR_TEST:
-                # Wait for collection or enable flag to clear
-                if not self.mtr_enable.get() or not self.col_start.get():
+                # Check for abort signal first
+                if self.ser.any():
+                    ch = self.ser.read(1).decode().lower() # read 1 char AAT
+                    if ch == 'k':
+                        print("Stopping test")
+                        self.abort.put(1)  # Set abort flag first
+                        self.mtr_enable.put(0)  # Then disable motors
+                        self.col_start.put(0)  # Stop data collection
+                        self.ser.write(b'q')  # Tell PC test is done
+                        self.state = self.S1_WAIT_FOR_COMMAND
+
+                        # Clear any other junk that might be in the buffer
+                        while self.ser.any():
+                            self.ser.read(1)
+
+                # Then, check for normal completion if no kill command
+                elif not self.mtr_enable.get() or not self.col_start.get():
                     # Tell PC test is testing is done
                     self.ser.write(b'q')
                     self.state = self.S1_WAIT_FOR_COMMAND

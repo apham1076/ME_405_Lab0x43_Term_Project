@@ -111,6 +111,14 @@ class MotorControlTask:
             ### 1: WAITING STATE -----------------------------------------------
             elif (self.state == self.S1_WAIT_FOR_ENABLE):
                 if self.mtr_enable.get():
+
+                    if self.battery is not None:
+                        try:
+                            gain = self.battery.refresh()
+                            print(f"Measured battery: {self.battery._cached_voltage:.2f} V, applying droop gain: {gain:.3f}")
+                        except Exception as e:
+                            print(f"Battery refresh failed: {e}")
+
                     self.left_encoder.zero()
                     self.right_encoder.zero()
                     self.t0 = millis() # a timestamp to zero the time right when the motors are enabled
@@ -121,6 +129,18 @@ class MotorControlTask:
             
             ### 2: RUN STATE ---------------------------------------------------
             elif (self.state == self.S2_RUN):
+                # Check for abort signal
+                if self.abort.get(): # (abort is a share)
+                    self.left_motor.disable()
+                    self.right_motor.disable()
+                    self.left_controller.reset()
+                    self.right_controller.reset()
+                    self.abort.put(0)  # Reset abort flag after handling it
+                    self.mtr_enable.put(0)  # Clear enable flag
+                    self.state = self.S1_WAIT_FOR_ENABLE
+                    yield self.state
+                    continue
+
                 # Update encoders
                 self.left_encoder.update()
                 self.right_encoder.update()
@@ -212,7 +232,7 @@ class MotorControlTask:
                     # Apply efforts
                     self.left_motor.set_effort(left_effort)
                     self.right_motor.set_effort(right_effort)
-
+                # ----------------------------------------------------------
 
                 # Calculate the exact timestamp of the measurement
                 t = millis() - self.t0
@@ -230,15 +250,5 @@ class MotorControlTask:
                 # print(self.right_pos_sh.get())
                 # print(self.left_vel_sh.get())
                 # print(self.right_vel_sh.get())
-
-                # Disable if mtr_enable flag is cleared or abort is triggered
-                if not self.mtr_enable.get() or self.abort.get():
-                    self.left_motor.disable()
-                    self.right_motor.disable()
-                    self.abort.put(0)  # Reset abort flag after handling it
-                    # Reset controllers
-                    self.left_controller.reset()
-                    self.right_controller.reset()
-                    self.state = self.S1_WAIT_FOR_ENABLE
             
             yield self.state
