@@ -181,13 +181,13 @@ def main():
     
     _data_collection_task = cotask.Task(data_task_obj.run, name='Data Collection Task', priority=2, period=10, profile=True, trace=False)
 
-    _ui_task = cotask.Task(ui_task_obj.run, name='User Interface Task', priority=0, period=40, profile=True, trace=False)
+    _ui_task = cotask.Task(ui_task_obj.run, name='User Interface Task', priority=0, period=20, profile=True, trace=False)
 
     _stream_task = cotask.Task(stream_task_obj.run, name='Stream Task', priority=1, period=20, profile=True, trace=False)
 
     _steering_task = cotask.Task(steering_task_obj.run,
                              name='Steering Task',
-                             priority=2, period=10,
+                             priority=2, period=40,
                              profile=True, trace=False)
 
 
@@ -219,6 +219,7 @@ def main():
     # print(_motor_task.get_trace())
     # print(_data_collection_task.get_trace())
     # print(_stream_task.get_trace())
+    # print(_steering_task.get_trace())
 
     
 if __name__ == "__main__":
