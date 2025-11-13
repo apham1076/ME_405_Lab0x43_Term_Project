@@ -11,6 +11,9 @@ i2c = I2C(2, mode=I2C.CONTROLLER, baudrate=400000, timeout=100)
 # Set operation mode
 i2c.mem_write(0x0C, 0x28, 0x3D)
 
+# Reset IMU
+i2c.mem_write(0x20, 0x28, 0x3F)
+
 # Read calibration status
 cal_stat = i2c.mem_read(8, 0x28, 0x35)
 
@@ -27,7 +30,7 @@ scl = Pin('PB13', mode=Pin.ALT, alt=4)
 i2c = I2C(2, mode=I2C.CONTROLLER, baudrate=400000)
 i2c.scan()
 i2c.mem_write(0x0C, 0x28, 0x3D)
-cal_stat = i2c.mem_read(8, 0x28, 0x35)
+cal_stat = i2c.mem_read(1, 0x28, 0x35)
 mag_stat = cal_stat[0] & 0b11
 acc_stat = (cal_stat[0] >> 2) & 0b11
 gyr_stat = (cal_stat[0] >> 2) & 0b11
@@ -37,3 +40,4 @@ acc_stat
 gyr_stat
 sys_stat
 mag_stat
+

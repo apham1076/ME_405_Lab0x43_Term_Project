@@ -6,8 +6,8 @@ from pyb import Pin, I2C
 # Initialize and configure pins
 Left_nSLP = Pin('PB3', mode=Pin.OUT_PP)
 Right_nSLP = Pin('PC9', mode=Pin.OUT_PP)
-# sda = Pin('PB14', mode=Pin.ALT, alt=4)
-# scl = Pin('PB13', mode=Pin.ALT, alt=4)
+sda = Pin('PB14', mode=Pin.ALT, alt=4)
+scl = Pin('PB13', mode=Pin.ALT, alt=4)
 # reset = Pin('PB15', mode=Pin.OUT_PP)
 
 # Initialize I2C interface
@@ -20,4 +20,3 @@ def disable_motors():
     print("Motors disabled.")
 
 disable_motors()
-
