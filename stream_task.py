@@ -75,31 +75,31 @@ class StreamTask:
             ### 2: STREAM DATA STATE -------------------------------------------
             elif (self.state == self.S2_STREAM_DATA):
 
-                # Get control mode info to send to PC
-                mode_val = int(self.control_mode.get())
-                if mode_val == 0:
-                    mode = "E"  # effort mode
-                    control_val = self.eff.get()
-                elif mode_val == 1:
-                    mode = "V"  # velocity mode
-                    control_val = self.setpoint.get()
-                else:
-                    mode = "L"  # line follow mode
-                    control_val = self.lf_target.get()
+                # # Get control mode info to send to PC
+                # mode_val = int(self.control_mode.get())
+                # if mode_val == 0:
+                #     mode = "E"  # effort mode
+                #     control_val = self.eff.get()
+                # elif mode_val == 1:
+                #     mode = "V"  # velocity mode
+                #     control_val = self.setpoint.get()
+                # else:
+                #     mode = "L"  # line follow mode
+                #     control_val = self.lf_target.get()
 
-                # Determine the number of samples actually in the queues
-                _size = self.time_q.num_in()
+                # # Determine the number of samples actually in the queues
+                # _size = self.time_q.num_in()
 
-                # Send a line with the control mode and parameters
-                if mode == "E":
-                    line = f"{mode},{control_val},{_size}\r\n"
-                elif mode == "V":
-                    line = f"{mode},{control_val},{self.kp.get():.2f},{self.ki.get():.2f},{_size}\r\n"
-                else:
-                    line = f"{mode},{control_val},{self.kp.get():.2f},{self.ki.get():.2f},{self.k_line.get():.2f},{_size}\r\n"
+                # # Send a line with the control mode and parameters
+                # if mode == "E":
+                #     line = f"{mode},{control_val},{_size}\r\n"
+                # elif mode == "V":
+                #     line = f"{mode},{control_val},{self.kp.get():.2f},{self.ki.get():.2f},{_size}\r\n"
+                # else:
+                #     line = f"{mode},{control_val},{self.kp.get():.2f},{self.ki.get():.2f},{self.k_line.get():.2f},{_size}\r\n"
 
-                self.ser.write(line.encode()) # write the line over Bluetooth
-                yield self.state # write only one line then yield
+                # self.ser.write(line.encode()) # write the line over Bluetooth
+                # yield self.state # write only one line then yield
 
                 # while we still have items in queue
                 index = 0 # sample index number (sent to PC for alignment)

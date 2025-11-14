@@ -148,8 +148,8 @@ class UITask:
                         self.eff.put(val)
                         # Ready to go
 
-                # 'g' → GO
-                elif cmd == 'g':
+                # 'r' → Run test
+                elif cmd == 'r':
                     if not self.mtr_enable.get():
                         print("Starting run")
                         self.abort.put(0)
@@ -218,8 +218,8 @@ class UITask:
                     except ValueError:
                         pass  # Invalid Ki format
 
-                # 'e' → Toggle control mode
-                elif cmd == 'e':
+                # 'm' → Toggle control mode
+                elif cmd == 'm':
                     if not self.mtr_enable.get():  # Only allow mode change when motors are off
                         current_mode = self.control_mode.get()
                         new_mode = (current_mode + 1) % 3  # Cycle through 0, 1, 2
@@ -237,8 +237,8 @@ class UITask:
                     # else:
                     #     self.stream_data.put(1)
 
-                # 'm' → TOGGLE MODE
-                elif cmd == 'm':
+                # 'n' → TOGGLE MODE
+                elif cmd == 'n':
                     # Toggle driving mode (1 = straight, 2 = pivot, 3 = arc)
                     if not self.mtr_enable.get():            # only change when stopped
                         current_mode = self.driving_mode.get() or 1

@@ -31,10 +31,12 @@ control_mode = 0            # 0 = effort mode, 1 = velocity mode, 2 = line follo
 current_setpoint = 0        # Current velocity setpoint in rad/s
 first = True
 done = False
-mode = 1                    # 1, 2, 3 = straight, pivot, arc
+# mode = 1                    # 1, 2, 3 = straight, pivot, arc
+effort = 0                   # Current effort value
+stack = []                  # Stack of tests to run
 
 user_prompt = '''\r\nCommand keys:
-    e      : Toggle mode: Effort, Velocity, and Line Following
+    m      : Toggle mode: Effort, Velocity, and Line Following
     0-9,a  : Set effort (0-100%) for open-loop control [Effort mode]
     t      : Set setpoint (rad/s) for closed-loop control [Velocity mode]
     p      : Set proportional gain (Kp) for controller [Velocity mode]
@@ -44,7 +46,7 @@ user_prompt = '''\r\nCommand keys:
     r      : Run automated sequence (0 to 100% by 10%)
     x      : Plot all runs' left velocity
     s      : Stream data
-    m      : Toggle driving mode (straight/pivot/arc)
+    n      : Toggle driving mode (straight/pivot/arc)
     d      : Save latest run to CSV and plot PNG
     c      : Run automated closed-loop test
     w      : IR white calibration (prints table from Nucleo USB REPL)
@@ -53,6 +55,20 @@ user_prompt = '''\r\nCommand keys:
     v      : Query battery voltage (prints to this terminal)
     h      : Help / show this menu
     ctrl-c : Interrupt this program\r\n'''
+
+new_user_prompt = '''\r\nCommand keys:
+    t      : Select a test to run: Effort, Velocity, Line Following
+    u      : Automate test sequence using stack
+    r      : Run test
+    k      : Kill (stop) motors
+    s      : Stream data
+    d      : Save data from latest run to CSV and plot PNG
+    v      : Query battery voltage (prints to this terminal)
+    c      : Calibrate sensors: IR sensors or IMU
+    h      : Help / show this menu
+'''
+
+control_mode_dict = {0: "Effort", 1: "Velocity", 2: "Line Following"}
 
 # Function to calibrate IR sensors
 def calibrate_ir_sensors():
@@ -155,6 +171,13 @@ def eff_to_key(eff):
     digit = int(eff // 10)
     return str(digit)
 
+def key_to_eff(key):
+    if key == 'a':
+        return 100
+    if key.isdigit():
+        digit = int(key)
+        return digit * 10
+    return None
 
 # Automated run sequence: for each effort in 'efforts' send the effort key and 'g' to start
 # then wait for the Romi to send a 'q' (test done), request streaming ('s'), and collect the
@@ -408,19 +431,136 @@ while True:
         # Check for key pressed
         if msvcrt.kbhit():
             key = msvcrt.getch().decode()
-            # print(f"{key} was pressed")
-            if key.isdigit() or key == 'a':
+            # if key.isdigit() or key == 'a':
+            #     if running:
+            #         print("Cannot set effort at this time. Try again when test is finished")
+            #     elif streaming:
+            #         print("Cannot set effort at this time. Data streaming in progress")
+            #     else:
+            #         ser.write(key.encode())
+            #         effort = key_to_eff(key)
+
+            #         if key == 'a':
+            #             print(f"Effort value set to 100%. Enter 'g' to begin test.")
+            #         else:
+            #             print(f"Effort value set to {key}0%. Enter 'g' to begin test.")
+            if key == 't':
                 if running:
-                    print("Cannot set effort at this time. Try again when test is finished")
+                    print("Cannot select test while test is running")
                 elif streaming:
-                    print("Cannot set effort at this time. Data streaming in progress")
+                    print("Cannot select test while data is streaming")
                 else:
-                    ser.write(key.encode())
-                    if key == 'a':
-                        print(f"Effort value set to 100%. Enter 'g' to begin test.")
+                    print("Select test to run:")
+                    print("  e: Effort mode")
+                    print("  v: Velocity mode")
+                    print("  l: Line Following mode")
+                    selected = input("Enter choice (e, v, l, or q to quit): ")
+                    if selected == 'e':
+                        control_mode = 0
+                        print("Selected Effort mode")
+                        effort = int(input("Enter effort (0-100%) in steps of 10%: "))
+                        try:
+                            if effort < 0 or effort > 100 or effort % 10 != 0:
+                                raise ValueError("Effort must be between 0 and 100 in steps of 10")
+                        except ValueError as e:
+                            print(e)
+                            continue
+                        line = 'e' + eff_to_key(effort)
+                    elif selected == 'v':
+                        control_mode = 1
+                        print("Selected Velocity mode")
+                        gains = input("Enter Kp and Ki separated by a comma (e.g., 1.5,0.1): ")
+                        try:
+                            kp_str, ki_str = gains.split(',')
+                            kp = float(kp_str)
+                            ki = float(ki_str)
+                            kp_int = int(kp * 100)
+                            ki_int = int(ki * 100)
+                            line = f'v{kp_int:04d}{ki_int:04d}'
+                        except ValueError:
+                            print("Invalid format. Please enter two numbers separated by a comma.")
+
+                    elif selected == 'l':
+                        control_mode = 2
+                        print("Selected Line Following mode")
+                        gains = input("Enter Kp, Ki, K_line, and target separated by commas (e.g., 1.5,0.1,2.0,0.5): ")
+                        try:
+                            kp_str, ki_str, k_line_str, target_str = gains.split(',')
+                            kp = float(kp_str)
+                            ki = float(ki_str)
+                            k_line = float(k_line_str)
+                            target = float(target_str)
+                            kp_int = int(kp * 100)
+                            ki_int = int(ki * 100)
+                            k_line_int = int(k_line * 100)
+                            target_int = int(target * 100)
+                            line = f'l{kp_int:04d}{ki_int:04d}{k_line_int:04d}{target_int:04d}'
+                        except ValueError:
+                            print("Invalid format. Please enter four numbers separated by commas.")
+                    
+                    elif selected == 'q':
+                        print("Test selection cancelled.")
+                        continue
                     else:
-                        print(f"Effort value set to {key}0%. Enter 'g' to begin test.")
-            elif key == 'g':
+                        print("Invalid selection. Enter 'e', 'v', 'l', or 'q' to quit.")
+
+                    # Send configuration line to Romi    
+                    ser.write(line.encode())
+                    print("Configuration sent to Romi.")
+            
+            if key == 'u':
+                if running:
+                    print("Cannot add tests to stack while test is running")
+                elif streaming:
+                    print("Cannot add tests to stack while data is streaming")
+                else:
+                    print(("Select from the following:"))
+                    print("  l: View items in stack")
+                    print("  c: Clear stack")
+                    print("  a: Add test to stack")
+                    selected = input("Enter choice (l, c, a, or q to quit): ")
+                    if selected == 'l':
+                        if not stack:
+                            print("Stack is empty.")
+                        else:
+                            print("Current stack:")
+                            for t in stack:
+                                # Format for test is (mode, param1, param2, ...)
+                                print(t)
+                    
+                    elif selected == 'c':
+                        stack.clear()
+                        ser.write(b'uc')  # send clear command to Romi
+                        print("Stack cleared.")
+                    elif selected == 'a':
+                        # For now only allow adding effort tests
+                        eff = input("Enter effort test in the following format: start, end, step (e.g., 0,100,10): ")
+                        try:
+                            start_str, end_str, step_str = eff.split(',')
+                            start = int(start_str)
+                            end = int(end_str)
+                            step = int(step_str)
+                            if start < 0 or end > 100 or step <= 0 or start > end:
+                                raise ValueError("Invalid range or step")
+                            # Add tests to stack in LIFO order
+                            for e in range(end, start - 1, -step):
+                                stack.append( ('effort', e) )
+                            ser.write(b'ua')  # send add command to Romi
+                            for i in stack:
+                                if i[0] == 'effort':
+                                    cmd = 'e' + eff_to_key(i[1])
+                                    ser.write(cmd.encode())
+                                    sleep(0.1)
+                                else:
+                                    print(f"Unknown test type in stack: {i[0]}")
+                            print("Effort test added to stack.")
+                        except ValueError as e:
+                            print(f"Invalid format: {e}")
+                    elif selected == 'q':
+                        print("Stack operation cancelled.")
+                        continue
+                    
+            if key == 'r':
                 if running:
                     print("Test is already running")
                 elif streaming:
@@ -428,7 +568,7 @@ while True:
                 else:
                     print("Starting test...")
                     running = True
-                    ser.write(b'g')
+                    ser.write(b'r')
             elif key == 'k':
                 if running:
                     # Kill motors
@@ -451,89 +591,108 @@ while True:
 
                     print("Data streaming to PC...")
                     streaming = True
-            
-            elif key == 'm':
-                if not running and not streaming:
-                    print("Toggle mode")
-                    ser.write(b'm')
-                    if mode == 1:
-                        print("Romi will drive in a straight line.")
-                        mode = 2
-                    elif mode == 2:
-                        print("Romi will pivot in place.")
-                        mode = 3
+
+            elif key == 'c':
+                if running:
+                    print("Cannot calibrate while test is running")
+                elif streaming:
+                    print("Cannot calibrate while data is streaming")
+                else:
+                    print("Select calibration to perform:")
+                    print("  1: IR Sensors")
+                    print("  2: IMU")
+                    selected = input("Enter choice (1 or 2): ")
+                    if selected == '1':
+                        ser.write(b'c1')
+                        print("IR sensor calibration command sent to Romi.")
+                    elif selected == '2':
+                        ser.write(b'c2')
+                        print("IMU calibration command sent to Romi.")
                     else:
-                        mode = 1
-                        print("Romi will follow an arc.")
+                        print("Invalid selection. Enter '1' or '2'.")
 
-            elif key == 'e':
-                if running:
-                    print("Cannot change control mode while test is running")
-                elif streaming:
-                    print("Cannot change control mode while streaming")
-                else:
-                    ser.write(b'e')
-                    control_mode = (control_mode + 1) % 3
-                    mode_str = "effort" if control_mode == 0 else "velocity" if control_mode == 1 else "line following"
-                    print(f"Switched to {mode_str} control mode")
+            # elif key == 'n':
+            #     if not running and not streaming:
+            #         print("Toggle mode")
+            #         ser.write(b'n')
+            #         if mode == 1:
+            #             print("Romi will drive in a straight line.")
+            #             mode = 2
+            #         elif mode == 2:
+            #             print("Romi will pivot in place.")
+            #             mode = 3
+            #         else:
+            #             mode = 1
+            #             print("Romi will follow an arc.")
 
-            elif key == 't':
-                if running:
-                    print("Cannot set velocity setpoint while test is running")
-                elif streaming:
-                    print("Cannot set velocity setpoint while streaming")
-                elif control_mode != 1:
-                    print("Must be in velocity mode to set setpoint")
-                else:
-                    try:
-                        # Get setpoint from user
-                        setpoint = input("Enter velocity setpoint (rad/s): ")
-                        setpoint = int(setpoint)
-                        # Format: 'yXXXX' for positive, 'zXXXX' for negative
-                        cmd = 'y' if setpoint >= 0 else 'z'  # 'y' for positive, 'z' for negative
-                        cmd += f"{abs(setpoint):04d}"  # Always send magnitude as 4 digits
-                        ser.write(cmd.encode())
-                        current_setpoint = setpoint
-                        sign_str = "+" if setpoint >= 0 else "-"
-                        print(f"Velocity setpoint set to {sign_str}{abs(setpoint)} rad/s")
-                    except ValueError:
-                        print("Invalid input. Please enter an integer.")
+            # elif key == 'm':
+            #     if running:
+            #         print("Cannot change control mode while test is running")
+            #     elif streaming:
+            #         print("Cannot change control mode while streaming")
+            #     else:
+            #         ser.write(b'm')
+            #         control_mode = (control_mode + 1) % 3
+            #         mode_str = "effort" if control_mode == 0 else "velocity" if control_mode == 1 else "line following"
+            #         print(f"Switched to {mode_str} control mode")
 
-            elif key == 'i':
-                if running:
-                    print("Cannot set Ki while test is running")
-                elif streaming:
-                    print("Cannot set Ki while streaming")
-                else:
-                    try:
-                        # Get Ki from user
-                        ki = input("Enter integral gain (Ki): ")
-                        ki = float(ki)
-                        # Send Ki to Romi - format: 'iXXXX' where XXXX is Ki*100
-                        ki_int = int(ki * 100)  # Scale up by 100 to send as integer
-                        cmd = f"i{abs(ki_int):04d}"
-                        ser.write(cmd.encode())
-                        print(f"Integral gain set to {ki}")
-                    except ValueError:
-                        print("Invalid input. Please enter a number.")
+            # elif key == 't':
+            #     if running:
+            #         print("Cannot set velocity setpoint while test is running")
+            #     elif streaming:
+            #         print("Cannot set velocity setpoint while streaming")
+            #     elif control_mode != 1:
+            #         print("Must be in velocity mode to set setpoint")
+            #     else:
+            #         try:
+            #             # Get setpoint from user
+            #             setpoint = input("Enter velocity setpoint (rad/s): ")
+            #             setpoint = int(setpoint)
+            #             # Format: 'yXXXX' for positive, 'zXXXX' for negative
+            #             cmd = 'y' if setpoint >= 0 else 'z'  # 'y' for positive, 'z' for negative
+            #             cmd += f"{abs(setpoint):04d}"  # Always send magnitude as 4 digits
+            #             ser.write(cmd.encode())
+            #             current_setpoint = setpoint
+            #             sign_str = "+" if setpoint >= 0 else "-"
+            #             print(f"Velocity setpoint set to {sign_str}{abs(setpoint)} rad/s")
+            #         except ValueError:
+            #             print("Invalid input. Please enter an integer.")
 
-            elif key == 'p':
-                if running:
-                    print("Cannot set Kp while test is running")
-                elif streaming:
-                    print("Cannot set Kp while streaming")
-                else:
-                    try:
-                        # Get Kp from user
-                        kp = input("Enter proportional gain (Kp): ")
-                        kp = float(kp)
-                        # Send Kp to Romi - format: 'pXXXX' where XXXX is Kp*100
-                        kp_int = int(kp * 100)  # Scale up by 100 to send as integer
-                        cmd = f"p{abs(kp_int):04d}"
-                        ser.write(cmd.encode())
-                        print(f"Proportional gain set to {kp}")
-                    except ValueError:
-                        print("Invalid input. Please enter a number.")
+            # elif key == 'i':
+            #     if running:
+            #         print("Cannot set Ki while test is running")
+            #     elif streaming:
+            #         print("Cannot set Ki while streaming")
+            #     else:
+            #         try:
+            #             # Get Ki from user
+            #             ki = input("Enter integral gain (Ki): ")
+            #             ki = float(ki)
+            #             # Send Ki to Romi - format: 'iXXXX' where XXXX is Ki*100
+            #             ki_int = int(ki * 100)  # Scale up by 100 to send as integer
+            #             cmd = f"i{abs(ki_int):04d}"
+            #             ser.write(cmd.encode())
+            #             print(f"Integral gain set to {ki}")
+            #         except ValueError:
+            #             print("Invalid input. Please enter a number.")
+
+            # elif key == 'p':
+            #     if running:
+            #         print("Cannot set Kp while test is running")
+            #     elif streaming:
+            #         print("Cannot set Kp while streaming")
+            #     else:
+            #         try:
+            #             # Get Kp from user
+            #             kp = input("Enter proportional gain (Kp): ")
+            #             kp = float(kp)
+            #             # Send Kp to Romi - format: 'pXXXX' where XXXX is Kp*100
+            #             kp_int = int(kp * 100)  # Scale up by 100 to send as integer
+            #             cmd = f"p{abs(kp_int):04d}"
+            #             ser.write(cmd.encode())
+            #             print(f"Proportional gain set to {kp}")
+            #         except ValueError:
+            #             print("Invalid input. Please enter a number.")
             
             elif key == 'w':
                 # IR white calibration (Nucleo will print the table to USB REPL;
@@ -552,33 +711,33 @@ while True:
                     ser.write(b'b')
                     print("Sent IR BLACK calibration command. Check USB PuTTY for the calibration table.")
 
-            elif key == 'l':
-                # Set gains for line-following
-                if running:
-                    print("Cannot set line-following gains while test is running")
-                elif streaming:
-                    print("Cannot set line-following gains while streaming")
-                else:
-                    try:
-                        # Get line-following gains from user
-                        kp = input("Enter closed-loop proportional gain (Kp): ")
-                        kp = float(kp)
-                        ki = input("Enter closed-loop integral gain (Ki): ")
-                        ki = float(ki)
-                        k_line = input("Enter line-following proportional gain (K_line): ")
-                        k_line = float(k_line)
-                        v_target = input("Enter line-following target: ")
-                        v_target = float(v_target)
-                        # Send line-following gains to Romi - format: 'lppppiiiilllltttt' where pppp is Kp*100, iiii is Ki*100, llll is K_line*100, and tttt is target
-                        kp_int = int(kp * 100)
-                        ki_int = int(ki * 100)
-                        k_line_int = int(k_line * 100)
-                        v_target_int = int(v_target * 100)
-                        cmd = f"l{kp_int:04d}{ki_int:04d}{k_line_int:04d}{v_target_int:04d}"
-                        ser.write(cmd.encode())
-                        print(f"Line-following gains set to Kp={kp}, Ki={ki}, K_line={k_line}, Setpoint={v_target}")
-                    except ValueError:
-                        print("Invalid input. Please enter numbers for gains.")
+            # elif key == 'l':
+            #     # Set gains for line-following
+            #     if running:
+            #         print("Cannot set line-following gains while test is running")
+            #     elif streaming:
+            #         print("Cannot set line-following gains while streaming")
+            #     else:
+            #         try:
+            #             # Get line-following gains from user
+            #             kp = input("Enter closed-loop proportional gain (Kp): ")
+            #             kp = float(kp)
+            #             ki = input("Enter closed-loop integral gain (Ki): ")
+            #             ki = float(ki)
+            #             k_line = input("Enter line-following proportional gain (K_line): ")
+            #             k_line = float(k_line)
+            #             v_target = input("Enter line-following target: ")
+            #             v_target = float(v_target)
+            #             # Send line-following gains to Romi - format: 'lppppiiiilllltttt' where pppp is Kp*100, iiii is Ki*100, llll is K_line*100, and tttt is target
+            #             kp_int = int(kp * 100)
+            #             ki_int = int(ki * 100)
+            #             k_line_int = int(k_line * 100)
+            #             v_target_int = int(v_target * 100)
+            #             cmd = f"l{kp_int:04d}{ki_int:04d}{k_line_int:04d}{v_target_int:04d}"
+            #             ser.write(cmd.encode())
+            #             print(f"Line-following gains set to Kp={kp}, Ki={ki}, K_line={k_line}, Setpoint={v_target}")
+            #         except ValueError:
+            #             print("Invalid input. Please enter numbers for gains.")
 
             elif key == 'v':
                 # Request battery voltage (firmware will respond with a number and newline)
@@ -691,13 +850,13 @@ while True:
                     print("Saved plot of all runs to 'runs/all_runs_velocity_response.png'")
                     print(user_prompt)
             
-            elif key == 'c':
-                if running:
-                    print("Cannot start automated test while test is running")
-                elif streaming:
-                    print("Cannot start automated test while streaming")
-                else:
-                    run_closed_loop_test()
+            # elif key == 'c':
+            #     if running:
+            #         print("Cannot start automated test while test is running")
+            #     elif streaming:
+            #         print("Cannot start automated test while streaming")
+            #     else:
+            #         run_closed_loop_test()
             
             elif key == 'h':
                 # Print helpful prompt
@@ -723,45 +882,50 @@ while True:
                     # print("ve r streeming")
                     if first:
                         # Read and parse header line (mode, control, params, size)
-                        header_line = ser.readline().decode().strip()
-                        if not header_line:
-                            continue
-                        parts = header_line.split(',')
-                        hdr_mode = parts[0].upper() if parts else 'E'  # 'E' for effort, 'V' for velocity, 'L' for line follow
+                        # header_line = ser.readline().decode().strip()
 
-                        try:
-                            if hdr_mode == 'E':
-                                control_val = float(parts[1])  # effort value
-                                size = int(parts[2])
-                                params = None
-                            elif hdr_mode == 'V':  # Velocity mode
-                                control_val = float(parts[1])  # setpoint value
-                                kp = float(parts[2])
-                                ki = float(parts[3])
-                                size = int(parts[4])
-                                params = {'kp': kp, 'ki': ki}
-                            elif hdr_mode == 'L':  # Line follow mode
-                                control_val = float(parts[1])  # target value
-                                kp = float(parts[2])
-                                ki = float(parts[3])
-                                k_line = float(parts[4])
-                                size = int(parts[5])
-                                params = {'kp': kp, 'ki': ki, 'k_line': k_line}
-                            else:
-                                print(f"Unknown header mode: '{header_line}'")
-                                continue
-                        except Exception as e:
-                            print(f"Failed to parse header '{header_line}': {e}")
-                            continue
+                        # if not header_line:
+                        #     continue
+                        # parts = header_line.split(',')
+                        # hdr_mode = parts[0].upper() if parts else 'E'  # 'E' for effort, 'V' for velocity, 'L' for line follow
+
+                        # try:
+                        #     if hdr_mode == 'E':
+                        #         control_val = float(parts[1])  # effort value
+                        #         size = int(parts[2])
+                        #         params = None
+                        #     elif hdr_mode == 'V':  # Velocity mode
+                        #         control_val = float(parts[1])  # setpoint value
+                        #         kp = float(parts[2])
+                        #         ki = float(parts[3])
+                        #         size = int(parts[4])
+                        #         params = {'kp': kp, 'ki': ki}
+                        #     elif hdr_mode == 'L':  # Line follow mode
+                        #         control_val = float(parts[1])  # target value
+                        #         kp = float(parts[2])
+                        #         ki = float(parts[3])
+                        #         k_line = float(parts[4])
+                        #         size = int(parts[5])
+                        #         params = {'kp': kp, 'ki': ki, 'k_line': k_line}
+                        #     else:
+                        #         print(f"Unknown header mode: '{header_line}'")
+                        #         continue
+                        # except Exception as e:
+                        #     print(f"Failed to parse header '{header_line}': {e}")
+                        #     continue
+
+                        mode_name = control_mode_dict[control_mode]
+                        sample_size = 250
+                        params = None
 
                         # Create new run
                         run_count += 1
                         run_name = f'run{run_count}'
-                        runs[run_name] = create_run(control_val, size)
+                        runs[run_name] = create_run(effort, sample_size)
                         if params:
                             runs[run_name]['params'] = params
-                        runs[run_name]['mode'] = hdr_mode
-                        print(f"Run {run_name} created in {hdr_mode} mode (size={size})")
+                        runs[run_name]['mode'] = mode_name
+                        print(f"Run {run_name} created in {mode_name} mode (size={sample_size})")
 
                         recv_line_num = 0
                         first = False
