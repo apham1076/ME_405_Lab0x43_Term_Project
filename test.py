@@ -38,27 +38,6 @@ queuing = False              # Set when queuing tests
 
 control_mode_dict = {0: "Effort", 1: "Velocity", 2: "Line Following"}
 
-old_user_prompt = '''\r\nCommand keys:
-    m      : Toggle mode: Effort, Velocity, and Line Following
-    0-9,a  : Set effort (0-100%) for open-loop control [Effort mode]
-    t      : Set setpoint (rad/s) for closed-loop control [Velocity mode]
-    p      : Set proportional gain (Kp) for controller [Velocity mode]
-    i      : Set integral gain (Ki) for controller [Velocity mode]
-    g      : GO (start test)
-    k      : Kill (stop) motors
-    r      : Run automated sequence (0 to 100% by 10%)
-    x      : Plot all runs' left velocity
-    s      : Stream data
-    n      : Toggle driving mode (straight/pivot/arc)
-    d      : Save latest run to CSV and plot PNG
-    c      : Run automated closed-loop test
-    w      : IR white calibration (prints table from Nucleo USB REPL)
-    b      : IR black calibration (prints table from Nucleo USB REPL)
-    l      : Set IR line following gains (lf_kp, lf_ki)
-    v      : Query battery voltage (prints to this terminal)
-    h      : Help / show this menu
-    ctrl-c : Interrupt this program\r\n'''
-
 user_prompt = '''\r\nCommand keys:
     t      : Select a test to run: Effort, Velocity, Line Following
     u      : Queue tests
@@ -171,26 +150,6 @@ def clean_data(df, cols=None, mode='all'):
     removed = len(df) - len(cleaned)
     return cleaned, removed
 
-
-# # ************* MAIN PROGRAM **************
-
-print("Begin Program:")
-
-# Create 'runs' directory if it doesn't exist
-try:
-    os.makedirs('runs', exist_ok=True)
-    # print("Output directory 'runs' is ready")
-except Exception as e:
-    print(f"Warning: Could not create 'runs' directory: {e}")
-
-# Establish Bluetooth connection
-try:
-    ser = Serial('COM3', baudrate=115200, timeout=1)
-except SerialException:
-    print("Unable to connect to port")
-
-print(user_prompt)
-
 def start_stream_handshake(ser, timeout=2.0, retries=3):
     """Send START and wait for ACK from MCU. Returns True if ACK received."""
     for attempt in range(retries):
@@ -214,19 +173,29 @@ def start_stream_handshake(ser, timeout=2.0, retries=3):
         # retry
     return False
 
+# # ************* MAIN PROGRAM **************
+
+# Create 'runs' directory if it doesn't exist
+try:
+    os.makedirs('runs', exist_ok=True)
+    # print("Output directory 'runs' is ready")
+except Exception as e:
+    print(f"Warning: Could not create 'runs' directory: {e}")
+
+# Establish Bluetooth connection
+try:
+    ser = Serial('COM3', baudrate=115200, timeout=1)
+except SerialException:
+    print("Unable to connect to port")
+
+print("Begin Program:")
+print(user_prompt)
+
 while True:
     try:
         # Check for key pressed
         if msvcrt.kbhit():
-            key = msvcrt.getch().decode()
-            # try:
-            #     # Prefer getwch which returns a Python string and handles wide chars
-            #     key = msvcrt.getwch()
-            # except Exception:
-            #     try:
-            #         key = msvcrt.getch().decode(errors='ignore')
-            #     except Exception:
-            #         key = ''
+            key = msvcrt.getch().decode().lower()
 
             if key == 't':
                 if running:
@@ -323,7 +292,6 @@ while True:
                     elif selected == 'c':
                         while not queue.is_empty():
                             queue.dequeue()
-                        ser.write(b'uc')  # send clear command to Romi
                         print("Queue cleared.")
                     elif selected == 'a':
                         # For now only allow adding effort tests
@@ -340,6 +308,7 @@ while True:
                                 queue.enqueue( ('effort', e) )
                         except ValueError as e:
                             print(f"Invalid format: {e}")
+                        queuing = True if not queue.is_empty() else False
                     elif selected == 'q':
                         print("Queue operation cancelled.")
                         continue
@@ -357,6 +326,7 @@ while True:
                 if running:
                     # Kill motors
                     ser.write(b'k')
+                    queuing = False
                     print("End test. Stop motors")
                 else:
                     print("Motors are already off")
@@ -398,7 +368,7 @@ while True:
                     print("  2: IMU")
                     selected = input("Enter choice (1 or 2): ")
                     if selected == '1':
-                        print("IR sensor calibration command sent to Romi.")
+                        # print("IR sensor calibration command sent to Romi.")
                         key = input("Place Romi on white surface and press any key to continue...")
                         ser.write(b'w')
                         print("White calibration done. Now place Romi on black surface.")
@@ -406,7 +376,11 @@ while True:
                         ser.write(b'b')
                         print("Black calibration done.")
                     elif selected == '2':
-                        print("IMU calibration command sent to Romi.")
+                        # print("IMU calibration command sent to Romi.")
+                        ser.write(b'i')
+                        key = input("Follow IMU calibration procedure and press any key to continue...")
+                        ser.write(b'j')
+                        print("IMU calibration command sent.")
                     else:
                         print("Invalid selection. Enter '1' or '2'.")
 
@@ -625,14 +599,13 @@ while True:
                 # Print helpful prompt
                 print(user_prompt)
 
-            # else:
-            #     print(f"Unknown command '{key}'. Press 'h' for help.")
-
             # Clear any remaining input
             while msvcrt.kbhit():
                 msvcrt.getch()
 
-        elif not running and not streaming:
+            
+        # If not running a test and queuing tests, start the next test
+        elif not running and not streaming and queuing:
             if not queue.is_empty():
                 next_test = queue.dequeue()
                 mode = next_test[0]
@@ -651,6 +624,7 @@ while True:
                 ser.write(b'r')
                 running = True
         
+        # Handle serial input
         else:
             # Check for bytes waiting
             if ser.in_waiting:
@@ -665,16 +639,20 @@ while True:
                         streaming = True
                         running = False
                 elif streaming:
+                    # Create new run for the run
                     if first:
-                        mode_name = control_mode_dict[control_mode]
-                        sample_size = 250
-                        params = None
+                        if control_mode == 0:
+                            mode_name = "Effort"
+                            params = None
+                        elif control_mode == 1:
+                            mode_name = "Velocity"
+                            params = {'setpoint': setpoint, 'kp': kp, 'ki': ki}
+                        sample_size = 250    # Default sample size
 
                         # Create new run
                         run_count += 1
                         run_name = f'run{run_count}'
                         runs[run_name] = create_run(effort, run_count, sample_size)
-                        # Add in params if in velocity mode and line-following mode
                         if params:
                             runs[run_name]['params'] = params
                         runs[run_name]['mode'] = mode_name
@@ -688,7 +666,7 @@ while True:
                         if not line:
                             continue
 
-                        if line.startswith("#END"):
+                        if "#END" in line:
                             print("Received end of stream marker from Romi. Hit 'd' to print data.")
                             # Acknowledge end of stream
                             try:

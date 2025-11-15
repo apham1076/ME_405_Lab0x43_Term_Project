@@ -40,7 +40,7 @@ USB serial (REPL) remains active for debug prints.
 import gc
 import cotask
 import task_share
-from pyb import Pin, UART, Timer, ADC
+from pyb import Pin, UART, Timer, ADC, I2C
 from motor import Motor
 from encoder import Encoder
 from battery_droop import Battery
@@ -50,7 +50,8 @@ from data_task import DataCollectionTask
 from ui_task import UITask
 from stream_task import StreamTask
 from steering_task import SteeringTask
-
+from IMU_sensor import IMU
+from os import listdir
 
 def main():
     print("\r\n=== ME405 Lab 0x04 Scheduler Start ===")
@@ -95,6 +96,31 @@ def main():
         samples=100, # for stable calibration averages
         sensor_indices=IR_BOARD_INDICES
     )
+
+    # Create IMU object
+    sda = Pin('PB14', mode=Pin.ALT, alt=4)
+    scl = Pin('PB13', mode=Pin.ALT, alt=4)
+    i2c = I2C(2, I2C.CONTROLLER, baudrate=400000)
+    imu = IMU(i2c)
+    imu.set_operation_mode("config")  # start in config mode
+
+    # ------------------------------------------------------------------------
+    ### Calibration Files Check:
+    # ------------------------------------------------------------------------
+    filelist = listdir()
+    # Check for existing IMU calibration file
+    if "imu_cal.bin" in filelist:
+        print("Calibration file imu_cal.bin found.")
+        imu.write_calibration_coeffs()
+    else:
+        print("No IMU calibration file found.")
+
+    # Check for existing IR calibration file
+    if "IR_cal.txt" in filelist:
+        print("IR calibration file IR_cal.txt found.")
+        ir_array.set_calibration()
+    else:
+        print("No IR calibration file found.")
 
     # -----------------------------------------------------------------------
     ### Shared Variables: create shares and queues (inter-task communication)
@@ -165,7 +191,7 @@ def main():
     # Create Task Objects (since tasks are classes)    
     ui_task_obj = UITask(col_start, col_done, mtr_enable, stream_data, abort,
                          eff, driving_mode, setpoint, kp, ki, control_mode,
-                         uart, battery,
+                         uart, battery, imu,
                          time_q, left_pos_q, right_pos_q, left_vel_q, right_vel_q,
                          ir_cmd,
                          k_line, lf_target, ack_end)

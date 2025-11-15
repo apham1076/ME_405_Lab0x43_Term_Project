@@ -8,6 +8,7 @@
 
 from pyb import delay
 from struct import calcsize, unpack_from
+from os import listdir
 
 class IMU:
     '''A IMU driver interface that works with an IMU using a SCL, SDA, RST inputs such as the BNO055'''
@@ -45,6 +46,7 @@ class IMU:
             "ndof_fmc_off": {"code": 0x0B, "name": "NDOF (Fast Mag Calibration Off)"},
             "ndof":         {"code": 0x0C, "name": "NDOF (Full 9-DOF Fusion)"}
         }
+
         
         delay(700)  # Delay for IMU to start up
 
@@ -93,7 +95,7 @@ class IMU:
         return (sys_stat, gyr_stat, acc_stat, mag_stat)
     
     # --------------------------------------------------------------------------
-    def read_calibration_coeffs(self, save_to_file=True, filename='imu_cal.txt'):
+    def read_calibration_coeffs(self, save_to_file=True):
         '''Read the 22 bytes of calibration coefficients (offsets + radii) from the IMU'''
 
         # MUST be in config mode to read calibration coefficients
@@ -112,8 +114,9 @@ class IMU:
             # Save the raw 22 bytes to a file
             length = calcsize(self.reg.CALIB_PROFILE[1])
             buf = memoryview(self._buf)[:length]
-            with open(filename, 'wb') as f: # 'write binary' mode
+            with open("imu_cal.bin", 'wb') as f: # 'write binary' mode
                 f.write(buf)
+        print("Calibration coefficients saved to imu_cal.bin")
 
         data = {
             "accel_offset": (accel_x, accel_y, accel_z),
@@ -130,7 +133,7 @@ class IMU:
         return data
 
     # --------------------------------------------------------------------------
-    def write_calibration_coeffs(self, filename='imu_cal.txt'):
+    def write_calibration_coeffs(self):
 
         # MUST be in config mode to write calibration coefficients
         prev_mode = self._current_mode
@@ -138,10 +141,11 @@ class IMU:
             print("Switching to CONFIG mode to write calibration coefficients")
             self.set_operation_mode("config")
 
-        with open(filename, 'rb') as f: # 'read binary' mode
+        with open("imu_cal.bin", 'rb') as f: # 'read binary' mode
             coeffs = f.read()
         if len(coeffs) != calcsize(self.reg.CALIB_PROFILE[1]):
             raise ValueError("Calibration file must contain exactly 22 bytes.")
+        print("Calibration coefficients read from imu_cal.bin")
         # Write the coefficients to the IMU
         print("Writing calibration coefficients to IMU")
         self._i2c.mem_write(coeffs, IMU.DEV_ADDR, self.reg.CALIB_PROFILE[0], timeout=100)
@@ -151,7 +155,6 @@ class IMU:
         if prev_mode != "config":
             print(f"Restoring previous mode: {prev_mode}")
             self.set_operation_mode(prev_mode)
-        
 
     # --------------------------------------------------------------------------
     def read_euler_angles(self):

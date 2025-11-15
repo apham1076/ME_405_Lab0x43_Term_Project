@@ -15,6 +15,7 @@
 
 # from pyb import USB_VCP
 # from pyb import UART
+from time import ticks_ms, ticks_diff
 
 class UITask:
     """Reads user input from Bluetooth UART (UART5), interprets commands, and sets. Reads user input from the Bluetooth UART (UART5). Commands are sent from PC via test.py (VS Code terminal)."""
@@ -24,6 +25,7 @@ class UITask:
     S1_WAIT_FOR_COMMAND = 1
     S2_PROCESS_COMMAND = 2
     S3_MONITOR_TEST = 3
+    S4_CALIBRATION = 4
 
     # --------------------------------------------------------------------------
     ### Initialize the object's attributes
@@ -31,7 +33,7 @@ class UITask:
     def __init__(self,
                  col_start, col_done, mtr_enable, stream_data, abort,
                  eff, driving_mode, setpoint, kp, ki, control_mode,
-                 uart5, battery,
+                 uart5, battery, imu,
                  time_q, left_pos_q, right_pos_q, left_vel_q, right_vel_q,
                  ir_cmd,
                  k_line, lf_target,
@@ -61,6 +63,8 @@ class UITask:
         self.ser = uart5
         # Battery object
         self.battery = battery
+        # IMU object
+        self.imu = imu
 
         # Queues
         self.time_q = time_q
@@ -103,6 +107,7 @@ class UITask:
                 self.abort.put(0)
                 self.driving_mode.put(1) # default to straight line mode
                 self.ack_end.put(0)
+                self.prev_time = ticks_ms()
                 
                 self.state = self.S1_WAIT_FOR_COMMAND
 
@@ -156,6 +161,8 @@ class UITask:
                     #     pass
                     
                     self.state = self.S2_PROCESS_COMMAND # set next state
+                
+                yield self.state
             
             ### 2: PROCESS COMMAND STATE ---------------------------------------
             elif self.state == self.S2_PROCESS_COMMAND:
@@ -253,6 +260,7 @@ class UITask:
 
                 # 's' → STREAM
                 elif cmd == 's':
+                    print("Starting data stream")
                     self.stream_data.put(1)
 
                 # 'n' → TOGGLE MODE
@@ -273,6 +281,12 @@ class UITask:
 
                         self.driving_mode.put(new_mode)
                 
+                # 'i' → IMU calibration command
+                elif cmd == 'i':
+                    print("IMU calibration command received.")
+                    self.imu.set_operation_mode("ndof")
+                    self.state = self.S4_CALIBRATION
+                
                 # 'v' → print current battery voltage
                 elif cmd == 'V':
                     v_batt = self.battery.read_voltage()
@@ -290,6 +304,8 @@ class UITask:
 
                 if self.state == self.S2_PROCESS_COMMAND:
                     self.state = self.S1_WAIT_FOR_COMMAND
+                
+                yield self.state
 
             ### 3: MONITOR TEST STATE ------------------------------------------
             elif self.state == self.S3_MONITOR_TEST:
@@ -341,5 +357,23 @@ class UITask:
                     self.col_start.put(0)
                     self.col_done.put(0)
                     self.state = self.S1_WAIT_FOR_COMMAND
+                    yield self.state
+                
+                yield self.state
 
-            yield self.state
+            ### 3: IMU Calibration State ------------------------------------------
+            elif self.state == self.S4_CALIBRATION:
+                self.curr_time = ticks_ms()
+                if ticks_diff(self.curr_time, self.prev_time) > 1000:
+                    self.prev_time = self.curr_time
+                    imu_status_bytes = self.imu.read_calibration_status()
+                    print("IMU Calibration Status (sys, gyr, acc, mag):", imu_status_bytes)
+                if self.ser.any():
+                    key = self.ser.read(1).decode()
+                    if key == 'j':
+                        self.imu.read_calibration_coeffs()
+                        # self.imu.set_operation_mode("ndof")
+                        print("IMU calibration complete.")
+                        self.state = self.S1_WAIT_FOR_COMMAND
+                
+                yield self.state

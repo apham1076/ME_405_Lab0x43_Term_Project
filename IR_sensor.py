@@ -1,3 +1,4 @@
+from os import listdir
 from pyb import Pin, ADC, Timer
 import array
 
@@ -28,6 +29,8 @@ class IRArray:
         # Create ADCs internally in the driver from pins specified in main.py
         self.adcs = [ADC(Pin(p)) for p in pins]
         self.num = len(self.adcs)
+        self.white_cal = False
+        self.black_cal = False
 
         # Indices used for centroid math (center = (min(idx)+max(idx))/2)
         if sensor_indices is None:
@@ -60,10 +63,21 @@ class IRArray:
             for i, v in enumerate(avgs):
                 self.black[i] = float(v)
             label = "BLACK"
+            self.black_cal = True
         else:
             for i, v in enumerate(avgs):
                 self.white[i] = float(v)
             label = "WHITE"
+            self.white_cal = True
+
+        # Save to file if both calibrations done
+        if self.black_cal and self.white_cal:
+            with open("IR_cal.txt", "w") as f:
+                black_line = ",".join(f"{v:.1f}" for v in self.black)
+                white_line = ",".join(f"{v:.1f}" for v in self.white)
+                f.write(black_line + "\n")
+                f.write(white_line + "\n")
+            print("[IR CALIBRATION] Calibration data saved to IR_cal.txt")
 
         print("\r\n[IR CALIBRATION] {} averages:".format(label))
         print(" Index | Average (counts)")
@@ -75,6 +89,22 @@ class IRArray:
         print("")
 
         return avgs
+    
+    # --------------------------------------------------------
+    def set_calibration(self):
+        with open("IR_cal.txt", "r") as f:
+            lines = f.readlines()
+            if len(lines) >= 2:
+                black_vals = [float(v) for v in lines[0].strip().split(",")]
+                white_vals = [float(v) for v in lines[1].strip().split(",")]
+                if len(black_vals) == self.num and len(white_vals) == self.num:
+                    self.black = black_vals
+                    self.white = white_vals
+                    print("[IR CALIBRATION] Loaded from IR_cal.txt")
+                else:
+                    print("[IR CALIBRATION] Calibration file sensor count mismatch; using defaults")
+            else:
+                print("[IR CALIBRATION] Calibration file format error; using defaults")
     
     # ----------------------------------------------------------------------
     def read(self):
