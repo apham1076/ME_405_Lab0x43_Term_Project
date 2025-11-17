@@ -112,16 +112,18 @@ class StreamTask:
                     vL = self.left_vel_q.get()
                     vR = self.right_vel_q.get()
                     # Put it all into a CSV-style line stamped with the index
-                    data = f"{index},{t},{pL},{pR},{vL},{vR}\r\n"
+                    # Build a framed message with delimiters for better PC parsing
+                    payload = f"{index},{t},{pL:.3f},{pR:.3f},{vL:.3f},{vR:.3f}"
+                    framed = f"<S>{payload}<E>" # these start and end delimeters will help us process data on the PC side
                     # Send the line over Bluetooth
-                    self.ser.write(data.encode())
+                    self.ser.write(framed.encode() + b"\n")
                     # Increment the sample index
                     index += 1
-                    # Only write one line then yield
+                    # Only write one line, then yield
                     yield self.state
 
                 # Once all samples have been sent, mark the end of the stream
-                self.ser.write(b"#END\r\n") # explicit end marker for PC
+                self.ser.write(b"<S>#END<E>\n") # explicit end marker for PC
 
                 # Do NOT block waiting for ACK here; ack handling will be done in UI task
                 # Reset flags

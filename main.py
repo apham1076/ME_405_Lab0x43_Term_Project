@@ -16,15 +16,15 @@
 #                     samples (time/pos/vel) to shares.
 #
 #   DataCollectionTask: moves data from shares into queues to be used by
-#   StreamTask
+#                       StreamTask
 #
 #   StreamTask: buffers data stored in queues over bluetooth serial connection
-#   back to PC
+#               back to PC
 #
 #   SteeringTask: reads IR sensor array, computes steering correction, and
-#   sends commands to motor control task.
+#                 sends commands to motor control task.
 #
-#   StateEstimationTask: predicts the future state of the system using a system #    #   model and sensor inputs.
+#   StateEstimationTask: predicts the future state of the system using a system #                        model and sensor inputs.
 # ==============================================================================
 
 ### TO-DO:
@@ -33,14 +33,14 @@
 
 '''
 Bluetooth related changes:
-Bluetooth UART1 is used for UI commands and data streaming.
+Bluetooth UART is used for UI commands and data streaming.
 USB serial (REPL) remains active for debug prints.
 '''
 
 import gc
 import cotask
 import task_share
-from pyb import Pin, UART, Timer, ADC, I2C
+from pyb import Pin, UART, Timer, I2C
 from motor import Motor
 from encoder import Encoder
 from battery_droop import Battery
@@ -54,7 +54,7 @@ from IMU_sensor import IMU
 from os import listdir
 
 def main():
-    print("\r\n=== ME405 Lab 0x04 Scheduler Start ===")
+    print("\r\n=== ME405 Lab 0x05 Scheduler Start ===")
     MAX_SAMPLES = 250
     
     # -----------------------------------------------------------------------
@@ -67,7 +67,7 @@ def main():
     right_encoder = Encoder(8, Pin.cpu.C6, Pin.cpu.C7)
 
     # Create battery measurement object
-    battery = Battery(Pin.cpu.A6)
+    battery = Battery(Pin.cpu.C2)
 
     # Create IR sensor array object
     tim6 = Timer(6, freq=20000)  # timer for ADC-based calibration reads
@@ -110,14 +110,14 @@ def main():
     filelist = listdir()
     # Check for existing IMU calibration file
     if "imu_cal.bin" in filelist:
-        print("Calibration file imu_cal.bin found.")
+        print("IMU calibration file 'imu_cal.bin' found.")
         imu.write_calibration_coeffs()
     else:
         print("No IMU calibration file found.")
 
     # Check for existing IR calibration file
     if "IR_cal.txt" in filelist:
-        print("IR calibration file IR_cal.txt found.")
+        print("IR calibration file 'IR_cal.txt' found.")
         ir_array.set_calibration()
     else:
         print("No IR calibration file found.")
@@ -246,7 +246,7 @@ def main():
     gc.collect()
     
 	# Run the scheduler with the chosen scheduling algorithm. Quit if ^C pressed
-    # print("Scheduler running... Press Ctrl-C to halt.\r\n")
+    print("Scheduler running... Press Ctrl-C to halt.\r\n")
     while True: # run inifinite iterations of the scheduler
         try:
             cotask.task_list.pri_sched()

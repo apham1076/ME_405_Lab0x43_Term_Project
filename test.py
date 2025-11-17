@@ -24,6 +24,7 @@ running = False             # Set when motor testing is progress
 streaming = False           # Set when data streaming is in progress
 runs = {}                   # Dict to contain runs
 run_count = 0               # Number of runs
+frame_buffer = ""           # Buffer for delimiter-framed lines
 control_mode = 0            # 0 = effort mode, 1 = velocity mode, 2 = line follow mode
 effort = 0                 # Current effort value
 setpoint = 0               # Current velocity setpoint in rad/s
@@ -32,9 +33,10 @@ ki = 0.0                    # Current integral gain
 k_line = 0.0                # Current line following gain
 first = True
 done = False
-# mode = 1                    # 1, 2, 3 = straight, pivot, arc
-queue = local_queue.Queue()           # Queue to hold tests
+# mode = 1                   # 1, 2, 3 = straight, pivot, arc
+queue = local_queue.Queue()  # Queue to hold tests
 queuing = False              # Set when queuing tests
+test_origin = "manual"      # tracks how the current test started: "manual" or "queue"
 
 control_mode_dict = {0: "Effort", 1: "Velocity", 2: "Line Following"}
 
@@ -44,14 +46,16 @@ user_prompt = '''\r\nCommand keys:
     r      : Run test
     k      : Kill (stop) motors
     s      : Stream data
-    d      : Save data from latest run to CSV and plot PNG
+    d      : Save complete data to CSV and optionally create plots
     b      : Check battery voltage (prints to this terminal)
     c      : Calibrate sensors: IR sensors or IMU
     h      : Help / show this menu
     ctrl-c : Interrupt this program
 '''
 
-# # ************* HELPER FUNCTIONS **************
+# ==============================================================================
+# HELPER FUNCTIONS
+# ==============================================================================
 
 # Map an effort percentage (0-100) to the single-character key
 def eff_to_key(eff):
@@ -60,7 +64,7 @@ def eff_to_key(eff):
     # assume efforts are multiples of 10
     digit = int(eff // 10)
     return str(digit)
-
+# ------------------------------------------------------------------------------
 # Map a single-character key to an effort percentage (0-100)
 def key_to_eff(key):
     if key == 'a':
@@ -69,7 +73,7 @@ def key_to_eff(key):
         digit = int(key)
         return digit * 10
     return None
-
+# ------------------------------------------------------------------------------
 # Function to create dictionary for storing data from one run
 def create_run(control_val, run_num, size):
     time = np.zeros(size)
@@ -89,7 +93,7 @@ def create_run(control_val, run_num, size):
     })
 
     return {"control_val": control_val, "run_num": run_num, "size": size, "motor_data": df}
-
+# ------------------------------------------------------------------------------
 # Function to clean DataFrame by removing all-zero rows except leading zeros
 def clean_data(df, cols=None, mode='all'):
     """
@@ -149,7 +153,8 @@ def clean_data(df, cols=None, mode='all'):
 
     removed = len(df) - len(cleaned)
     return cleaned, removed
-
+# ------------------------------------------------------------------------------
+# Function to perform START / ACK handshake for data streaming
 def start_stream_handshake(ser, timeout=2.0, retries=3):
     """Send START and wait for ACK from MCU. Returns True if ACK received."""
     for attempt in range(retries):
@@ -173,7 +178,9 @@ def start_stream_handshake(ser, timeout=2.0, retries=3):
         # retry
     return False
 
-# # ************* MAIN PROGRAM **************
+# ==============================================================================
+# MAIN PROGRAM
+# ==============================================================================
 
 # Create 'runs' directory if it doesn't exist
 try:
@@ -184,7 +191,7 @@ except Exception as e:
 
 # Establish Bluetooth connection
 try:
-    ser = Serial('COM3', baudrate=115200, timeout=1)
+    ser = Serial('COM9', baudrate=115200, timeout=1)
 except SerialException:
     print("Unable to connect to port")
 
@@ -213,14 +220,19 @@ while True:
                         print("Selected Effort mode")
                         # Accept a single key (0-9 or 'a') or an integer percentage 0-100
                         key_in = input("Enter effort key (0-9 or 'a' for 100%) or percent (0-100): ").strip()
-                        eff_val = key_to_eff(key_in)
-                        if eff_val is None:
-                            # Try parse as integer percent
+                        
+                        # Only use key_to_eff for single characters
+                        if len(key_in) == 1:
+                            eff_val = key_to_eff(key_in)
+                            if eff_val is None:
+                                print("Invalid effort entry. Use 0-9, 'a', or a number 0-100.")
+                                continue
+                        else:
+                            # Multi-digit input: parse as integer percent directly
                             try:
-                                perc = int(key_in)
-                                if perc < 0 or perc > 100:
+                                eff_val = int(key_in)
+                                if eff_val < 0 or eff_val > 100:
                                     raise ValueError()
-                                eff_val = perc
                             except Exception:
                                 print("Invalid effort entry. Use 0-9, 'a', or a number 0-100.")
                                 continue
@@ -268,8 +280,8 @@ while True:
                     # Send configuration line to Romi    
                     ser.write(line.encode())
                     print("Command sent to Romi. Hit 'r' to run the test.")
-            
-            if key == 'u':
+
+            elif key == 'u':
                 if running:
                     print("Cannot add tests to queue while test is running")
                 elif streaming:
@@ -313,7 +325,7 @@ while True:
                         print("Queue operation cancelled.")
                         continue
                     
-            if key == 'r':
+            elif key == 'r':
                 if running:
                     print("Test is already running")
                 elif streaming:
@@ -402,7 +414,7 @@ while True:
                         print("Requested battery voltage.")
 
             elif key == 'd':
-                # Unified command: prompt user for single/latest or all runs and whether to save CSVs, plots, or both
+                # Save all data to CSV and optionally create plots
                 # Ensure base 'runs' and subfolders exist
                 try:
                     os.makedirs('runs', exist_ok=True)
@@ -411,60 +423,49 @@ while True:
                     os.makedirs(csv_dir, exist_ok=True)
                     os.makedirs(plots_dir, exist_ok=True)
                 except Exception as e:
-                    print(f"Warning: could not create runs subdirectories: {e}")
+                    print(f"Warning: could not create output directories: {e}")
 
                 if not runs:
                     print("No runs available to display or save.")
                 else:
-                    print("Select target to save/plot:")
+                    print("Select target:")
                     print("  l : Latest run")
-                    print("  a : All runs (combined plot and/or individual CSVs)")
+                    print("  a : All runs")
                     print("  c : Cancel")
                     target = input("Enter choice (l/a/c): ").strip().lower()
                     if target == 'c' or target == '':
                         print("Operation cancelled.")
                         continue
 
-                    print("Select output type:")
-                    print("  p : plots only")
-                    print("  c : csvs only")
-                    print("  b : both plots and csvs")
-                    print("  n : none (cancel)")
-                    out = input("Enter choice (p/c/b/n): ").strip().lower()
-                    if out == 'n' or out == '':
-                        print("Operation cancelled.")
-                        continue
+                    print("Create plots? (y/n): ")
+                    create_plots = input().strip().lower() == 'y'
 
-                    save_plots = out in ('p', 'b')
-                    save_csvs = out in ('c', 'b')
-
-                    # Prompt user for which data channels to include
-                    print("Select data to include (comma-separated):")
-                    print("  1 : left motor velocity")
-                    print("  2 : right motor velocity")
-                    print("  3 : left motor position")
-                    print("  4 : right motor position")
-                    data_sel = input("Enter choices (e.g. 1,2,3): ").strip()
-                    if not data_sel:
-                        print("No data selections made. Operation cancelled.")
-                        continue
-                    # map selection to dataframe columns and short codes
-                    sel_map = {
-                        '1': ('_left_vel', 'Left velocity', 'lv'),
-                        '2': ('_right_vel', 'Right velocity', 'rv'),
-                        '3': ('_left_pos', 'Left position', 'lp'),
-                        '4': ('_right_pos', 'Right position', 'rp')
-                    }
-                    chosen = []
-                    for token in [t.strip() for t in data_sel.split(',')]:
-                        if token in sel_map and token not in chosen:
-                            chosen.append(token)
-                    if not chosen:
-                        print("No valid data selections found. Operation cancelled.")
-                        continue
-
-                    # Prepare a variable suffix for filenames
-                    var_suffix = "_".join([sel_map[k][2] for k in chosen])
+                    if create_plots:
+                        # Prompt user for which data channels to plot
+                        print("Select data to plot (comma-separated):")
+                        print("  1 : left motor velocity")
+                        print("  2 : right motor velocity")
+                        print("  3 : left motor position")
+                        print("  4 : right motor position")
+                        data_sel = input("Enter choices (e.g. 1,2,3): ").strip()
+                        if not data_sel:
+                            print("No data selections made. Skipping plots.")
+                            create_plots = False
+                        else:
+                            # map selection to dataframe columns and short codes
+                            sel_map = {
+                                '1': ('_left_vel', 'Left velocity', 'lv'),
+                                '2': ('_right_vel', 'Right velocity', 'rv'),
+                                '3': ('_left_pos', 'Left position', 'lp'),
+                                '4': ('_right_pos', 'Right position', 'rp')
+                            }
+                            chosen = []
+                            for token in [t.strip() for t in data_sel.split(',')]:
+                                if token in sel_map and token not in chosen:
+                                    chosen.append(token)
+                            if not chosen:
+                                print("No valid data selections found. Skipping plots.")
+                                create_plots = False
 
                     def normalize_mode(mode_val):
                         try:
@@ -497,7 +498,17 @@ while True:
                             label = f"Effort={control_val}"
                             base_name = f"{run_name}_E_eff{control_val}"
 
-                        if save_plots:
+                        # Always save complete CSV with all data columns
+                        try:
+                            csv_name = os.path.join(csv_dir, base_name + ".csv")
+                            cols = ["_time", "_left_pos", "_right_pos", "_left_vel", "_right_vel"]
+                            cols = [c for c in cols if c in df_clean.columns]
+                            df_clean[cols].to_csv(csv_name, index=False)
+                            print(f"Saved complete motor data to {csv_name}")
+                        except Exception as e:
+                            print(f"Failed to save CSV for {run_name}: {e}")
+
+                        if create_plots:
                             # Save separate plot per selected channel for this single run
                             for k in chosen:
                                 col, readable, code = sel_map[k]
@@ -517,67 +528,61 @@ while True:
                                 except Exception as e:
                                     print(f"Failed to save figure {code} for {run_name}: {e}")
 
-                        if save_csvs:
-                            # Save separate CSV per selected channel for this single run
-                            for k in chosen:
-                                col, readable, code = sel_map[k]
-                                try:
-                                    csv_name = os.path.join(csv_dir, base_name + "_" + code + ".csv")
-                                    cols = ["_time", col]
-                                    cols = [c for c in cols if c in df_clean.columns]
-                                    df_clean[cols].to_csv(csv_name, index=False)
-                                    print(f"Saved motor_data to {csv_name}")
-                                except Exception as e:
-                                    print(f"Failed to save CSV {code} for {run_name}: {e}")
-
                         print(user_prompt)
 
                     elif target == 'a':
-                        # Optionally create individual CSVs and a combined plot
-                        if save_plots:
-                            plt.figure()
+                        # Save individual CSVs for all runs and optionally create combined plots
+                        for run_name, meta in runs.items():
+                            df = meta["motor_data"]
+                            df_clean, removed = clean_data(df, mode='all')
+                            if removed:
+                                print(f"Removed {removed} all-zero rows from {run_name} before saving")
 
-                        # For all-runs: for each selected channel, create combined plot across runs
-                        for k in chosen:
-                            col, readable, code = sel_map[k]
-                            if save_plots:
+                            mode_char = normalize_mode(meta.get('mode', 'E'))
+                            control_val = meta.get('control_val', 'unknown')
+
+                            if mode_char == 'v':
+                                kp = meta.get('params', {}).get('kp', 0) if meta.get('params') else 0
+                                ki = meta.get('params', {}).get('ki', 0) if meta.get('params') else 0
+                                base_name = f"{run_name}_V_sp{control_val}_Kp{kp:.2f}_Ki{ki:.2f}"
+                            else:
+                                base_name = f"{run_name}_E_eff{control_val}"
+
+                            # Save complete CSV with all data columns
+                            try:
+                                csv_name = os.path.join(csv_dir, base_name + ".csv")
+                                cols = ["_time", "_left_pos", "_right_pos", "_left_vel", "_right_vel"]
+                                cols = [c for c in cols if c in df_clean.columns]
+                                df_clean[cols].to_csv(csv_name, index=False)
+                                print(f"Saved complete motor data to {csv_name}")
+                            except Exception as e:
+                                print(f"Failed to save CSV for {run_name}: {e}")
+
+                        # Create combined plots if requested
+                        if create_plots:
+                            for k in chosen:
+                                col, readable, code = sel_map[k]
                                 plt.figure()
-                            # Save per-run CSVs for this channel
-                            for run_name, meta in runs.items():
-                                df = meta["motor_data"]
-                                df_clean, removed = clean_data(df, mode='all')
-                                if removed:
-                                    print(f"Removed {removed} all-zero rows from {run_name} before plotting/saving")
+                                
+                                for run_name, meta in runs.items():
+                                    df = meta["motor_data"]
+                                    df_clean, removed = clean_data(df, mode='all')
 
-                                mode_char = normalize_mode(meta.get('mode', 'E'))
-                                control_val = meta.get('control_val', 'unknown')
+                                    mode_char = normalize_mode(meta.get('mode', 'E'))
+                                    control_val = meta.get('control_val', 'unknown')
 
-                                if mode_char == 'v':
-                                    kp = meta.get('params', {}).get('kp', 0) if meta.get('params') else 0
-                                    ki = meta.get('params', {}).get('ki', 0) if meta.get('params') else 0
-                                    label = f"{run_name} (V) sp={control_val} Kp={kp:.2f} Ki={ki:.2f}"
-                                    base_name = f"{run_name}_V_sp{control_val}_Kp{kp:.2f}_Ki{ki:.2f}"
-                                else:
-                                    label = f"{run_name} (E) eff={control_val}"
-                                    base_name = f"{run_name}_E_eff{control_val}"
+                                    if mode_char == 'v':
+                                        kp = meta.get('params', {}).get('kp', 0) if meta.get('params') else 0
+                                        ki = meta.get('params', {}).get('ki', 0) if meta.get('params') else 0
+                                        label = f"{run_name} (V) sp={control_val} Kp={kp:.2f} Ki={ki:.2f}"
+                                    else:
+                                        label = f"{run_name} (E) eff={control_val}"
 
-                                if save_plots:
                                     try:
                                         plt.plot(df_clean["_time"], df_clean[col], label=label)
                                     except Exception as e:
                                         print(f"Failed to add plot {readable} for {run_name}: {e}")
 
-                                if save_csvs:
-                                    try:
-                                        csv_name = os.path.join(csv_dir, base_name + "_" + code + ".csv")
-                                        cols = ["_time", col]
-                                        cols = [c for c in cols if c in df_clean.columns]
-                                        df_clean[cols].to_csv(csv_name, index=False)
-                                        print(f"Saved motor_data to {csv_name}")
-                                    except Exception as e:
-                                        print(f"Failed to save CSV {code} for {run_name}: {e}")
-
-                            if save_plots:
                                 try:
                                     plt.xlabel("Time, [ms]")
                                     plt.ylabel(readable)
@@ -662,55 +667,55 @@ while True:
                         first = False
                     
                     else:
-                        line = ser.readline().decode().strip()
-                        if not line:
-                            continue
+                        # Read all the available bytes in the UART buffer
+                        chunk = ser.read(ser.in_waiting or 1).decode()
+                        if chunk:
+                            frame_buffer += chunk
 
-                        if "#END" in line:
-                            print("Received end of stream marker from Romi. Hit 'd' to print data.")
-                            # Acknowledge end of stream
+                        # For complete <S> ... <E> frames, extract lines
+                        while "<S>" in frame_buffer and "<E>" in frame_buffer:
+                            start = frame_buffer.find("<S>")
+                            end = frame_buffer.find("<E>", start)
+
+                            if end == -1: # if there is no <E> found, break
+                                break # incomplete frame
+
+                            # Extract the inside contents
+                            frame = frame_buffer[start+3 : end]
+                            frame_buffer = frame_buffer[end+3:]  # Remove processed frame
+
+                            # END OF STREAM CHECK
+                            if frame == "#END":
+                                print("Received end of stream marker from Romi. Hit 'd' to print data.")
+                                # Acknowledge end of stream
+                                try:
+                                    ser.write(b'ACK_END\n')
+                                except Exception:
+                                    pass
+                                first = True
+                                streaming = False
+                                sleep(0.2)
+                                continue
+
+                            # For a normal frame, parse the CSV payload
                             try:
-                                ser.write(b'ACK_END\n')
-                            except Exception:
-                                pass
-                            first = True
-                            streaming = False
-                            sleep(0.2)
-                            # print(user_prompt)
-                            continue
+                                idx_str, time_s, left_pos, right_pos, left_vel, right_vel = frame.split(',')
+                                idx = int(idx_str)
+                            except ValueError:
+                                print(f"[Rejected] Bad frame contents: '{frame}'")
+                                continue
 
-                        # Read line by line
-                        try:
-                            idx_str, time_s, left_pos, right_pos, left_vel, right_vel = line.split(',')
-                            idx = int(idx_str)
-                        except ValueError:
-                            print(f"[Rejected] Received line #{recv_line_num}: could not parse the index. Raw: '{line}'")
-                            recv_line_num += 1
-                            continue
-
-                        try:
-                            # Check index bounds before writing to dataframe
                             size = runs.get(run_name, {}).get('size')
-                            if size is None:
-                                print(f"[Rejected] Line #{recv_line_num}: unknown run size for {run_name}")
-                                recv_line_num += 1
-                                continue
                             if idx < 0 or idx >= size:
-                                print(f"[Rejected] Line #{recv_line_num}: index {idx} out of range for {run_name} (size={size})")
-                                recv_line_num += 1
+                                print(f"[Rejected] Index {idx} out of range (size={size})")
                                 continue
 
+                            # Store the values
                             runs[run_name]["motor_data"].loc[idx,"_time"] = float(time_s)
                             runs[run_name]["motor_data"].loc[idx, "_left_pos"] = float(left_pos)
                             runs[run_name]["motor_data"].loc[idx, "_right_pos"] = float(right_pos)
                             runs[run_name]["motor_data"].loc[idx, "_left_vel"] = float(left_vel)
                             runs[run_name]["motor_data"].loc[idx, "_right_vel"] = float(right_vel)
-                        except ValueError:
-                            print(f"[Rejected] Line #{recv_line_num}: numeric conversion failed. Raw: '{line}'")
-                            recv_line_num += 1
-                            continue
-                        
-                        recv_line_num += 1
 
                 else:
                     pass
