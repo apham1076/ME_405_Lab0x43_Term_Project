@@ -114,6 +114,30 @@ class StreamTask:
                     # Put it all into a CSV-style line stamped with the index
                     # Build a framed message with delimiters for better PC parsing
                     payload = f"{index},{t},{pL:.3f},{pR:.3f},{vL:.3f},{vR:.3f}"
+
+                    framed = f"<S>{payload}<E>" # these start and end delimeters will help us process data on the PC side
+                    # Send the line over Bluetooth
+                    self.ser.write(framed.encode() + b"\n")
+                    # Increment the sample index
+                    index += 1
+                    # Only write one line, then yield
+                    yield self.state
+                
+                # Once all samples have been sent, mark the end of the stream
+                self.ser.write(b"<S>#END1<E>\n") # explicit end marker for PC
+
+                index = 0 # sample index number (sent to PC for alignment)
+                while self.obsv_time_q.any():
+                    # Get items from the queues
+                    t = self.obsv_time_q.get()
+                    sL = self.obsv_sL_q.get()
+                    sR = self.obsv_sR_q.get()
+                    psi = self.obsv_psi_q.get()
+                    psi_dot = self.obsv_psi_dot_q.get()
+                    # Put it all into a CSV-style line stamped with the index
+                    # Build a framed message with delimiters for better PC parsing
+                    payload = f"{index},{t},{sL:.3f},{sR:.3f},{psi:.3f},{psi_dot:.3f}"
+
                     framed = f"<S>{payload}<E>" # these start and end delimeters will help us process data on the PC side
                     # Send the line over Bluetooth
                     self.ser.write(framed.encode() + b"\n")
@@ -123,7 +147,7 @@ class StreamTask:
                     yield self.state
 
                 # Once all samples have been sent, mark the end of the stream
-                self.ser.write(b"<S>#END<E>\n") # explicit end marker for PC
+                self.ser.write(b"<S>#END2<E>\n") # explicit end marker for PC
 
                 # Do NOT block waiting for ACK here; ack handling will be done in UI task
                 # Reset flags

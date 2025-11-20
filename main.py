@@ -126,7 +126,9 @@ def main():
     # -----------------------------------------------------------------------
     ### Shared Variables: create shares and queues (inter-task communication)
     # ----------------------------------------------------------------------
-    # --- Data Shares...
+
+    # --- Data Task Shares...
+    start_time = task_share.Share('H', name='Start Time Share')
     time_sh = task_share.Share('H', name='Time share')
     left_pos_sh = task_share.Share('f', name= 'Left motor position share')
     right_pos_sh = task_share.Share('f', name= 'Right motor position share')
@@ -138,11 +140,6 @@ def main():
     setpoint = task_share.Share('h', name='Velocity Setpoint')  # 'h' for signed 16-bit to handle larger velocity values
     kp = task_share.Share('f', name='Proportional Gain')  # 'f' for float to store Kp
     ki = task_share.Share('f', name='Integral Gain')  # 'f' for float to store Ki
-    # --- Initialize motor control shares
-    eff.put(0)  # Start with zero effort
-    setpoint.put(0)  # Start with zero setpoint
-    kp.put(0)  # Start with zero gains
-    ki.put(0)
     left_eff_sh = task_share.Share('f', name='Left Motor Effort Share')
     right_eff_sh = task_share.Share('f', name='Right Motor Effort Share')
 
@@ -169,6 +166,20 @@ def main():
     k_line.put(0.0)
     lf_target.put(0.0)
 
+    # --- State Estimation shares...
+    psi_sh = task_share.Share('f', name='Yaw Angle Share')
+    psi_dot_sh = task_share.Share('f', name='Yaw Rate Share')
+
+    obsv_time_sh = task_share.Share('H', name='Observed Time Share')
+    obsv_sL_sh = task_share.Share('f', name='Observed Left Displacement Share')
+    obsv_sR_sh = task_share.Share('f', name='Observed Right Displacement Share')
+    obsv_psi_sh = task_share.Share('f', name='Observed Yaw Angle Share')
+    obsv_psi_dot_sh = task_share.Share('f', name='Observed Yaw Rate Share')
+    obsv_left_vel_sh = task_share.Share('f', name='Observed Left Velocity Share')
+    obsv_right_vel_sh = task_share.Share('f', name='Observed Right Velocity Share')
+    obsv_s_sh = task_share.Share('f', name='Observed Linear Displacement Share')
+    obsv_yaw_sh = task_share.Share('f', name='Observed Yaw Share')
+
     # --- Boolean flags (shares)...
     col_start = task_share.Share('B', name='Start Collection Flag')
     col_done = task_share.Share('B', name='Collection Done Flag')
@@ -176,15 +187,27 @@ def main():
     stream_data = task_share.Share('B', name='Stream Data Flag')
     abort = task_share.Share('B', name='Abort Flag')
 
-    # --- Data Queues...
+       # --- Data streaming shares...
+    ack_end = task_share.Share('B', name='ACK End of Stream Flag')
+
+    #
+    #
+    # ------------------------------- Queues -----------------------------
+    #
+    #
     time_q = task_share.Queue('H', size=MAX_SAMPLES, name='Time share')
     left_pos_q = task_share.Queue('f', size=MAX_SAMPLES, name= 'Left motor position share')
     right_pos_q = task_share.Queue('f', size=MAX_SAMPLES, name= 'Right motor position share')
     left_vel_q = task_share.Queue('f', size=MAX_SAMPLES, name= 'Left motor velocity share')
     right_vel_q = task_share.Queue('f', size=MAX_SAMPLES, name= 'Right motor velocity share')
 
-    # --- Data streaming shares...
-    ack_end = task_share.Share('B', name='ACK End of Stream Flag')
+    obsv_time_q = task_share.Queue('H', size=MAX_SAMPLES/2, name='Observed Time Queue')
+    obsv_sL_q = task_share.Queue('f', size=MAX_SAMPLES/2, name='Observed Left Displacement Queue')
+    obsv_sR_q = task_share.Queue('f', size=MAX_SAMPLES/2, name='Observed Right Displacement Queue')
+    obsv_psi_q = task_share.Queue('f', size=MAX_SAMPLES/2, name='Observed Yaw Angle Queue')
+    obsv_psi_dot_q = task_share.Queue('f', size=MAX_SAMPLES/2, name='Observed Yaw Rate Queue')
+
+
 
     # -----------------------------------------------------------------------
 
@@ -202,14 +225,15 @@ def main():
     motor_task_obj = MotorControlTask(left_motor, right_motor,
                                       left_encoder, right_encoder,
                                       battery,
-                                      eff, mtr_enable, abort, driving_mode, setpoint, kp, ki, control_mode,
+                                      eff, mtr_enable, abort, driving_mode, setpoint, kp, ki, control_mode, start_time,
                                       time_sh, left_pos_sh, right_pos_sh, left_vel_sh, right_vel_sh,
                                       left_sp_sh, right_sp_sh, left_eff_sh, right_eff_sh)
 
     data_task_obj = DataCollectionTask(col_start, col_done,
                                        mtr_enable, abort,
                                        time_q, left_pos_q, right_pos_q, left_vel_q, right_vel_q,
-                                       time_sh, left_pos_sh, right_pos_sh, left_vel_sh, right_vel_sh)
+                                       obsv_time_q, obsv_sL_q, obsv_sR_q, obsv_psi_q, obsv_psi_dot_q,
+                                       time_sh, left_pos_sh, right_pos_sh, left_vel_sh, right_vel_sh, obsv_time_sh, obsv_sL_sh, obsv_sR_sh, obsv_psi_sh, obsv_psi_dot_sh)
 
     stream_task_obj = StreamTask(eff, col_done, stream_data, uart,
                                  time_q, left_pos_q, right_pos_q, left_vel_q, right_vel_q,
@@ -220,7 +244,7 @@ def main():
                                  left_sp_sh, right_sp_sh,
                                  k_line, lf_target)
 
-    state_estimation_task_obj = StateEstimationTask(left_pos_sh, right_pos_sh,
+    state_estimation_task_obj = StateEstimationTask(start_time, obsv_time_sh, left_pos_sh, right_pos_sh,
                                                     left_vel_sh, right_vel_sh,
                                                     psi_sh, psi_dot_sh,
                                                     left_eff_sh, right_eff_sh,
@@ -235,10 +259,10 @@ def main():
 
     _stream_task = cotask.Task(stream_task_obj.run, name='Stream Task', priority=1, period=20, profile=True, trace=False)
 
-    _steering_task = cotask.Task(steering_task_obj.run,
-                             name='Steering Task',
-                             priority=2, period=40,
-                             profile=True, trace=False)
+    _steering_task = cotask.Task(steering_task_obj.run, name='Steering Task', priority=2, period=40, profile=True, trace=False)
+    
+    _state_estimation_task = cotask.Task(state_estimation_task_obj.run,
+                             name='State Estimation Task', priority=2, period=20, profile=True, trace=False)
 
 
 	# Now add (append) the tasks to the scheduler list
@@ -247,6 +271,7 @@ def main():
     cotask.task_list.append(_ui_task)
     cotask.task_list.append(_stream_task)
     cotask.task_list.append(_steering_task)
+    cotask.task_list.append(_state_estimation_task)
 
     ### The scheduler is ready to start ###
 

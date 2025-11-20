@@ -38,8 +38,8 @@ class DataCollectionTask:
     def __init__(self,
                  col_start, col_done,
                  mtr_enable, abort,
-                 time_q, left_pos_q, right_pos_q, left_vel_q, right_vel_q,
-                 time_sh, left_pos_sh, right_pos_sh, left_vel_sh, right_vel_sh):
+                 time_q, left_pos_q, right_pos_q, left_vel_q, right_vel_q, obsv_time_q, obsv_sL_q, obsv_sR_q, obsv_psi_q, obsv_psi_dot_q,
+                 time_sh, left_pos_sh, right_pos_sh, left_vel_sh, right_vel_sh, obsv_time_sh, obsv_sL_sh, obsv_sR_sh, obsv_psi_sh, obsv_psi_dot_sh):
 
         # Flags
         self.col_start = col_start
@@ -54,12 +54,24 @@ class DataCollectionTask:
         self.left_vel_q = left_vel_q
         self.right_vel_q = right_vel_q
 
+        self.obsv_time_q = obsv_time_q
+        self.obsv_sL_q = obsv_sL_q
+        self.obsv_sR_q = obsv_sR_q
+        self.obsv_psi_q = obsv_psi_q
+        self.obsv_psi_dot_q = obsv_psi_dot_q
+
         # Shares
         self.time_sh = time_sh
         self.left_pos_sh = left_pos_sh
         self.right_pos_sh = right_pos_sh
         self.left_vel_sh = left_vel_sh
         self.right_vel_sh = right_vel_sh
+
+        self.obsv_time_sh = obsv_time_sh
+        self.obsv_sL_sh = obsv_sL_sh
+        self.obsv_sR_sh = obsv_sR_sh
+        self.obsv_psi_sh = obsv_psi_sh
+        self.obsv_psi_dot_sh = obsv_psi_dot_sh
 
         # ensure FSM starts in state S0_INIT
         self.state = self.S0_INIT
@@ -78,6 +90,12 @@ class DataCollectionTask:
                 self.right_pos_q.clear()
                 self.left_vel_q.clear()
                 self.right_vel_q.clear()
+
+                self.obsv_time_q.clear()
+                self.obsv_sL_q.clear()
+                self.obsv_sR_q.clear()
+                self.obsv_psi_q.clear()
+                self.obsv_psi_dot_q.clear()
 
                 self.state = self.S1_WAIT_FOR_START_COLLECTING # set next state
 
@@ -98,7 +116,15 @@ class DataCollectionTask:
                     self.right_pos_q.put(self.right_pos_sh.get())
                     self.left_vel_q.put(self.left_vel_sh.get())
                     self.right_vel_q.put(self.right_vel_sh.get())
-                
+
+                if not self.obsv_time_q.full() and not self.abort.get():
+                    self.obsv_time_q.put(self.obsv_time_sh.get())
+                    self.obsv_sL_q.put(self.obsv_sL_sh.get())
+                    self.obsv_sR_q.put(self.obsv_sR_sh.get())
+                    self.obsv_psi_q.put(self.obsv_psi_sh.get())
+                    self.obsv_psi_dot_q.put(self.obsv_psi_dot_sh.get())
+
+                    yield self.state
                 else:
                     # Set flags
                     # self.col_start.put(0)
