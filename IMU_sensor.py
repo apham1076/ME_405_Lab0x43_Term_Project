@@ -17,12 +17,15 @@ class IMU:
 
     class reg:
         # Data registers and struct format strings
+        ACC_DATA_ALL  = (0x08, "<hhh")     # x, y, z (6 bytes)
         EULER_DATA_ALL = (0x1A, "<hhh")     # heading, roll, pitch (6 bytes)
         GYRO_DATA_ALL  = (0x14, "<hhh")     # x, y, z (6 bytes)
         CALIB_STAT     = (0x35, "<B")       # single byte
         CALIB_PROFILE  = (0x55, "<hhhhhhhhhhh")  # 11 x 16-bit values (22 bytes)
         OPR_MODE       = (0x3D, "<B")
         SYS_TRIGGER    = (0x3F, "<B")
+        AXIS_MAP_CONFIG = (0x41, "<B")
+        AXIS_MAP_SIGN   = (0x42, "<B")
 
     def __init__(self, i2c):
         '''Initialize an IMU object'''
@@ -47,7 +50,10 @@ class IMU:
             "ndof":         {"code": 0x0C, "name": "NDOF (Full 9-DOF Fusion)"}
         }
 
-        
+        # Remap axes and signs to match robot frame
+        self._i2c.mem_write(bytes([0x21]), IMU.DEV_ADDR, self.reg.AXIS_MAP_CONFIG[0], timeout=100)
+        self._i2c.mem_write(bytes([0x04]), IMU.DEV_ADDR, self.reg.AXIS_MAP_SIGN[0], timeout=100)
+
         delay(700)  # Delay for IMU to start up
 
     # --------------------------------------------------------------------------
@@ -163,7 +169,7 @@ class IMU:
         print("Reading Euler angles")
         heading, roll, pitch = self._read_reg(self.reg.EULER_DATA_ALL)
         # Convert to degrees (1 degree = 16 LSB) and return the values
-        return (heading / 16.0, roll / 16.0, pitch / 16.0)
+        return (-heading / 16.0, roll / 16.0, pitch / 16.0)
 
     # --------------------------------------------------------------------------
     def read_angular_velocity(self):
@@ -173,7 +179,14 @@ class IMU:
         x, y, z = self._read_reg(self.reg.GYRO_DATA_ALL)
         # Convert to degrees/s (1 degree/s = 16 LSB/s)
         return (x / 16.0, y / 16.0, z / 16.0)
-    
+    # --------------------------------------------------------------------------
+    def read_acceleration(self):
+        '''Return the linear acceleration (x, y, z) in m/s^2.'''
+        # The 6 bytes are: X_LSB, X_MSB, Y_LSB, Y_MSB, Z_LSB, Z_MSB
+        print("Reading linear acceleration")
+        x, y, z = self._read_reg(self.reg.ACC_DATA_ALL)
+        # Convert to m/s^2 (1 m/s^2 = 16 LSB)
+        return (x / 100, y / 100, z / 100)
     # --------------------------------------------------------------------------
     def reset(self):
         '''Reset the IMU'''

@@ -50,6 +50,7 @@ from data_task import DataCollectionTask
 from ui_task import UITask
 from stream_task import StreamTask
 from steering_task import SteeringTask
+from state_estimation_task import StateEstimationTask
 from IMU_sensor import IMU
 from os import listdir
 
@@ -142,6 +143,8 @@ def main():
     setpoint.put(0)  # Start with zero setpoint
     kp.put(0)  # Start with zero gains
     ki.put(0)
+    left_eff_sh = task_share.Share('f', name='Left Motor Effort Share')
+    right_eff_sh = task_share.Share('f', name='Right Motor Effort Share')
 
     # --- Driving mode and control mode shares...
     driving_mode = task_share.Share('B', name='Driving Mode')
@@ -201,7 +204,7 @@ def main():
                                       battery,
                                       eff, mtr_enable, abort, driving_mode, setpoint, kp, ki, control_mode,
                                       time_sh, left_pos_sh, right_pos_sh, left_vel_sh, right_vel_sh,
-                                      left_sp_sh, right_sp_sh)
+                                      left_sp_sh, right_sp_sh, left_eff_sh, right_eff_sh)
 
     data_task_obj = DataCollectionTask(col_start, col_done,
                                        mtr_enable, abort,
@@ -217,6 +220,11 @@ def main():
                                  left_sp_sh, right_sp_sh,
                                  k_line, lf_target)
 
+    state_estimation_task_obj = StateEstimationTask(left_pos_sh, right_pos_sh,
+                                                    left_vel_sh, right_vel_sh,
+                                                    psi_sh, psi_dot_sh,
+                                                    left_eff_sh, right_eff_sh,
+                                                    battery, imu)
 
 	# Create costask.Task WRAPPERS. (If trace is enabled for any task, memory will be allocated for state transition tracing, and the application will run out of memory after a while and quit. Therefore, use tracing only for debugging and set trace to False when it's not needed)
     _motor_task = cotask.Task(motor_task_obj.run, name='Motor Control Task', priority=3, period=5, profile=True, trace=False)
