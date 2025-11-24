@@ -267,7 +267,7 @@ class Task:
     #  profiling results if profiling has been done.
     #  @returns The string which represents the task
     def __repr__(self):
-        rst = f"{self.name:<16s}{self.priority: 4d}"
+        rst = f"{self.name:<24s}{self.priority: 4d}"
         try:
             rst += f"{(self.period / 1000.0): 10.1f}"
         except TypeError:
@@ -377,7 +377,7 @@ class TaskList:
 
     ## Create some diagnostic text showing the tasks in the task list.
     def __repr__(self):
-        ret_str = 'TASK             PRI    PERIOD    RUNS   AVG DUR   MAX ' \
+        ret_str = 'TASK                     PRI    PERIOD    RUNS   AVG DUR   MAX ' \
             'DUR  AVG LATE  MAX LATE\n'
         for pri in self.pri_list:
             for task in pri[2:]:
@@ -389,7 +389,6 @@ class TaskList:
 ## This is @b the main task list which is created for scheduling when 
 #  @c cotask.py is imported into a program. 
 task_list = TaskList()
-
 
 
 

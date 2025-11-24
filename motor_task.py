@@ -47,9 +47,9 @@ class MotorControlTask:
         self.right_sp_sh = right_sp_sh
         self.left_eff_sh = left_eff_sh
         self.right_eff_sh = right_eff_sh
+        self.start_time = start_time
 
         # Queues
-        self.start_time = start_time
         self.time_sh = time_sh
         self.left_pos_sh = left_pos_sh
         self.right_pos_sh = right_pos_sh
@@ -125,6 +125,7 @@ class MotorControlTask:
                     self.left_encoder.zero()
                     self.right_encoder.zero()
                     self.t0 = millis() # a timestamp to zero the time right when the motors are enabled
+                    
                     self.start_time.put(self.t0)
                     self.left_motor.enable()
                     self.right_motor.enable()

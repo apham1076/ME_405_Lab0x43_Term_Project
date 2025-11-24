@@ -18,11 +18,12 @@ class StateEstimationTask:
 
     ### Initialize the object's attributes
     # --------------------------------------------------------------------------
-    def __init__(self, start_time, obsv_time_sh, left_pos_sh, right_pos_sh, left_vel_sh, right_vel_sh,
+    def __init__(self, start_time, obsv_time_sh, left_pos_sh, right_pos_sh, 
+                 left_vel_sh, right_vel_sh,
                  psi_sh, psi_dot_sh, left_eff_sh, right_eff_sh,
                  battery, imu,
                  obsv_sL_sh, obsv_sR_sh, obsv_psi_sh, obsv_psi_dot_sh,
-                 obsv_left_vel_sh, obsv_right_vel_sh, obsv_s_sh, obsv_s, obsv_yaw_sh):
+                 obsv_left_vel_sh, obsv_right_vel_sh, obsv_s_sh, obsv_yaw_sh):
 
         # Shares
         self.left_pos_sh = left_pos_sh
@@ -36,6 +37,17 @@ class StateEstimationTask:
         self.battery = battery
         self.imu = imu
 
+        self.start_time = start_time
+        self.obsv_time_sh = obsv_time_sh
+        self.obsv_sL_sh = obsv_sL_sh
+        self.obsv_sR_sh = obsv_sR_sh
+        self.obsv_psi_sh = obsv_psi_sh
+        self.obsv_psi_dot_sh = obsv_psi_dot_sh
+        self.obsv_left_vel_sh = obsv_left_vel_sh
+        self.obsv_right_vel_sh = obsv_right_vel_sh
+        self.obsv_s_sh = obsv_s_sh
+        self.obsv_yaw_sh = obsv_yaw_sh
+
         self.r = 0.035  # wheel radius (m)
         self.w = 0.141  # distance between wheels (m)
 
@@ -43,31 +55,43 @@ class StateEstimationTask:
 
         # Set initial yaw angle from IMU
 
-        self.A_D = np.array([[0], [0], [0.1331], [0],
-                             [0], [0], [0.1331], [0],
-                             [0], [0], [0], [0],
-                             [0], [0], [0], [0]])
-
-        self.B_D = np.array([[0.0406], [0.0373], [-0.0666], [-0.0666], [0], [-2.0123],
-                             [0.0373], [0.0406], [-0.0666], [-0.0666], [0], [2.0123],
-                             [0], [0], [0.5], [0.5], [0], [0],
-                             [0], [0], [-0.0698], [0.0698], [0.9902], [0.0001]])
+        # self.A_D = np.array([[0], [0], [0.1331], [0],
+        #                      [0], [0], [0.1331], [0],
+        #                      [0], [0], [0], [0],
+        #                      [0], [0], [0], [0]])
         
-        self.C = np.array([[0], [0], [1], [-self.w/2],
-                           [0], [0], [1], [self.w/2],
-                           [0], [0], [0], [1],
-                           [-self.r/self.w], [self.r/self.w], [0], [0]])
+        
+        self.A_D = np.array([[0, 0, 0.1331, 0],
+                             [0, 0, 0.1331, 0],
+                             [0, 0, 0, 0],
+                             [0, 0, 0, 0]])
+
+        self.B_D = np.array([[0.0406, 0.0373, -0.0666, -0.0666, 0, -2.0123],
+                             [0.0373, 0.0406, -0.0666, -0.0666, 0, 2.0123],
+                             [0, 0, 0.5, 0.5, 0, 0],
+                             [0, 0, -0.0698, 0.0698, 0.9902, 0.0001]])
+        
+        self.C = np.array([[0, 0, 1, -self.w/2],
+                           [0, 0, 1, self.w/2],
+                           [0, 0, 0, 1],
+                           [-self.r/self.w, self.r/self.w, 0, 0]])
         
         self.x_k = np.array([[0],
                              [0], 
                              [0],
                              [0]])
         
-        self.y = np.array([[0],
+        self.x_kplus1 = np.array([[0],
+                                 [0],
+                                 [0],
+                                 [0]])
+        
+        self.y_k = np.array([[0],
                            [0],
                            [0],
                            [0]])
-        
+
+
         self.state = self.S0_INIT # ensure FSM starts in state S0_INIT
     
     def run(self):
@@ -91,16 +115,20 @@ class StateEstimationTask:
                 s_L = self.left_pos_sh.get() * self.r # Left wheel displacement (m)
                 s_R = self.right_pos_sh.get() * self.r # Right wheel displacement (m)
                 psi = self.imu.read_euler_angles()[0] * (3.14159 / 180.0)  # yaw angle in rad
+                psi = 3.14159
                 psi -= self.psi_offset  # Subtract offset
                 psi_dot = self.imu.read_angular_velocity()[2] * (3.14159 / 180.0)  # yaw rate in rad/s
+                psi_dot = 0.0
 
                 # Store away yaw angle and yaw rate from IMU
                 self.psi_sh.put(psi)
                 self.psi_dot_sh.put(psi_dot)
 
                 # Determine input vector, u
-                V_L = self.left_eff_sh.get() * self.V_nom / 100.0
-                V_R = self.right_eff_sh.get() * self.V_nom / 100.0
+                V_L = self.left_eff_sh.get()
+                V_R = self.right_eff_sh.get()
+                V_L = V_L * self.V_nom / 100.0
+                V_R = V_R * self.V_nom / 100.0
                 
                 # Form u_star
                 u_star = np.array([[V_L],
@@ -110,26 +138,35 @@ class StateEstimationTask:
                                     [psi],
                                     [psi_dot]])
                 
+                # print("u_star shape:", u_star.shape)
+                
                 # Predict next state
-                self.x_kplus1 = np.dot(self.A_D, self.x_k) + np.dot(self.B_D, u_star)
+                # self.x_kplus1 = np.dot(self.A_D, self.x_k) + np.dot(self.B_D, u_star)
                 # Determine present output
-                self.y_k = np.dot(self.C, self.x_k)
+                # self.y_k = np.dot(self.C, self.x_k)
 
                 # Put observer values in shares
-                self.obsv_sL_sh.put(float(self.y_k[0]))
-                self.obsv_sR_sh.put(float(self.y_k[1]))
-                self.obsv_psi_sh.put(float(self.y_k[2]))
-                self.obsv_psi_dot_sh.put(float(self.y_k[3]))
+                self.obsv_sL_sh.put(float(self.y_k[0,0]))
+                self.obsv_sR_sh.put(float(self.y_k[1,0]))
+                self.obsv_psi_sh.put(float(self.y_k[2,0]))
+                self.obsv_psi_dot_sh.put(float(self.y_k[3,0]))
 
-                self.obsv_left_vel_sh.put(float(self.x_kplus1[0]))
-                self.obsv_right_vel_sh.put(float(self.x_kplus1[1]))
-                self.obsv_s_sh.put(float(self.x_kplus1[2]))
-                self.obsv_yaw_sh.put(float(self.x_kplus1[3]))
-
+                self.obsv_left_vel_sh.put(float(self.x_kplus1[0,0]))
+                self.obsv_right_vel_sh.put(float(self.x_kplus1[1,0]))
+                self.obsv_s_sh.put(float(self.x_kplus1[2,0]))
+                self.obsv_yaw_sh.put(float(self.x_kplus1[3,0]))
+                
+                # Put time in share
                 t = millis() - self.t0
-                self.obsv_time_sh.put(t)
+                self.obsv_time_sh.put(int(t))
+
+                # print(f"State Estimation Timing: y_k calc: {t2 - t1} ms, u_star calc: {t3 - t2} ms, x_kplus1 calc: {t5 - t4} ms, shares put: {t6 - t5} ms, total: {t6} ms")
 
                 # Update state for next iteration
-                self.x_k = self.x_kplus1
+                # self.x_k = self.x_kplus1
+                self.x_k = np.array([[0],
+                           [0],
+                           [0],
+                           [0]])
                 
-                yield self.state
+            yield self.state

@@ -126,6 +126,7 @@ class DataCollectionTask:
 
                     yield self.state
                 else:
+                    print("Queues full or abort signal received, stopping data collection.")
                     # Set flags
                     # self.col_start.put(0)
                     self.col_done.put(1)

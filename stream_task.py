@@ -9,7 +9,6 @@
 # ==============================================================================
 
 
-import gc # garbage collector
 import time
 
 class StreamTask:
@@ -25,9 +24,10 @@ class StreamTask:
     ### Initialize the object's attributes
     # --------------------------------------------------------------------------
     def __init__(self,
-                 eff, col_done, stream_data, uart,
-                 time_q, left_pos_q, right_pos_q, left_vel_q, right_vel_q,
-                 control_mode, setpoint, kp, ki, k_line, lf_target):
+                    eff, col_done, stream_data, uart,
+                    time_q, left_pos_q, right_pos_q, left_vel_q, right_vel_q,
+                    obsv_time_q, obsv_sL_q, obsv_sR_q, obsv_psi_q, obsv_psi_dot_q,
+                    control_mode, setpoint, kp, ki, k_line, lf_target):
 
          # Serial interface (Bluetooth UART)
         self.ser = uart
@@ -51,7 +51,13 @@ class StreamTask:
         self.right_pos_q = right_pos_q
         self.left_vel_q = left_vel_q
         self.right_vel_q = right_vel_q
-        
+
+        self.obsv_time_q = obsv_time_q
+        self.obsv_sL_q = obsv_sL_q
+        self.obsv_sR_q = obsv_sR_q
+        self.obsv_psi_q = obsv_psi_q
+        self.obsv_psi_dot_q = obsv_psi_dot_q
+
        
         # ensure FSM starts in state S0_INIT
         self.state = self.S0_INIT
@@ -125,6 +131,7 @@ class StreamTask:
                 
                 # Once all samples have been sent, mark the end of the stream
                 self.ser.write(b"<S>#END1<E>\n") # explicit end marker for PC
+                yield self.state
 
                 index = 0 # sample index number (sent to PC for alignment)
                 while self.obsv_time_q.any():
@@ -154,7 +161,6 @@ class StreamTask:
                 self.stream_data.put(0)
                 self.col_done.put(0) # reset done flag for next test
 
-                gc.collect() # run garbage collector
                 self.state = self.S1_WAIT_FOR_TRIGGER # go back to wait state
 
             yield self.state

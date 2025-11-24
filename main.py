@@ -57,6 +57,7 @@ from os import listdir
 def main():
     print("\r\n=== ME405 Lab 0x05 Scheduler Start ===")
     MAX_SAMPLES = 250
+    OBSV_SAMPLES = MAX_SAMPLES // 2  # Observer collects half the samples
     
     # -----------------------------------------------------------------------
     ### Hardware Setup:
@@ -201,12 +202,11 @@ def main():
     left_vel_q = task_share.Queue('f', size=MAX_SAMPLES, name= 'Left motor velocity share')
     right_vel_q = task_share.Queue('f', size=MAX_SAMPLES, name= 'Right motor velocity share')
 
-    obsv_time_q = task_share.Queue('H', size=MAX_SAMPLES/2, name='Observed Time Queue')
-    obsv_sL_q = task_share.Queue('f', size=MAX_SAMPLES/2, name='Observed Left Displacement Queue')
-    obsv_sR_q = task_share.Queue('f', size=MAX_SAMPLES/2, name='Observed Right Displacement Queue')
-    obsv_psi_q = task_share.Queue('f', size=MAX_SAMPLES/2, name='Observed Yaw Angle Queue')
-    obsv_psi_dot_q = task_share.Queue('f', size=MAX_SAMPLES/2, name='Observed Yaw Rate Queue')
-
+    obsv_time_q = task_share.Queue('H', size=OBSV_SAMPLES, name='Observed Time Queue')
+    obsv_sL_q = task_share.Queue('f', size=OBSV_SAMPLES, name='Observed Left Displacement Queue')
+    obsv_sR_q = task_share.Queue('f', size=OBSV_SAMPLES, name='Observed Right Displacement Queue')
+    obsv_psi_q = task_share.Queue('f', size=OBSV_SAMPLES, name='Observed Yaw Angle Queue')
+    obsv_psi_dot_q = task_share.Queue('f', size=OBSV_SAMPLES, name='Observed Yaw Rate Queue')
 
 
     # -----------------------------------------------------------------------
@@ -237,6 +237,7 @@ def main():
 
     stream_task_obj = StreamTask(eff, col_done, stream_data, uart,
                                  time_q, left_pos_q, right_pos_q, left_vel_q, right_vel_q,
+                                 obsv_time_q, obsv_sL_q, obsv_sR_q, obsv_psi_q, obsv_psi_dot_q,
                                  control_mode, setpoint, kp, ki, k_line, lf_target)
 
     steering_task_obj = SteeringTask(ir_array, battery,
@@ -244,25 +245,26 @@ def main():
                                  left_sp_sh, right_sp_sh,
                                  k_line, lf_target)
 
-    state_estimation_task_obj = StateEstimationTask(start_time, obsv_time_sh, left_pos_sh, right_pos_sh,
+    state_estimation_task_obj = StateEstimationTask(start_time, obsv_time_sh, 
+                                                    left_pos_sh, right_pos_sh,
                                                     left_vel_sh, right_vel_sh,
                                                     psi_sh, psi_dot_sh,
                                                     left_eff_sh, right_eff_sh,
-                                                    battery, imu)
+                                                    battery, imu, obsv_sL_sh, obsv_sR_sh, obsv_psi_sh, obsv_psi_dot_sh, obsv_left_vel_sh, obsv_right_vel_sh, obsv_s_sh, obsv_yaw_sh)
 
 	# Create costask.Task WRAPPERS. (If trace is enabled for any task, memory will be allocated for state transition tracing, and the application will run out of memory after a while and quit. Therefore, use tracing only for debugging and set trace to False when it's not needed)
-    _motor_task = cotask.Task(motor_task_obj.run, name='Motor Control Task', priority=3, period=5, profile=True, trace=False)
+    _motor_task = cotask.Task(motor_task_obj.run, name='Motor Control Task', priority=3, period=10, profile=True, trace=False)
     
     _data_collection_task = cotask.Task(data_task_obj.run, name='Data Collection Task', priority=2, period=10, profile=True, trace=False)
 
-    _ui_task = cotask.Task(ui_task_obj.run, name='User Interface Task', priority=0, period=20, profile=True, trace=False)
+    _ui_task = cotask.Task(ui_task_obj.run, name='User Interface Task', priority=0, period=100, profile=True, trace=False)
 
     _stream_task = cotask.Task(stream_task_obj.run, name='Stream Task', priority=1, period=20, profile=True, trace=False)
 
     _steering_task = cotask.Task(steering_task_obj.run, name='Steering Task', priority=2, period=40, profile=True, trace=False)
     
     _state_estimation_task = cotask.Task(state_estimation_task_obj.run,
-                             name='State Estimation Task', priority=2, period=20, profile=True, trace=False)
+                             name='State Estimation Task', priority=2, period=40, profile=True, trace=False)
 
 
 	# Now add (append) the tasks to the scheduler list
@@ -284,7 +286,14 @@ def main():
         try:
             cotask.task_list.pri_sched()
         except KeyboardInterrupt:
+            left_motor.disable()
+            right_motor.disable()
             break
+        except:
+            left_motor.disable()
+            right_motor.disable()
+            print("Unexpected error in scheduler, stopping motors.")
+            raise
 
     # Diagnostics on exit: print a table of task data and a table of shared information data
     print("\n=== Scheduler Halted ===")

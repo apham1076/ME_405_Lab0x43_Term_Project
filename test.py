@@ -22,6 +22,7 @@ import time
 key = ''                    # Stores value of key pressed as a string
 running = False             # Set when motor testing is progress
 streaming = False           # Set when data streaming is in progress
+first_stream = True         # Set on first data stream to create run entry
 runs = {}                   # Dict to contain runs
 run_count = 0               # Number of runs
 frame_buffer = ""           # Buffer for delimiter-framed lines
@@ -83,7 +84,14 @@ def create_run(control_val, run_num, size):
     v2 = np.zeros(size)
     ctrl = np.zeros(size)  # Store control value (effort or setpoint)
 
-    df = pd.DataFrame({
+    obsv_size = size // 2
+    obsv_time = np.zeros(obsv_size)
+    sL = np.zeros(obsv_size)
+    sR = np.zeros(obsv_size)
+    psi = np.zeros(obsv_size)
+    psi_dot = np.zeros(obsv_size)
+
+    df1 = pd.DataFrame({
         "_time": time,
         "_control": ctrl,
         "_left_pos": p1,
@@ -92,7 +100,16 @@ def create_run(control_val, run_num, size):
         "_right_vel": v2
     })
 
-    return {"control_val": control_val, "run_num": run_num, "size": size, "motor_data": df}
+    df2 = pd.DataFrame({
+        "_obsv_time": obsv_time,
+        "_obsv_sL": sL,
+        "_obsv_sR": sR,
+        "_obsv_psi": psi,
+        "_obsv_psi_dot": psi_dot
+    })
+
+    return {"control_val": control_val, "run_num": run_num, "size": size, "obsv_size": obsv_size, "motor_data": df1, "obsv_data": df2}
+
 # ------------------------------------------------------------------------------
 # Function to clean DataFrame by removing all-zero rows except leading zeros
 def clean_data(df, cols=None, mode='all'):
@@ -424,6 +441,25 @@ while True:
                     os.makedirs(plots_dir, exist_ok=True)
                 except Exception as e:
                     print(f"Warning: could not create output directories: {e}")
+                
+                
+                # Save data to CSV
+                for run_name, meta in runs.items():
+                    df1 = meta.get('motor_data')
+                    df2 = meta.get('obsv_data')
+                    df = pd.concat([df1, df2], axis=1)
+
+                    base_name = f"{run_name}_E_eff"
+                    try:
+                        csv_name = os.path.join(csv_dir, base_name + ".csv")
+                        cols = ["_time", "_left_pos", "_right_pos", "_left_vel", "_right_vel", "_obsv_time", "_obsv_sL", "_obsv_sR", "_obsv_psi", "_obsv_psi_dot"]
+                        cols = [c for c in cols if c in df.columns]
+                        df[cols].to_csv(csv_name, index=False)
+                        print(f"Saved complete motor data to {csv_name}")
+                    except Exception as e:
+                        print(f"Failed to save CSV for {run_name}: {e}")
+
+                continue
 
                 if not runs:
                     print("No runs available to display or save.")
@@ -654,7 +690,7 @@ while True:
                             params = {'setpoint': setpoint, 'kp': kp, 'ki': ki}
                         sample_size = 250    # Default sample size
 
-                        # Create new run
+                        # Create new run for motor data
                         run_count += 1
                         run_name = f'run{run_count}'
                         runs[run_name] = create_run(effort, run_count, sample_size)
@@ -663,7 +699,6 @@ while True:
                         runs[run_name]['mode'] = mode_name
                         print(f"Run {run_name} created in {mode_name} mode (size={sample_size})")
 
-                        recv_line_num = 0
                         first = False
                     
                     else:
@@ -673,7 +708,7 @@ while True:
                             frame_buffer += chunk
 
                         # For complete <S> ... <E> frames, extract lines
-                        while "<S>" in frame_buffer and "<E>" in frame_buffer:
+                        while "<S>" in frame_buffer and "<E>" in frame_buffer and first_stream:
                             start = frame_buffer.find("<S>")
                             end = frame_buffer.find("<E>", start)
 
@@ -685,17 +720,19 @@ while True:
                             frame_buffer = frame_buffer[end+3:]  # Remove processed frame
 
                             # END OF STREAM CHECK
-                            if frame == "#END":
-                                print("Received end of stream marker from Romi. Hit 'd' to print data.")
+                            if frame == "#END1":
+                                print("Received end of stream marker 1 from Romi. Hit 'd' to print data.")
                                 # Acknowledge end of stream
                                 try:
                                     ser.write(b'ACK_END\n')
                                 except Exception:
                                     pass
-                                first = True
-                                streaming = False
+                                # first = True
+                                # streaming = False
+                                first_stream = False
+                                frame_buffer = ""  # Clear buffer
                                 sleep(0.2)
-                                continue
+                                break
 
                             # For a normal frame, parse the CSV payload
                             try:
@@ -717,6 +754,49 @@ while True:
                             runs[run_name]["motor_data"].loc[idx, "_left_vel"] = float(left_vel)
                             runs[run_name]["motor_data"].loc[idx, "_right_vel"] = float(right_vel)
 
+                        while "<S>" in frame_buffer and "<E>" in frame_buffer:
+                            start = frame_buffer.find("<S>")
+                            end = frame_buffer.find("<E>", start)
+
+                            if end == -1: # if there is no <E> found, break
+                                break # incomplete frame
+
+                            # Extract the inside contents
+                            frame = frame_buffer[start+3 : end]
+                            frame_buffer = frame_buffer[end+3:]  # Remove processed frame
+
+                            # END OF STREAM CHECK
+                            if frame == "#END2":
+                                print("Received end of stream marker 2 from Romi. Hit 'd' to print data.")
+                                # Acknowledge end of stream
+                                try:
+                                    ser.write(b'ACK_END\n')
+                                except Exception:
+                                    pass
+                                first = True
+                                streaming = False
+                                sleep(0.2)
+                                continue
+
+                            # For a normal observer frame, parse the CSV payload
+                            try:
+                                idx_str, time_s, sL, sR, psi, psi_dot = frame.split(',')
+                                idx = int(idx_str)
+                            except ValueError:
+                                print(f"[Rejected] Bad observer frame contents: '{frame}'")
+                                continue
+
+                            obsv_size = runs.get(run_name, {}).get('obsv_size')
+                            if idx < 0 or idx >= obsv_size:
+                                print(f"[Rejected] Observer index {idx} out of range (size={obsv_size})")
+                                continue
+
+                            # Store the observer values
+                            runs[run_name]["obsv_data"].loc[idx,"_obsv_time"] = float(time_s)
+                            runs[run_name]["obsv_data"].loc[idx, "_obsv_sL"] = float(sL)
+                            runs[run_name]["obsv_data"].loc[idx, "_obsv_sR"] = float(sR)
+                            runs[run_name]["obsv_data"].loc[idx, "_obsv_psi"] = float(psi)
+                            runs[run_name]["obsv_data"].loc[idx, "_obsv_psi_dot"] = float(psi_dot)
                 else:
                     pass
             else:
