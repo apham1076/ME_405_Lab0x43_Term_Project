@@ -37,7 +37,7 @@ class DataCollectionTask:
     # --------------------------------------------------------------------------
     def __init__(self,
                  col_start, col_done,
-                 mtr_enable, abort,
+                 mtr_enable, abort, motor_data_ready, obsv_data_ready,
                  time_q, left_pos_q, right_pos_q, left_vel_q, right_vel_q, obsv_time_q, obsv_sL_q, obsv_sR_q, obsv_psi_q, obsv_psi_dot_q,
                  time_sh, left_pos_sh, right_pos_sh, left_vel_sh, right_vel_sh, obsv_time_sh, obsv_sL_sh, obsv_sR_sh, obsv_psi_sh, obsv_psi_dot_sh):
 
@@ -46,6 +46,8 @@ class DataCollectionTask:
         self.col_done = col_done
         self.mtr_enable = mtr_enable
         self.abort = abort
+        self.motor_data_ready = motor_data_ready
+        self.obsv_data_ready = obsv_data_ready
 
         # Queues
         self.time_q = time_q
@@ -107,24 +109,24 @@ class DataCollectionTask:
             ### 2: COLLECTING STATE --------------------------------------------
             elif (self.state == self.S2_COLLECTING_DATA):
                 # print("Collecting data...")
-                
-                # Check if sample queue is full
-                if not self.time_q.full() and not self.abort.get():    
-                    # Move data from shares into queues
-                    self.time_q.put(self.time_sh.get())
-                    self.left_pos_q.put(self.left_pos_sh.get())
-                    self.right_pos_q.put(self.right_pos_sh.get())
-                    self.left_vel_q.put(self.left_vel_sh.get())
-                    self.right_vel_q.put(self.right_vel_sh.get())
+                if not self.abort.get() and not self.time_q.full() and not self.obsv_time_q.full():
+                    # Check if sample queue is full
+                    if self.motor_data_ready.get():
+                        self.time_q.put(self.time_sh.get())
+                        self.left_pos_q.put(self.left_pos_sh.get())
+                        self.right_pos_q.put(self.right_pos_sh.get())
+                        self.left_vel_q.put(self.left_vel_sh.get())
+                        self.right_vel_q.put(self.right_vel_sh.get())
+                        self.motor_data_ready.put(0)
 
-                if not self.obsv_time_q.full() and not self.abort.get():
-                    self.obsv_time_q.put(self.obsv_time_sh.get())
-                    self.obsv_sL_q.put(self.obsv_sL_sh.get())
-                    self.obsv_sR_q.put(self.obsv_sR_sh.get())
-                    self.obsv_psi_q.put(self.obsv_psi_sh.get())
-                    self.obsv_psi_dot_q.put(self.obsv_psi_dot_sh.get())
+                    if self.obsv_data_ready.get():
+                        self.obsv_time_q.put(self.obsv_time_sh.get())
+                        self.obsv_sL_q.put(self.obsv_sL_sh.get())
+                        self.obsv_sR_q.put(self.obsv_sR_sh.get())
+                        self.obsv_psi_q.put(self.obsv_psi_sh.get())
+                        self.obsv_psi_dot_q.put(self.obsv_psi_dot_sh.get())
+                        self.obsv_data_ready.put(0)
 
-                    yield self.state
                 else:
                     print("Queues full or abort signal received, stopping data collection.")
                     # Set flags

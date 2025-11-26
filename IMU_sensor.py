@@ -53,28 +53,28 @@ class IMU:
             "ndof":         {"code": 0x0C, "name": "NDOF (Full 9-DOF Fusion)"}
         }
         # Enable interrupts for data ready
-        msk = 0b00000001
-        buf = memoryview(self._buf)[:1]         # buf is type bytes of length 1
-        self._i2c.mem_read(buf, self._DEV_ADDR, self.reg.INT_ENABLE[0], timeout=100)
-        val = buf[0]        # convert bytes to int
-        val |= msk  # Set bit 0
-        self._i2c.mem_write(buf, self._DEV_ADDR, self.reg.INT_ENABLE[0], timeout=100)
-        self._i2c.mem_read(buf, self._DEV_ADDR, self.reg.INT_MASK[0], timeout=100)
-        val = buf[0]
-        val |= msk  # Set bit 0
-        self._i2c.mem_write(buf, self._DEV_ADDR, self.reg.INT_MASK[0], timeout=100)
+        # msk = 0b00000001
+        # buf = memoryview(self._buf)[:1]         # buf is type bytes of length 1
+        # self._i2c.mem_read(buf, self._DEV_ADDR, self.reg.INT_ENABLE[0], timeout=100)
+        # val = buf[0]        # convert bytes to int
+        # val |= msk  # Set bit 0
+        # self._i2c.mem_write(buf, self._DEV_ADDR, self.reg.INT_ENABLE[0], timeout=100)
+        # self._i2c.mem_read(buf, self._DEV_ADDR, self.reg.INT_MASK[0], timeout=100)
+        # val = buf[0]
+        # val |= msk  # Set bit 0
+        # self._i2c.mem_write(buf, self._DEV_ADDR, self.reg.INT_MASK[0], timeout=100)
 
         # Reset interrupt
 
 
-        # Remap axes and signs to match robot frame
-        self._i2c.mem_write(bytes([0x21]), self._DEV_ADDR, self.reg.AXIS_MAP_CONFIG[0], timeout=100)
-        self._i2c.mem_write(bytes([0x04]), self._DEV_ADDR, self.reg.AXIS_MAP_SIGN[0], timeout=100)
+        # # Remap axes and signs to match robot frame
+        # self._i2c.mem_write(bytes([0x21]), self._DEV_ADDR, self.reg.AXIS_MAP_CONFIG[0], timeout=100)
+        # self._i2c.mem_write(bytes([0x04]), self._DEV_ADDR, self.reg.AXIS_MAP_SIGN[0], timeout=100)
 
-        delay(700)  # Delay for IMU to start up
+        delay(1000)  # Delay for IMU to start up
 
     # --------------------------------------------------------------------------
-    def _read_reg(self, reg, debug=False):
+    def _read_reg(self, reg):
         '''Generic register read method using calcsize() and unpack_from()
 
         Added optional `debug` flag to measure and print the time spent in the
@@ -102,19 +102,19 @@ class IMU:
             if mode_name not in self.mode_dict:
                 raise ValueError(f"Invalid mode name: {mode_name}")
         except Exception as e:
-            print(f"Error in set_operation_mode: {e}")
+            # print(f"Error in set_operation_mode: {e}")
             return
         
         code = self.mode_dict[mode_name]["code"]
         self._i2c.mem_write(bytes([code]), self._DEV_ADDR, self.reg.OPR_MODE[0], timeout=100)
         delay(30)  # Small delay for mode switch
         self._current_mode = mode_name
-        print(f"IMU operation mode set to {mode_name}")
+        # print(f"IMU operation mode set to {mode_name}")
 
     # --------------------------------------------------------------------------
     def read_calibration_status(self):
         '''Read the calibration status of the IMU and return (sys, gyr, acc, mag) each from 0-3.'''
-        print("Reading calibration status")
+        # print("Reading calibration status")
         # The calibration status is 1 byte with 2 bits each for sys, gyr, acc, mag
         cal_start = self._read_reg(self.reg.CALIB_STAT)
         # Shift bits and mask to isolate each 2-bit field
@@ -131,10 +131,10 @@ class IMU:
         # MUST be in config mode to read calibration coefficients
         prev_mode = self._current_mode
         if prev_mode != "config":
-            print("Switching to CONFIG mode to read calibration coefficients")
+            # print("Switching to CONFIG mode to read calibration coefficients")
             self.set_operation_mode("config")
 
-        print("Reading calibration coefficients")
+        # print("Reading calibration coefficients")
         coeffs = self._read_reg(self.reg.CALIB_PROFILE)
         # decode each signed 16-bit little-endian value
         accel_x, accel_y, accel_z, mag_x, mag_y, mag_z, \
@@ -146,7 +146,7 @@ class IMU:
             buf = memoryview(self._buf)[:length]
             with open("imu_cal.bin", 'wb') as f: # 'write binary' mode
                 f.write(buf)
-        print("Calibration coefficients saved to imu_cal.bin")
+        # print("Calibration coefficients saved to imu_cal.bin")
 
         data = {
             "accel_offset": (accel_x, accel_y, accel_z),
@@ -157,7 +157,7 @@ class IMU:
         }
 
         if prev_mode != "config":
-            print(f"Restoring previous mode: {prev_mode}")
+            # print(f"Restoring previous mode: {prev_mode}")
             self.set_operation_mode(prev_mode)
 
         return data
@@ -175,9 +175,9 @@ class IMU:
             coeffs = f.read()
         if len(coeffs) != calcsize(self.reg.CALIB_PROFILE[1]):
             raise ValueError("Calibration file must contain exactly 22 bytes.")
-        print("Calibration coefficients read from imu_cal.bin")
+        # print("Calibration coefficients read from imu_cal.bin")
         # Write the coefficients to the IMU
-        print("Writing calibration coefficients to IMU")
+        # print("Writing calibration coefficients to IMU")
         self._i2c.mem_write(coeffs, self._DEV_ADDR, self.reg.CALIB_PROFILE[0], timeout=100)
         delay(20) # Small delay for write to complete
         print("Calibration coefficients written to IMU")
@@ -218,4 +218,4 @@ class IMU:
         self._i2c.mem_write(bytes([0x20]), self._DEV_ADDR, self.reg.SYS_TRIGGER[0], timeout=100)
         delay(700)  # Delay for reset to complete
         self._current_mode = "config"
-        print("IMU reset complete; set to CONFIG mode")
+        # print("IMU reset complete; set to CONFIG mode")

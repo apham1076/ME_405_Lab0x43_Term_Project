@@ -61,11 +61,11 @@ class Encoder:
     # --------------------------------------------------------------------------
     def get_position(self):
         '''Return position in radians.'''
-        return self.position_counts * self.RAD_PER_COUNT  # position in [rad]
+        return self.position_counts  # position in counts
 
     def get_velocity(self):
         '''Return velocity in radians per second.'''
-        return self.velocity_counts_per_s * self.RAD_PER_COUNT  # velocity in [rad/s]
+        return self.velocity_counts_per_s  # velocity in counts/s
 
     def zero(self):
         '''Zero the encoder position.'''

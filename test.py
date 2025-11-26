@@ -5,8 +5,6 @@
 # # ************* NOTES **************
 
 # ************* TO-DO **************
-# Figure out why data is so jaggedy (message Charlie on Piazza)
-# Debug data streaming: use START and ACK
 
 
 from serial import Serial, SerialException
@@ -22,11 +20,12 @@ import time
 key = ''                    # Stores value of key pressed as a string
 running = False             # Set when motor testing is progress
 streaming = False           # Set when data streaming is in progress
-first_stream = True         # Set on first data stream to create run entry
+first_frame = True          # Set on first data stream to create run entry
 runs = {}                   # Dict to contain runs
 run_count = 0               # Number of runs
 frame_buffer = ""           # Buffer for delimiter-framed lines
 control_mode = 0            # 0 = effort mode, 1 = velocity mode, 2 = line follow mode
+driving_mode = 0            # 0 = straight line, 1 = arc, 2 = pivot
 effort = 0                 # Current effort value
 setpoint = 0               # Current velocity setpoint in rad/s
 kp = 0.0                    # Current proportional gain
@@ -39,7 +38,9 @@ queue = local_queue.Queue()  # Queue to hold tests
 queuing = False              # Set when queuing tests
 test_origin = "manual"      # tracks how the current test started: "manual" or "queue"
 
-control_mode_dict = {0: "Effort", 1: "Velocity", 2: "Line Following"}
+control_mode_dict = {0: "effort", 1: "velocity", 2: "line following"}
+
+driving_mode_dict = {0: "straight", 1: "pivot", 2: "arc"}
 
 user_prompt = '''\r\nCommand keys:
     t      : Select a test to run: Effort, Velocity, Line Following
@@ -76,7 +77,7 @@ def key_to_eff(key):
     return None
 # ------------------------------------------------------------------------------
 # Function to create dictionary for storing data from one run
-def create_run(control_val, run_num, size):
+def create_run(control_mode, control_val, driving_mode, run_num, size):
     time = np.zeros(size)
     p1 = np.zeros(size)
     p2 = np.zeros(size)
@@ -108,7 +109,7 @@ def create_run(control_val, run_num, size):
         "_obsv_psi_dot": psi_dot
     })
 
-    return {"control_val": control_val, "run_num": run_num, "size": size, "obsv_size": obsv_size, "motor_data": df1, "obsv_data": df2}
+    return {"control_val": control_val, "run_num": run_num, "control_mode": control_mode_dict[control_mode], "driving_mode": driving_mode_dict[driving_mode], "size": size, "obsv_size": obsv_size, "motor_data": df1, "obsv_data": df2}
 
 # ------------------------------------------------------------------------------
 # Function to clean DataFrame by removing all-zero rows except leading zeros
@@ -386,6 +387,17 @@ while True:
                     print("Data streaming to PC...")
                     streaming = True
 
+            elif key == 'n':
+                if running:
+                    print("Test is already running, cannot toggle driving mode")
+                elif streaming:
+                    print("Data is already streaming.")
+                else:
+                    print("Toggle driving mode")
+                    driving_mode = (driving_mode + 1) % 3
+                    ser.write(b'n')
+
+
             elif key == 'c':
                 if running:
                     print("Cannot calibrate while test is running")
@@ -447,9 +459,26 @@ while True:
                 for run_name, meta in runs.items():
                     df1 = meta.get('motor_data')
                     df2 = meta.get('obsv_data')
+                    _control_mode = meta.get('control_mode')
+                    _control_val = meta.get('control_val')
+                    _driving_mode = meta.get('driving_mode')
                     df = pd.concat([df1, df2], axis=1)
 
-                    base_name = f"{run_name}_E_eff"
+                    if _control_mode == "effort":
+                        run_code = 'E'
+                    elif _control_mode == "velocity":
+                        run_code = 'V'
+                    else:
+                        run_code = 'LF'
+
+                    if _driving_mode == "straight":
+                        driving_code = "STR"
+                    elif _driving_mode == "pivot":
+                        driving_code = "PV"
+                    else:
+                        driving_code = "ARC"
+
+                    base_name = f"{run_name}_{run_code}_{_control_val}_{driving_code}"
                     try:
                         csv_name = os.path.join(csv_dir, base_name + ".csv")
                         cols = ["_time", "_left_pos", "_right_pos", "_left_vel", "_right_vel", "_obsv_time", "_obsv_sL", "_obsv_sR", "_obsv_psi", "_obsv_psi_dot"]
@@ -683,21 +712,20 @@ while True:
                     # Create new run for the run
                     if first:
                         if control_mode == 0:
-                            mode_name = "Effort"
+                            mode_name = "effort"
                             params = None
                         elif control_mode == 1:
-                            mode_name = "Velocity"
+                            mode_name = "velocity"
                             params = {'setpoint': setpoint, 'kp': kp, 'ki': ki}
-                        sample_size = 250    # Default sample size
+                        sample_size = 200    # Default sample size
 
                         # Create new run for motor data
                         run_count += 1
                         run_name = f'run{run_count}'
-                        runs[run_name] = create_run(effort, run_count, sample_size)
+                        runs[run_name] = create_run(control_mode, effort, driving_mode, run_count, sample_size)
                         if params:
                             runs[run_name]['params'] = params
-                        runs[run_name]['mode'] = mode_name
-                        print(f"Run {run_name} created in {mode_name} mode (size={sample_size})")
+                        print(f"Run {run_count} created in {mode_name} mode (size={sample_size})")
 
                         first = False
                     
@@ -708,7 +736,7 @@ while True:
                             frame_buffer += chunk
 
                         # For complete <S> ... <E> frames, extract lines
-                        while "<S>" in frame_buffer and "<E>" in frame_buffer and first_stream:
+                        while "<S>" in frame_buffer and "<E>" in frame_buffer and first_frame:
                             start = frame_buffer.find("<S>")
                             end = frame_buffer.find("<E>", start)
 
@@ -729,7 +757,7 @@ while True:
                                     pass
                                 # first = True
                                 # streaming = False
-                                first_stream = False
+                                first_frame = False
                                 frame_buffer = ""  # Clear buffer
                                 sleep(0.2)
                                 break
@@ -773,6 +801,7 @@ while True:
                                     ser.write(b'ACK_END\n')
                                 except Exception:
                                     pass
+                                first_frame = True
                                 first = True
                                 streaming = False
                                 sleep(0.2)

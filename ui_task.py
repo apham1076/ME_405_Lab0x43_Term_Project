@@ -100,9 +100,7 @@ class UITask:
     def run(self):
         """Generator that checks PuTTY for commands and updates flags"""
         while True: # run infinite iterations of the FSM
-
             gc.collect()    # Run garbage collector to free up memory
-            
             ### 0: INIT STATE --------------------------------------------------
             if (self.state == self.S0_INIT):
                 self.col_start.put(0)
@@ -114,6 +112,8 @@ class UITask:
                 self.prev_time = ticks_ms()
                 
                 self.state = self.S1_WAIT_FOR_COMMAND
+                
+                yield self.state
 
             ### 1: WAITING STATE -----------------------------------------------
             elif (self.state == self.S1_WAIT_FOR_COMMAND):
@@ -361,7 +361,6 @@ class UITask:
                     self.col_start.put(0)
                     self.col_done.put(0)
                     self.state = self.S1_WAIT_FOR_COMMAND
-                    yield self.state
                 
                 yield self.state
 

@@ -51,12 +51,13 @@ from ui_task import UITask
 from stream_task import StreamTask
 from steering_task import SteeringTask
 from state_estimation_task import StateEstimationTask
+from read_IMU_task import ReadIMUTask
 from IMU_sensor import IMU
 from os import listdir
 
 def main():
     print("\r\n=== ME405 Lab 0x05 Scheduler Start ===")
-    MAX_SAMPLES = 250
+    MAX_SAMPLES = 200
     OBSV_SAMPLES = MAX_SAMPLES // 2  # Observer collects half the samples
     
     # -----------------------------------------------------------------------
@@ -129,12 +130,12 @@ def main():
     # ----------------------------------------------------------------------
 
     # --- Data Task Shares...
-    start_time = task_share.Share('H', name='Start Time Share')
+    start = task_share.Share('L', name='Start Time Share')
     time_sh = task_share.Share('H', name='Time share')
-    left_pos_sh = task_share.Share('f', name= 'Left motor position share')
-    right_pos_sh = task_share.Share('f', name= 'Right motor position share')
-    left_vel_sh = task_share.Share('f', name= 'Left motor velocity share')
-    right_vel_sh = task_share.Share('f', name= 'Right motor velocity share')
+    left_pos_sh = task_share.Share('h', name= 'Left motor position share')
+    right_pos_sh = task_share.Share('h', name= 'Right motor position share')
+    left_vel_sh = task_share.Share('h', name= 'Left motor velocity share')
+    right_vel_sh = task_share.Share('h', name= 'Right motor velocity share')
 
     # --- Motor control shares...
     eff = task_share.Share('f', name='Requested Effort')  # float effort percent
@@ -145,14 +146,10 @@ def main():
     right_eff_sh = task_share.Share('f', name='Right Motor Effort Share')
 
     # --- Driving mode and control mode shares...
-    driving_mode = task_share.Share('B', name='Driving Mode')
     # 1: straight line, 2: pivot, 3: arc
-    # Driving mode only affects effort and velocity modes, not line follow mode
-    control_mode = task_share.Share('B', name='Control Mode')
+    driving_mode = task_share.Share('B', name='Driving Mode')
     # 0: effort mode, 1: velocity mode, 2: line follow mode
-    # --- Initialize driving and control mode shares
-    control_mode.put(0)  # Start in effort mode
-    driving_mode.put(1)  # Start in straight line mode
+    control_mode = task_share.Share('B', name='Control Mode')
 
     # ---Line following shares...
     left_sp_sh = task_share.Share('f', name='LF Left Setpoint')
@@ -172,14 +169,14 @@ def main():
     psi_dot_sh = task_share.Share('f', name='Yaw Rate Share')
 
     obsv_time_sh = task_share.Share('H', name='Observed Time Share')
-    obsv_sL_sh = task_share.Share('f', name='Observed Left Displacement Share')
-    obsv_sR_sh = task_share.Share('f', name='Observed Right Displacement Share')
-    obsv_psi_sh = task_share.Share('f', name='Observed Yaw Angle Share')
-    obsv_psi_dot_sh = task_share.Share('f', name='Observed Yaw Rate Share')
-    obsv_left_vel_sh = task_share.Share('f', name='Observed Left Velocity Share')
-    obsv_right_vel_sh = task_share.Share('f', name='Observed Right Velocity Share')
-    obsv_s_sh = task_share.Share('f', name='Observed Linear Displacement Share')
-    obsv_yaw_sh = task_share.Share('f', name='Observed Yaw Share')
+    obsv_sL_sh = task_share.Share('h', name='Observed Left Displacement Share')
+    obsv_sR_sh = task_share.Share('h', name='Observed Right Displacement Share')
+    obsv_psi_sh = task_share.Share('h', name='Observed Yaw Angle Share')
+    obsv_psi_dot_sh = task_share.Share('h', name='Observed Yaw Rate Share')
+    obsv_left_vel_sh = task_share.Share('h', name='Observed Left Velocity Share')
+    obsv_right_vel_sh = task_share.Share('h', name='Observed Right Velocity Share')
+    obsv_s_sh = task_share.Share('h', name='Observed Linear Displacement Share')
+    obsv_yaw_sh = task_share.Share('h', name='Observed Yaw Share')
 
     # --- Boolean flags (shares)...
     col_start = task_share.Share('B', name='Start Collection Flag')
@@ -187,6 +184,9 @@ def main():
     mtr_enable = task_share.Share('B', name='Motor Enable Flag')
     stream_data = task_share.Share('B', name='Stream Data Flag')
     abort = task_share.Share('B', name='Abort Flag')
+    read_IMU_flg = task_share.Share('B', name='Read IMU flag')
+    motor_data_ready = task_share.Share('B', name='Motor Data Ready Flag')
+    obsv_data_ready = task_share.Share('B', name='Observer Data Ready Flag')
 
        # --- Data streaming shares...
     ack_end = task_share.Share('B', name='ACK End of Stream Flag')
@@ -197,16 +197,16 @@ def main():
     #
     #
     time_q = task_share.Queue('H', size=MAX_SAMPLES, name='Time share')
-    left_pos_q = task_share.Queue('f', size=MAX_SAMPLES, name= 'Left motor position share')
-    right_pos_q = task_share.Queue('f', size=MAX_SAMPLES, name= 'Right motor position share')
-    left_vel_q = task_share.Queue('f', size=MAX_SAMPLES, name= 'Left motor velocity share')
-    right_vel_q = task_share.Queue('f', size=MAX_SAMPLES, name= 'Right motor velocity share')
+    left_pos_q = task_share.Queue('h', size=MAX_SAMPLES, name= 'Left motor position share')
+    right_pos_q = task_share.Queue('h', size=MAX_SAMPLES, name= 'Right motor position share')
+    left_vel_q = task_share.Queue('h', size=MAX_SAMPLES, name= 'Left motor velocity share')
+    right_vel_q = task_share.Queue('h', size=MAX_SAMPLES, name= 'Right motor velocity share')
 
     obsv_time_q = task_share.Queue('H', size=OBSV_SAMPLES, name='Observed Time Queue')
-    obsv_sL_q = task_share.Queue('f', size=OBSV_SAMPLES, name='Observed Left Displacement Queue')
-    obsv_sR_q = task_share.Queue('f', size=OBSV_SAMPLES, name='Observed Right Displacement Queue')
-    obsv_psi_q = task_share.Queue('f', size=OBSV_SAMPLES, name='Observed Yaw Angle Queue')
-    obsv_psi_dot_q = task_share.Queue('f', size=OBSV_SAMPLES, name='Observed Yaw Rate Queue')
+    obsv_sL_q = task_share.Queue('h', size=OBSV_SAMPLES, name='Observed Left Displacement Queue')
+    obsv_sR_q = task_share.Queue('h', size=OBSV_SAMPLES, name='Observed Right Displacement Queue')
+    obsv_psi_q = task_share.Queue('h', size=OBSV_SAMPLES, name='Observed Yaw Angle Queue')
+    obsv_psi_dot_q = task_share.Queue('h', size=OBSV_SAMPLES, name='Observed Yaw Rate Queue')
 
 
     # -----------------------------------------------------------------------
@@ -225,12 +225,12 @@ def main():
     motor_task_obj = MotorControlTask(left_motor, right_motor,
                                       left_encoder, right_encoder,
                                       battery,
-                                      eff, mtr_enable, abort, driving_mode, setpoint, kp, ki, control_mode, start_time,
+                                      eff, mtr_enable, motor_data_ready, abort, driving_mode, setpoint, kp, ki, control_mode, start,
                                       time_sh, left_pos_sh, right_pos_sh, left_vel_sh, right_vel_sh,
                                       left_sp_sh, right_sp_sh, left_eff_sh, right_eff_sh)
 
     data_task_obj = DataCollectionTask(col_start, col_done,
-                                       mtr_enable, abort,
+                                       mtr_enable, abort, motor_data_ready, obsv_data_ready,
                                        time_q, left_pos_q, right_pos_q, left_vel_q, right_vel_q,
                                        obsv_time_q, obsv_sL_q, obsv_sR_q, obsv_psi_q, obsv_psi_dot_q,
                                        time_sh, left_pos_sh, right_pos_sh, left_vel_sh, right_vel_sh, obsv_time_sh, obsv_sL_sh, obsv_sR_sh, obsv_psi_sh, obsv_psi_dot_sh)
@@ -244,8 +244,10 @@ def main():
                                  control_mode, ir_cmd,
                                  left_sp_sh, right_sp_sh,
                                  k_line, lf_target)
+    
+    read_IMU_task_obj = ReadIMUTask(imu, left_pos_sh, right_pos_sh, psi_sh, psi_dot_sh, read_IMU_flg)
 
-    state_estimation_task_obj = StateEstimationTask(start_time, obsv_time_sh, 
+    state_estimation_task_obj = StateEstimationTask(start, obsv_data_ready, obsv_time_sh, 
                                                     left_pos_sh, right_pos_sh,
                                                     left_vel_sh, right_vel_sh,
                                                     psi_sh, psi_dot_sh,
@@ -253,18 +255,20 @@ def main():
                                                     battery, imu, obsv_sL_sh, obsv_sR_sh, obsv_psi_sh, obsv_psi_dot_sh, obsv_left_vel_sh, obsv_right_vel_sh, obsv_s_sh, obsv_yaw_sh)
 
 	# Create costask.Task WRAPPERS. (If trace is enabled for any task, memory will be allocated for state transition tracing, and the application will run out of memory after a while and quit. Therefore, use tracing only for debugging and set trace to False when it's not needed)
-    _motor_task = cotask.Task(motor_task_obj.run, name='Motor Control Task', priority=3, period=10, profile=True, trace=False)
+    _motor_task = cotask.Task(motor_task_obj.run, name='Motor Control Task', priority=3, period=20, profile=True, trace=False)
     
-    _data_collection_task = cotask.Task(data_task_obj.run, name='Data Collection Task', priority=2, period=10, profile=True, trace=False)
+    _data_collection_task = cotask.Task(data_task_obj.run, name='Data Collection Task', priority=2, period=20, profile=True, trace=False)
 
-    _ui_task = cotask.Task(ui_task_obj.run, name='User Interface Task', priority=0, period=100, profile=True, trace=False)
+    _ui_task = cotask.Task(ui_task_obj.run, name='User Interface Task', priority=0, period=60, profile=True, trace=False)
 
     _stream_task = cotask.Task(stream_task_obj.run, name='Stream Task', priority=1, period=20, profile=True, trace=False)
 
     _steering_task = cotask.Task(steering_task_obj.run, name='Steering Task', priority=2, period=40, profile=True, trace=False)
     
-    _state_estimation_task = cotask.Task(state_estimation_task_obj.run,
-                             name='State Estimation Task', priority=2, period=40, profile=True, trace=False)
+    _read_IMU_task = cotask.Task(read_IMU_task_obj.run, name='Read IMU Task', priority=1, period=20, profile=True, trace=False)
+
+    _state_estimation_task = cotask.Task(state_estimation_task_obj.run, name='State Estimation Task', priority=2, period=40, profile=True, trace=False)
+
 
 
 	# Now add (append) the tasks to the scheduler list
@@ -274,6 +278,7 @@ def main():
     cotask.task_list.append(_stream_task)
     cotask.task_list.append(_steering_task)
     cotask.task_list.append(_state_estimation_task)
+    cotask.task_list.append(_read_IMU_task)
 
     ### The scheduler is ready to start ###
 
@@ -304,6 +309,8 @@ def main():
     # print(_data_collection_task.get_trace())
     # print(_stream_task.get_trace())
     # print(_steering_task.get_trace())
+    # print(_read_IMU_task.get_trace())
+    # print(_state_estimation_task.get_trace())
 
     
 if __name__ == "__main__":

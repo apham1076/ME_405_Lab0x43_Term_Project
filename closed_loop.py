@@ -4,18 +4,20 @@
 # ==============================================================================
 
 from time import ticks_diff, ticks_ms
+from math import pi
 
 class ClosedLoop:
     """Proportional-Integral (PI) controller for velocity control in rad/s."""
 
     def __init__(self,
-                 Kp=0.0, Ki=0.0,
-                 setpoint=0.0,
-                 effort_limits=(-100, 100),
-                 battery=None):
-        self.Kp = Kp
-        self.Ki = Ki
-        self.setpoint = setpoint
+                 kp, ki,
+                 sp_sh,
+                 battery,
+                 effort_limits=(-100, 100)):
+        
+        self.kp = kp
+        self.ki = ki
+        self.sp_sh = sp_sh
         self.effort_min, self.effort_max = effort_limits
         self.integrator = 0.0
         self.last_time = ticks_ms()
@@ -30,21 +32,7 @@ class ClosedLoop:
         self.output = 0.0
         self.last_time = ticks_ms()
 
-    def set_gains(self, Kp, Ki):
-        """Set controller gains with validation."""
-        if Kp < 0 or Ki < 0:
-            raise ValueError("Controller gains must be non-negative")
-        self.Kp = Kp
-        self.Ki = Ki
-
-    def set_setpoint(self, sp):
-        self.setpoint = sp
-
-    def attach_battery(self, battery_obj):
-        """Attach a Battery object after initialization."""
-        self.battery = battery_obj
-
-    def run(self, feedback_rad_per_s):
+    def run(self, fb):
         """Compute control output (effort %) from velocity feedback and measured battery voltage."""
         now = ticks_ms()
         dt_ms = ticks_diff(now, self.last_time)
@@ -57,21 +45,21 @@ class ClosedLoop:
         dt = dt_ms / 1000.0  # Convert to seconds
         self.last_time = now
 
-        # Sanity check on feedback
-        if abs(feedback_rad_per_s) > 100:  # Reasonable max rad/s for our motors
-            print(f"Warning: Unusually high velocity: {feedback_rad_per_s} rad/s")
+        # Convert velocity from count/s to rad/s
+        cpr = 1440
+        fb *= 2*pi / cpr
         
         # --- Core PI control ---
-        error = self.setpoint - feedback_rad_per_s
+        error = self.sp_sh.get() - fb
         self.integrator += error * dt
         
         # Clamp integrator to reasonable bounds based on output limits (prevent windup)
-        max_integral = (self.effort_max - self.Kp * error) / (self.Ki + 1e-6)
-        min_integral = (self.effort_min - self.Kp * error) / (self.Ki + 1e-6)
-        self.integrator = max(min(self.integrator, max_integral), min_integral)
+        # max_integral = (self.effort_max - self.kp.get() * error) / (self.ki.get() + 1e-6)
+        # min_integral = (self.effort_min - self.kp.get() * error) / (self.ki.get() + 1e-6)
+        # self.integrator = max(min(self.integrator, max_integral), min_integral)
         
         # Base PI output (without droop compensation)
-        u = self.Kp * error + self.Ki * self.integrator
+        u = self.kp.get() * error + self.ki.get() * self.integrator
 
         # --- Battery droop compensation ---
         if self.battery is not None:
