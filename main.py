@@ -208,6 +208,10 @@ def main():
     obsv_psi_q = task_share.Queue('h', size=OBSV_SAMPLES, name='Observed Yaw Angle Queue')
     obsv_psi_dot_q = task_share.Queue('h', size=OBSV_SAMPLES, name='Observed Yaw Rate Queue')
 
+    obsv_left_vel_q = task_share.Queue('h', size=OBSV_SAMPLES, name='Observed Left Velocity Queue')
+    obsv_right_vel_q = task_share.Queue('h', size=OBSV_SAMPLES, name='Observed Right Velocity Queue')
+    obsv_s_q = task_share.Queue('h', size=OBSV_SAMPLES, name='Observed Linear Displacement Queue')
+    obsv_yaw_q = task_share.Queue('h', size=OBSV_SAMPLES, name='Observed Yaw Queue')
 
     # -----------------------------------------------------------------------
 
@@ -233,11 +237,14 @@ def main():
                                        mtr_enable, abort, motor_data_ready, obsv_data_ready,
                                        time_q, left_pos_q, right_pos_q, left_vel_q, right_vel_q,
                                        obsv_time_q, obsv_sL_q, obsv_sR_q, obsv_psi_q, obsv_psi_dot_q,
-                                       time_sh, left_pos_sh, right_pos_sh, left_vel_sh, right_vel_sh, obsv_time_sh, obsv_sL_sh, obsv_sR_sh, obsv_psi_sh, obsv_psi_dot_sh)
+                                       time_sh, left_pos_sh, right_pos_sh, left_vel_sh, right_vel_sh, obsv_time_sh, obsv_sL_sh, obsv_sR_sh, obsv_psi_sh, obsv_psi_dot_sh,
+                                       obsv_left_vel_sh, obsv_right_vel_sh, obsv_s_sh, obsv_yaw_sh,
+                                       obsv_left_vel_q, obsv_right_vel_q, obsv_s_q, obsv_yaw_q)
 
     stream_task_obj = StreamTask(eff, col_done, stream_data, uart,
                                  time_q, left_pos_q, right_pos_q, left_vel_q, right_vel_q,
                                  obsv_time_q, obsv_sL_q, obsv_sR_q, obsv_psi_q, obsv_psi_dot_q,
+                                 obsv_left_vel_q, obsv_right_vel_q, obsv_s_q, obsv_yaw_q,
                                  control_mode, setpoint, kp, ki, k_line, lf_target)
 
     steering_task_obj = SteeringTask(ir_array, battery,
@@ -267,7 +274,7 @@ def main():
     
     _read_IMU_task = cotask.Task(read_IMU_task_obj.run, name='Read IMU Task', priority=1, period=20, profile=True, trace=False)
 
-    _state_estimation_task = cotask.Task(state_estimation_task_obj.run, name='State Estimation Task', priority=2, period=40, profile=True, trace=False)
+    _state_estimation_task = cotask.Task(state_estimation_task_obj.run, name='State Estimation Task', priority=2, period=20, profile=True, trace=False)
 
 
 

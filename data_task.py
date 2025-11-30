@@ -39,7 +39,8 @@ class DataCollectionTask:
                  col_start, col_done,
                  mtr_enable, abort, motor_data_ready, obsv_data_ready,
                  time_q, left_pos_q, right_pos_q, left_vel_q, right_vel_q, obsv_time_q, obsv_sL_q, obsv_sR_q, obsv_psi_q, obsv_psi_dot_q,
-                 time_sh, left_pos_sh, right_pos_sh, left_vel_sh, right_vel_sh, obsv_time_sh, obsv_sL_sh, obsv_sR_sh, obsv_psi_sh, obsv_psi_dot_sh):
+                 time_sh, left_pos_sh, right_pos_sh, left_vel_sh, right_vel_sh, obsv_time_sh, obsv_sL_sh, obsv_sR_sh, obsv_psi_sh, obsv_psi_dot_sh,
+                 obsv_left_vel_sh, obsv_right_vel_sh, obsv_s_sh, obsv_yaw_sh, obsv_left_vel_q, obsv_right_vel_q, obsv_s_q, obsv_yaw_q):
 
         # Flags
         self.col_start = col_start
@@ -48,6 +49,24 @@ class DataCollectionTask:
         self.abort = abort
         self.motor_data_ready = motor_data_ready
         self.obsv_data_ready = obsv_data_ready
+
+        # Shares
+        self.time_sh = time_sh
+        self.left_pos_sh = left_pos_sh
+        self.right_pos_sh = right_pos_sh
+        self.left_vel_sh = left_vel_sh
+        self.right_vel_sh = right_vel_sh
+
+        self.obsv_time_sh = obsv_time_sh
+        self.obsv_sL_sh = obsv_sL_sh
+        self.obsv_sR_sh = obsv_sR_sh
+        self.obsv_psi_sh = obsv_psi_sh
+        self.obsv_psi_dot_sh = obsv_psi_dot_sh
+
+        self.obsv_left_vel_sh = obsv_left_vel_sh
+        self.obsv_right_vel_sh = obsv_right_vel_sh
+        self.obsv_s_sh = obsv_s_sh
+        self.obsv_yaw_sh = obsv_yaw_sh
 
         # Queues
         self.time_q = time_q
@@ -62,18 +81,10 @@ class DataCollectionTask:
         self.obsv_psi_q = obsv_psi_q
         self.obsv_psi_dot_q = obsv_psi_dot_q
 
-        # Shares
-        self.time_sh = time_sh
-        self.left_pos_sh = left_pos_sh
-        self.right_pos_sh = right_pos_sh
-        self.left_vel_sh = left_vel_sh
-        self.right_vel_sh = right_vel_sh
-
-        self.obsv_time_sh = obsv_time_sh
-        self.obsv_sL_sh = obsv_sL_sh
-        self.obsv_sR_sh = obsv_sR_sh
-        self.obsv_psi_sh = obsv_psi_sh
-        self.obsv_psi_dot_sh = obsv_psi_dot_sh
+        self.obsv_left_vel_q = obsv_left_vel_q
+        self.obsv_right_vel_q = obsv_right_vel_q
+        self.obsv_s_q = obsv_s_q
+        self.obsv_yaw_q = obsv_yaw_q
 
         # ensure FSM starts in state S0_INIT
         self.state = self.S0_INIT
@@ -99,6 +110,11 @@ class DataCollectionTask:
                 self.obsv_psi_q.clear()
                 self.obsv_psi_dot_q.clear()
 
+                self.obsv_left_vel_q.clear()
+                self.obsv_right_vel_q.clear()
+                self.obsv_s_q.clear()
+                self.obsv_yaw_q.clear()
+
                 self.state = self.S1_WAIT_FOR_START_COLLECTING # set next state
 
             ### 1: WAITING STATE -----------------------------------------------
@@ -121,10 +137,15 @@ class DataCollectionTask:
 
                     if self.obsv_data_ready.get():
                         self.obsv_time_q.put(self.obsv_time_sh.get())
-                        self.obsv_sL_q.put(self.obsv_sL_sh.get())
-                        self.obsv_sR_q.put(self.obsv_sR_sh.get())
-                        self.obsv_psi_q.put(self.obsv_psi_sh.get())
-                        self.obsv_psi_dot_q.put(self.obsv_psi_dot_sh.get())
+                        # self.obsv_sL_q.put(self.obsv_sL_sh.get())
+                        # self.obsv_sR_q.put(self.obsv_sR_sh.get())
+                        # self.obsv_psi_q.put(self.obsv_psi_sh.get())
+                        # self.obsv_psi_dot_q.put(self.obsv_psi_dot_sh.get())
+                        # self.obsv_data_ready.put(0)
+                        self.obsv_left_vel_q.put(self.obsv_left_vel_sh.get())
+                        self.obsv_right_vel_q.put(self.obsv_right_vel_sh.get())
+                        self.obsv_s_q.put(self.obsv_s_sh.get())
+                        self.obsv_yaw_q.put(self.obsv_yaw_sh.get())
                         self.obsv_data_ready.put(0)
 
                 else:

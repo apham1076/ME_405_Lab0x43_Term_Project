@@ -193,7 +193,8 @@ class IMU:
         # print("Reading Euler angles")
         heading, roll, pitch = self._read_reg(self.reg.EULER_DATA_ALL)
         # Convert to degrees (1 degree = 16 LSB) and return the values
-        return (-heading / 16.0, roll / 16.0, pitch / 16.0)
+        heading = -1 * (heading / 16 ) + 360
+        return (heading, roll / 16.0, pitch / 16.0)
 
     # --------------------------------------------------------------------------
     def read_angular_velocity(self):

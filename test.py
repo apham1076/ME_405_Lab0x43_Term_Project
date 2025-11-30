@@ -91,6 +91,10 @@ def create_run(control_mode, control_val, driving_mode, run_num, size):
     sR = np.zeros(obsv_size)
     psi = np.zeros(obsv_size)
     psi_dot = np.zeros(obsv_size)
+    omega_L = np.zeros(obsv_size)
+    omega_R = np.zeros(obsv_size)
+    s = np.zeros(obsv_size)
+    yaw = np.zeros(obsv_size)
 
     df1 = pd.DataFrame({
         "_time": time,
@@ -103,10 +107,14 @@ def create_run(control_mode, control_val, driving_mode, run_num, size):
 
     df2 = pd.DataFrame({
         "_obsv_time": obsv_time,
-        "_obsv_sL": sL,
-        "_obsv_sR": sR,
-        "_obsv_psi": psi,
-        "_obsv_psi_dot": psi_dot
+        # "_obsv_sL": sL,
+        # "_obsv_sR": sR,
+        # "_obsv_psi": psi,
+        # "_obsv_psi_dot": psi_dot,
+        "_obsv_left_vel": omega_L,
+        "_obsv_right_vel": omega_R,
+        "_obsv_s": s,
+        "_obsv_yaw": yaw
     })
 
     return {"control_val": control_val, "run_num": run_num, "control_mode": control_mode_dict[control_mode], "driving_mode": driving_mode_dict[driving_mode], "size": size, "obsv_size": obsv_size, "motor_data": df1, "obsv_data": df2}
@@ -481,7 +489,8 @@ while True:
                     base_name = f"{run_name}_{run_code}_{_control_val}_{driving_code}"
                     try:
                         csv_name = os.path.join(csv_dir, base_name + ".csv")
-                        cols = ["_time", "_left_pos", "_right_pos", "_left_vel", "_right_vel", "_obsv_time", "_obsv_sL", "_obsv_sR", "_obsv_psi", "_obsv_psi_dot"]
+                        # cols = ["_time", "_left_pos", "_right_pos", "_left_vel", "_right_vel", "_obsv_time", "_obsv_sL", "_obsv_sR", "_obsv_psi", "_obsv_psi_dot"]
+                        cols = ["_time", "_left_pos", "_right_pos", "_left_vel", "_right_vel", "_obsv_time", "_obsv_left_vel", "_obsv_right_vel", "_obsv_s", "_obsv_yaw"]
                         cols = [c for c in cols if c in df.columns]
                         df[cols].to_csv(csv_name, index=False)
                         print(f"Saved complete motor data to {csv_name}")
@@ -809,7 +818,8 @@ while True:
 
                             # For a normal observer frame, parse the CSV payload
                             try:
-                                idx_str, time_s, sL, sR, psi, psi_dot = frame.split(',')
+                                # idx_str, time_s, sL, sR, psi, psi_dot = frame.split(',')
+                                idx_str, time_s, omega_L, omega_R, s, yaw = frame.split(',')
                                 idx = int(idx_str)
                             except ValueError:
                                 print(f"[Rejected] Bad observer frame contents: '{frame}'")
@@ -822,10 +832,14 @@ while True:
 
                             # Store the observer values
                             runs[run_name]["obsv_data"].loc[idx,"_obsv_time"] = float(time_s)
-                            runs[run_name]["obsv_data"].loc[idx, "_obsv_sL"] = float(sL)
-                            runs[run_name]["obsv_data"].loc[idx, "_obsv_sR"] = float(sR)
-                            runs[run_name]["obsv_data"].loc[idx, "_obsv_psi"] = float(psi)
-                            runs[run_name]["obsv_data"].loc[idx, "_obsv_psi_dot"] = float(psi_dot)
+                            # runs[run_name]["obsv_data"].loc[idx, "_obsv_sL"] = float(sL)
+                            # runs[run_name]["obsv_data"].loc[idx, "_obsv_sR"] = float(sR)
+                            # runs[run_name]["obsv_data"].loc[idx, "_obsv_psi"] = float(psi)
+                            # runs[run_name]["obsv_data"].loc[idx, "_obsv_psi_dot"] = float(psi_dot)
+                            runs[run_name]["obsv_data"].loc[idx, "_obsv_left_vel"] = float(omega_L)
+                            runs[run_name]["obsv_data"].loc[idx, "_obsv_right_vel"] = float(omega_R)
+                            runs[run_name]["obsv_data"].loc[idx, "_obsv_s"] = float(s)
+                            runs[run_name]["obsv_data"].loc[idx, "_obsv_yaw"] = float(yaw)
                 else:
                     pass
             else:

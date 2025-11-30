@@ -27,6 +27,7 @@ class StreamTask:
                     eff, col_done, stream_data, uart,
                     time_q, left_pos_q, right_pos_q, left_vel_q, right_vel_q,
                     obsv_time_q, obsv_sL_q, obsv_sR_q, obsv_psi_q, obsv_psi_dot_q,
+                    obsv_left_vel_q, obsv_right_vel_q, obsv_s_q, obsv_yaw_q,
                     control_mode, setpoint, kp, ki, k_line, lf_target):
 
          # Serial interface (Bluetooth UART)
@@ -57,6 +58,11 @@ class StreamTask:
         self.obsv_sR_q = obsv_sR_q
         self.obsv_psi_q = obsv_psi_q
         self.obsv_psi_dot_q = obsv_psi_dot_q
+
+        self.obsv_left_vel_q = obsv_left_vel_q
+        self.obsv_right_vel_q = obsv_right_vel_q
+        self.obsv_s_q = obsv_s_q
+        self.obsv_yaw_q = obsv_yaw_q
 
        
         # ensure FSM starts in state S0_INIT
@@ -137,13 +143,18 @@ class StreamTask:
                 while self.obsv_time_q.any():
                     # Get items from the queues
                     t = self.obsv_time_q.get()
-                    sL = self.obsv_sL_q.get()
-                    sR = self.obsv_sR_q.get()
-                    psi = self.obsv_psi_q.get()
-                    psi_dot = self.obsv_psi_dot_q.get()
+                    # sL = self.obsv_sL_q.get()
+                    # sR = self.obsv_sR_q.get()
+                    # psi = self.obsv_psi_q.get()
+                    # psi_dot = self.obsv_psi_dot_q.get()
+                    omega_L = self.obsv_left_vel_q.get()
+                    omega_R = self.obsv_right_vel_q.get()
+                    s = self.obsv_s_q.get()
+                    yaw = self.obsv_yaw_q.get()
                     # Put it all into a CSV-style line stamped with the index
                     # Build a framed message with delimiters for better PC parsing
-                    payload = f"{index},{t},{sL},{sR},{psi},{psi_dot}"
+                    # payload = f"{index},{t},{sL},{sR},{psi},{psi_dot}"
+                    payload = f"{index},{t},{omega_L},{omega_R},{s},{yaw}"
                     # payload = f"{index},{t},{sL:.3f},{sR:.3f},{psi:.3f},{psi_dot:.3f}"
 
                     framed = f"<S>{payload}<E>" # these start and end delimeters will help us process data on the PC side

@@ -125,21 +125,27 @@ class StateEstimationTask:
                 self.obsv_time_sh.put(int(t))
                 
                 # Scale values
-                obsv_sL = self.y_k[0,0] * 1e3       # Has units m / 1000
-                obsv_sR = self.y_k[1,0] * 1e3       # Has units m / 1000
-                obsv_psi = self.y_k[2,0] * 1e6          # Has units rad / 1e6
-                obsv_psi_dot = self.y_k[3,0] * 1e6      # Has units rad/s / 1e6
+                # obsv_sL = self.y_k[0,0] * 1e3       # Has units m / 1000
+                # obsv_sR = self.y_k[1,0] * 1e3       # Has units m / 1000
+                # obsv_psi = self.y_k[2,0] * 1e6          # Has units rad / 1e6
+                # obsv_psi_dot = self.y_k[3,0] * 1e6      # Has units rad/s / 1e6
 
-                # Put observer values in shares
-                self.obsv_sL_sh.put(int(obsv_sL))
-                self.obsv_sR_sh.put(int(obsv_sR))
-                self.obsv_psi_sh.put(int(obsv_psi))
-                self.obsv_psi_dot_sh.put(int(obsv_psi_dot))
+                # # Put observer values in shares
+                # self.obsv_sL_sh.put(int(obsv_sL))
+                # self.obsv_sR_sh.put(int(obsv_sR))
+                # self.obsv_psi_sh.put(int(obsv_psi))
+                # self.obsv_psi_dot_sh.put(int(obsv_psi_dot))
 
-                # self.obsv_left_vel_sh.put(float(self.x_kplus1[0,0]))
-                # self.obsv_right_vel_sh.put(float(self.x_kplus1[1,0]))
-                # self.obsv_s_sh.put(float(self.x_kplus1[2,0]))
-                # self.obsv_yaw_sh.put(float(self.x_kplus1[3,0]))
+                # Get estimated state
+                obsv_left_vel = self.x_kplus1[0,0] * 1e3    # Has units rad/s / 1e3
+                obsv_right_vel = self.x_kplus1[1,0] * 1e3   # Has units rad/s / 1e3
+                obsv_s = self.x_kplus1[2,0] * 1e3           # Has units m / 1e3
+                obsv_yaw = self.x_kplus1[3,0] * 1e3         # Has units rad / 1e3
+
+                self.obsv_left_vel_sh.put(int(obsv_left_vel))
+                self.obsv_right_vel_sh.put(int(obsv_right_vel))
+                self.obsv_s_sh.put(int(obsv_s))
+                self.obsv_yaw_sh.put(int(obsv_yaw))
                 
                 # Set flag for data task
                 self.obsv_data_ready.put(1)

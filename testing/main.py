@@ -49,22 +49,7 @@ print("Starting IMU test...")
 
 gc.collect()  # Run garbage collector to free up memory
 
-# while True:
-#     cal_stat = imu.read_calibration_status()
-#     print("Calibration status (sys, gyr, acc, mag):", cal_stat)
-#     # t1 = ticks_us()
-#     # imu._read_reg(imu.reg.ACC_DATA_ALL)
-#     # t2 = ticks_us()
-#     # print("Acceleration (mg): X={0}, Y={1}, Z={2}".format(ax, ay, az))
-#     # print("Time to read acceleration (us):", ticks_diff(t2, t1))
-#     sleep_ms(500)
-def callback(line):
-    print("line =", line)
-    extint.disable()
-
-extint = ExtInt('H0', ExtInt.IRQ_FALLING, Pin.PULL_NONE, callback)
-extint2 = ExtInt('H1', ExtInt.IRQ_FALLING, Pin.PULL_NONE, callback)
-extint3 = ExtInt('C10', ExtInt.IRQ_FALLING, Pin.PULL_NONE, callback)
-extint4 = ExtInt('C11', ExtInt.IRQ_FALLING, Pin.PULL_NONE, callback)
-extint5 = ExtInt('C12', ExtInt.IRQ_FALLING, Pin.PULL_NONE, callback)
-extint6 = ExtInt('D2', ExtInt.IRQ_FALLING, Pin.PULL_NONE, callback)
+while True:
+    yaw_rate = imu.read_angular_velocity()[2]
+    print("Yaw rate (deg/s):", yaw_rate)
+    sleep_ms(500)
