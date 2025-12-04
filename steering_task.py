@@ -66,6 +66,8 @@ class SteeringTask:
         v_right = max(min(v_right, max_sp), -max_sp)
         self.left_sp_sh.put(v_left)
         self.right_sp_sh.put(v_right)
+        # print("Max speed clamp: {:.2f}, Published v_left: {:.2f}, v_right: {:.2f}".format(
+        #     max_sp, v_left, v_right))
 
     # --------------------------------------------------------------------------
     ### FINITE STATE MACHINE
@@ -125,6 +127,7 @@ class SteeringTask:
                         correction = self.k_line_param * error_norm # steering correction
                         v_left = self.v_target_param + correction # correct steering
                         v_right = self.v_target_param - correction # correct steering
+                        # print(f"Centroid: {centroid:.2f}, Error norm: {error_norm:.3f}, Correction: {correction:.3f}, v_left: {v_left:.2f}, v_right: {v_right:.2f}")
                         self._publish(v_left, v_right)
 
             # S3: LOST LINE --------------------------------------------------

@@ -161,13 +161,19 @@ class MotorControlTask:
                         left_eff = _eff
                         right_eff = 0.6*_eff
                 # ----------------------------------------------------------
-                # MODE 1: VELOCITY (closed-loop velocity control) OR MODE 2: LINE-FOLLOWING
+                # MODE 1: VELOCITY (closed-loop velocity control)
                 # ----------------------------------------------------------
-                else:
+                elif self.control_mode.get() == 1:
                     self.left_sp_sh.put(float(self.setpoint.get()))
                     self.right_sp_sh.put(float(self.setpoint.get()))
-
                     # Calculate control efforts
+                    left_eff = self.left_controller.run(left_vel)
+                    right_eff = self.right_controller.run(right_vel)
+
+                # ----------------------------------------------------------
+                # MODE 2: LINE FOLLOWING (outer + inner loop)    
+
+                elif self.control_mode.get() == 2:
                     left_eff = self.left_controller.run(left_vel)
                     right_eff = self.right_controller.run(right_vel)
 

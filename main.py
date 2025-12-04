@@ -40,7 +40,7 @@ USB serial (REPL) remains active for debug prints.
 import gc
 import cotask
 import task_share
-from pyb import Pin, UART, Timer, I2C
+from pyb import Pin, UART, Timer, I2C, ExtInt
 from motor import Motor
 from encoder import Encoder
 from battery_droop import Battery
@@ -53,6 +53,8 @@ from steering_task import SteeringTask
 from state_estimation_task import StateEstimationTask
 from read_IMU_task import ReadIMUTask
 from IMU_sensor import IMU
+from bump_task import BumpTask
+from gc_task import GCTask
 from os import listdir
 
 def main():
@@ -81,16 +83,21 @@ def main():
     # other (odd) physical indices (1,3,5,7,9,11) on the array:
     IR_PINS = [
         Pin.cpu.A0,  # physical index 1  (leftmost used)
+        Pin.cpu.A6,  # physical index 2
         Pin.cpu.A1,  # physical index 3
+        Pin.cpu.A7,  # physical index 4
         Pin.cpu.A4,  # physical index 5
+        Pin.cpu.C4,  # physical index 6 (might be broken)
         Pin.cpu.B0,  # physical index 7
+        Pin.cpu.B1,  # physical index 8
         Pin.cpu.C1,  # physical index 9
+        Pin.cpu.C3,  # physical index 10
         Pin.cpu.C0,  # physical index 11 (rightmost used)
     ]
 
     # Map each pin to the *board's* printed sensor index.
     # When we later have the full array (e.g., 1..11), we can update this list to match the pins.
-    IR_BOARD_INDICES = [1, 3, 5, 7, 9, 11]
+    IR_BOARD_INDICES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 
     # Create the IR array driver (it constructs ADCs internally)
     ir_array = IRArray(
@@ -106,6 +113,8 @@ def main():
     i2c = I2C(2, I2C.CONTROLLER, baudrate=400000)
     imu = IMU(i2c)
     imu.set_operation_mode("config")  # start in config mode
+
+
 
     # ------------------------------------------------------------------------
     ### Calibration Files Check:
@@ -187,6 +196,7 @@ def main():
     read_IMU_flg = task_share.Share('B', name='Read IMU flag')
     motor_data_ready = task_share.Share('B', name='Motor Data Ready Flag')
     obsv_data_ready = task_share.Share('B', name='Observer Data Ready Flag')
+    bumpt = task_share.Share('B', name='Bump Triggered Flag')
 
        # --- Data streaming shares...
     ack_end = task_share.Share('B', name='ACK End of Stream Flag')
@@ -260,6 +270,10 @@ def main():
                                                     psi_sh, psi_dot_sh,
                                                     left_eff_sh, right_eff_sh,
                                                     battery, imu, obsv_sL_sh, obsv_sR_sh, obsv_psi_sh, obsv_psi_dot_sh, obsv_left_vel_sh, obsv_right_vel_sh, obsv_s_sh, obsv_yaw_sh)
+    
+    bump_task_obj = BumpTask(abort, bump_pin='H0')
+
+    gc_task_obj = GCTask()
 
 	# Create costask.Task WRAPPERS. (If trace is enabled for any task, memory will be allocated for state transition tracing, and the application will run out of memory after a while and quit. Therefore, use tracing only for debugging and set trace to False when it's not needed)
     _motor_task = cotask.Task(motor_task_obj.run, name='Motor Control Task', priority=3, period=20, profile=True, trace=False)
@@ -276,7 +290,9 @@ def main():
 
     _state_estimation_task = cotask.Task(state_estimation_task_obj.run, name='State Estimation Task', priority=2, period=20, profile=True, trace=False)
 
+    _bump_task = cotask.Task(bump_task_obj.run, name='Bump Task', priority=4, period=20, profile=True, trace=False)
 
+    _gc_task = cotask.Task(gc_task_obj.run, name='Garbage Collector Task', priority=2, period=100, profile=True, trace=False)
 
 	# Now add (append) the tasks to the scheduler list
     cotask.task_list.append(_motor_task)
@@ -286,6 +302,8 @@ def main():
     cotask.task_list.append(_steering_task)
     cotask.task_list.append(_state_estimation_task)
     cotask.task_list.append(_read_IMU_task)
+    cotask.task_list.append(_bump_task)
+    # cotask.task_list.append(_gc_task)
 
     ### The scheduler is ready to start ###
 
@@ -300,6 +318,7 @@ def main():
         except KeyboardInterrupt:
             left_motor.disable()
             right_motor.disable()
+            print("Keyboard interrupt detected, stopping motors and halting scheduler.")
             break
         except:
             left_motor.disable()

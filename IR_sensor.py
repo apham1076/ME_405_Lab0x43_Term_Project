@@ -152,4 +152,4 @@ class IRArray:
         Returns the ideal center location in index space.
         For arbitrary index sets, use average of min and max (center of span).
         """
-        return 0.5 * (min(self.sensor_index) + max(self.sensor_index))
+        return 0.5 * (min(self.sensor_index) + max(self.sensor_index)) - 1
