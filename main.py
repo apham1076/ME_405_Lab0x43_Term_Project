@@ -55,11 +55,12 @@ from read_IMU_task import ReadIMUTask
 from IMU_sensor import IMU
 from bump_task import BumpTask
 from gc_task import GCTask
+from spectator_task import SpectatorTask
 from os import listdir
 
 def main():
     print("\r\n=== ME405 Lab 0x05 Scheduler Start ===")
-    MAX_SAMPLES = 200
+    MAX_SAMPLES = 100
     OBSV_SAMPLES = MAX_SAMPLES // 2  # Observer collects half the samples
     
     # -----------------------------------------------------------------------
@@ -198,9 +199,13 @@ def main():
     obsv_data_ready = task_share.Share('B', name='Observer Data Ready Flag')
     bumpt = task_share.Share('B', name='Bump Triggered Flag')
 
-       # --- Data streaming shares...
+    # --- Data streaming shares...
     ack_end = task_share.Share('B', name='ACK End of Stream Flag')
 
+    # --- Spectator Task shares...
+    abs_x_sh = task_share.Share('f', name='Absolute X Position Share')
+    abs_y_sh = task_share.Share('f', name='Absolute Y Position Share')
+    abs_theta_sh = task_share.Share('f', name='Absolute Theta Share')
     #
     #
     # ------------------------------- Queues -----------------------------
@@ -275,6 +280,9 @@ def main():
 
     gc_task_obj = GCTask()
 
+    spectator_task_obj = SpectatorTask(start,
+                                       left_pos_sh, right_pos_sh, abs_x_sh, abs_y_sh, abs_theta_sh)
+
 	# Create costask.Task WRAPPERS. (If trace is enabled for any task, memory will be allocated for state transition tracing, and the application will run out of memory after a while and quit. Therefore, use tracing only for debugging and set trace to False when it's not needed)
     _motor_task = cotask.Task(motor_task_obj.run, name='Motor Control Task', priority=3, period=20, profile=True, trace=False)
     
@@ -292,7 +300,9 @@ def main():
 
     _bump_task = cotask.Task(bump_task_obj.run, name='Bump Task', priority=4, period=20, profile=True, trace=False)
 
-    _gc_task = cotask.Task(gc_task_obj.run, name='Garbage Collector Task', priority=2, period=100, profile=True, trace=False)
+    _gc_task = cotask.Task(gc_task_obj.run, name='Garbage Collector Task', priority=2, period=40, profile=True, trace=False)
+
+    _spectator_task = cotask.Task(spectator_task_obj.run, name='Spectator Task', priority=2, period=20, profile=True, trace=False)
 
 	# Now add (append) the tasks to the scheduler list
     cotask.task_list.append(_motor_task)
@@ -300,10 +310,11 @@ def main():
     cotask.task_list.append(_ui_task)
     cotask.task_list.append(_stream_task)
     cotask.task_list.append(_steering_task)
-    cotask.task_list.append(_state_estimation_task)
+    # cotask.task_list.append(_state_estimation_task)
     cotask.task_list.append(_read_IMU_task)
-    cotask.task_list.append(_bump_task)
-    # cotask.task_list.append(_gc_task)
+    # cotask.task_list.append(_bump_task)
+    cotask.task_list.append(_gc_task)
+    cotask.task_list.append(_spectator_task)
 
     ### The scheduler is ready to start ###
 
