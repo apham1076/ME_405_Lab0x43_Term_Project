@@ -161,10 +161,10 @@ class MotorControlTask:
                 t = millis() - self.t0
 
                 # Get current positions and velocities (in raw units, counts and counts/s, for data streaming)
-                left_pos = self.left_encoder.get_position_counts()
-                right_pos = self.right_encoder.get_position_counts()
-                left_vel = self.left_encoder.get_velocity_counts_s()
-                right_vel = self.right_encoder.get_velocity_counts_s()
+                left_pos = self.left_encoder.get_position("counts")
+                right_pos = self.right_encoder.get_position("counts")
+                left_vel = self.left_encoder.get_velocity("counts/s")
+                right_vel = self.right_encoder.get_velocity("counts/s")
 
                 ### Determine which control mode to use:
                 # 0 = Effort (open loop)

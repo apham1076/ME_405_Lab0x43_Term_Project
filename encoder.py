@@ -78,31 +78,25 @@ class Encoder:
         self.prev_time = ticks_us()
 
     # --------------------------------------------------------------------------
-    def get_position_counts(self):
-        '''Return position in counts.'''
-        return self.position_counts  # position [counts]
-    
+    def get_position(self, unit: str = "counts"):
+        '''Return position in specified units: "counts", "rad", or "mm".'''
+        if unit == "counts":
+            return self.position_counts  # position [counts]
+        elif unit == "rad":
+            return self.position_counts * self.RAD_PER_COUNT  # position [rad]
+        elif unit == "mm":
+            return self.position_counts * self.RAD_PER_COUNT * self.WHEEL_RADIUS_MM  # position [mm]
+        else:
+            raise ValueError("Invalid unit. Choose 'counts', 'rad', or 'mm'.")
+        
     # --------------------------------------------------------------------------
-    def get_position_rad(self):
-        '''Return position in radians.'''
-        return self.position_counts * self.RAD_PER_COUNT  # position [rad]
-
-    # --------------------------------------------------------------------------
-    def get_position_mm(self):
-        '''Return position in millimeters.'''
-        return self.get_position_rad() * self.WHEEL_RADIUS_MM  # position [mm]
-
-    # --------------------------------------------------------------------------
-    def get_velocity_counts_s(self):
-        '''Return velocity in counts per second.'''
-        return self.velocity_counts_per_s  # velocity [counts/s]
-    
-    # --------------------------------------------------------------------------
-    def get_velocity_rad_s(self):
-        '''Return velocity in radians per second.'''
-        return self.get_velocity_counts_s() * self.RAD_PER_COUNT  # velocity [rad/s]
-
-    # --------------------------------------------------------------------------
-    def get_velocity_mm_s(self):
-        '''Return velocity in millimeters per second.'''
-        return self.get_velocity_rad_s() * self.WHEEL_RADIUS_MM  # velocity [mm/s]
+    def get_velocity(self, unit: str = "counts/s"):
+        '''Return velocity in specified units: "counts/s", "rad/s", or "mm/s".'''
+        if unit == "counts/s":
+            return self.velocity_counts_per_s  # velocity [counts/s]
+        elif unit == "rad/s":
+            return self.velocity_counts_per_s * self.RAD_PER_COUNT  # velocity [rad/s]
+        elif unit == "mm/s":
+            return self.velocity_counts_per_s * self.RAD_PER_COUNT * self.WHEEL_RADIUS_MM  # velocity [mm/s]
+        else:
+            raise ValueError("Invalid unit. Choose 'counts/s', 'rad/s', or 'mm/s'.")
