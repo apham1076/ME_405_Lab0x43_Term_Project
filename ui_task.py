@@ -16,6 +16,7 @@
 # from pyb import USB_VCP
 # from pyb import UART
 from time import ticks_ms, ticks_diff
+import gc
 
 class UITask:
     """Reads user input from Bluetooth UART (UART5), interprets commands, and sets. Reads user input from the Bluetooth UART (UART5). Commands are sent from PC via test.py (VS Code terminal)."""
