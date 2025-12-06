@@ -19,11 +19,13 @@ class StateEstimationTask:
 
     ### Initialize the object's attributes
     # --------------------------------------------------------------------------
-    def __init__(self, start, obsv_data_ready,
+    def __init__(self,
+                 run_observer,
+                 start_time, obsv_data_ready,
                  obsv_time_sh, left_pos_sh, right_pos_sh, 
                  left_vel_sh, right_vel_sh,
                  psi_sh, psi_dot_sh, left_eff_sh, right_eff_sh,
-                 battery, imu,
+                 battery,
                  obsv_sL_sh, obsv_sR_sh, obsv_psi_sh, obsv_psi_dot_sh,
                  obsv_left_vel_sh, obsv_right_vel_sh, obsv_s_sh, obsv_yaw_sh):
 
@@ -38,7 +40,7 @@ class StateEstimationTask:
         self.right_eff_sh = right_eff_sh
         self.battery = battery
 
-        self.start = start
+        self.start_time = start_time
         self.obsv_time_sh = obsv_time_sh
         self.obsv_sL_sh = obsv_sL_sh
         self.obsv_sR_sh = obsv_sR_sh
@@ -50,6 +52,7 @@ class StateEstimationTask:
         self.obsv_yaw_sh = obsv_yaw_sh
 
         # Flags
+        self.run_observer = run_observer
         self.obsv_data_ready = obsv_data_ready
 
         self.r = 0.035  # wheel radius (m)
@@ -91,11 +94,19 @@ class StateEstimationTask:
         self.state = self.S0_INIT # ensure FSM starts in state S0_INIT
     
     def run(self):
-        while True:
+        while True: # run infinite iterations of the FSM
+            ### 0: INIT STATE --------------------------------------------------
             if (self.state == self.S0_INIT):
+                # Wait for signal from motor task to start observing
+                run_observer = self.run_observer.get()
+                if run_observer:
+                    motor_task_start_time = self.start_time.get()
+                    self.state = self.S1_ESTIMATING # set next state
+                else:
+                    yield self.state
+                    continue
 
-                self.state = self.S1_ESTIMATING # set next state
-
+            ### 1: ESTIMATING STATE --------------------------------------------
             elif (self.state == self.S1_ESTIMATING):
                 # Determine input vector, u
                 V_L = self.left_eff_sh.get() * self.V_nom / 100.0
@@ -121,7 +132,7 @@ class StateEstimationTask:
                 self.y_k = np.dot(self.C, self.x_k)
 
                 # Put time in share
-                t = millis() - self.start.get()
+                t = millis() - motor_task_start_time
                 self.obsv_time_sh.put(int(t))
                 
                 # Scale values

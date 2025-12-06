@@ -25,7 +25,7 @@ class MotorControlTask:
                  left_motor, right_motor,
                  left_encoder, right_encoder,
                  battery,
-                 eff, mtr_enable, motor_data_ready, abort, driving_mode, setpoint, kp, ki, control_mode,
+                 eff, mtr_enable, motor_data_ready, run_observer, abort, driving_mode, setpoint, kp, ki, control_mode,
                  start_time,
                  time_sh, left_pos_sh, right_pos_sh, left_vel_sh, right_vel_sh,
                  left_sp_sh, right_sp_sh, left_eff_sh, right_eff_sh):
@@ -61,6 +61,7 @@ class MotorControlTask:
         self.mtr_enable = mtr_enable
         self.abort = abort
         self.motor_data_ready = motor_data_ready
+        self.run_observer = run_observer
 
         # Controllers
         self.left_controller = ClosedLoop(self.kp, self.ki, self.left_sp_sh, self.battery, effort_limits=(-100, 100))
@@ -103,6 +104,7 @@ class MotorControlTask:
                 # Clear command and shares
                 self.eff.put(0)
                 self.mtr_enable.put(0)
+                self.run_observer.put(0)  # Disable state estimator
 
                 # Set default modes
                 self.driving_mode.put(1)
@@ -137,6 +139,9 @@ class MotorControlTask:
                     self.left_motor.enable()
                     self.right_motor.enable()
                     
+                    # Enable state estimator on transition from WAIT to RUN
+                    self.run_observer.put(1)
+                    
                     self.state = self.S2_RUN # set next state
             
             ### 2: RUN STATE ---------------------------------------------------
@@ -147,6 +152,7 @@ class MotorControlTask:
                     self.right_motor.disable()
                     self.left_controller.reset()
                     self.right_controller.reset()
+                    self.run_observer.put(0)  # Disable state estimator on transition from RUN to WAIT
                     self.abort.put(0)  # Reset abort flag after handling it
                     self.mtr_enable.put(0)  # Clear enable flag
                     self.state = self.S1_WAIT_FOR_ENABLE
