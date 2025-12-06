@@ -25,7 +25,8 @@ class MotorControlTask:
                  left_motor, right_motor,
                  left_encoder, right_encoder,
                  battery,
-                 eff, mtr_enable, motor_data_ready, abort, driving_mode, setpoint, kp, ki, control_mode, start,
+                 eff, mtr_enable, motor_data_ready, abort, driving_mode, setpoint, kp, ki, control_mode,
+                 start_time,
                  time_sh, left_pos_sh, right_pos_sh, left_vel_sh, right_vel_sh,
                  left_sp_sh, right_sp_sh, left_eff_sh, right_eff_sh):
 
@@ -38,16 +39,16 @@ class MotorControlTask:
 
         # Shares
         self.eff = eff
-        self.driving_mode = driving_mode
+        self.driving_mode = driving_mode # 1=straight, 2=pivot, 3=arc
         self.setpoint = setpoint
         self.kp = kp
         self.ki = ki
-        self.control_mode = control_mode
+        self.control_mode = control_mode # 0=effort, 1=velocity, 2=line follow
         self.left_sp_sh = left_sp_sh
         self.right_sp_sh = right_sp_sh
         self.left_eff_sh = left_eff_sh
         self.right_eff_sh = right_eff_sh
-        self.start = start
+        self.start_time = start_time
 
         # Queues
         self.time_sh = time_sh
@@ -67,6 +68,24 @@ class MotorControlTask:
 
         self.t0 = 0 # zero the start time offset
         self.state = self.S0_INIT # ensure FSM starts in state S0_INIT
+    
+    # --------------------------------------------------------------------------
+    ### HELPER FUNCTIONS
+    # --------------------------------------------------------------------------
+    ### Split setpoints for left and right motors based on driving mode
+    def _split_setpoints(self, mode_val, setpoint):
+        """
+        mode 1: straight  -> (spL, spR) = ( sp,  sp)
+        mode 2: pivot     -> (spL, spR) = ( sp, -sp)
+        mode 3: arc       -> (spL, spR) = ( sp, sp*RATIO )
+        """
+        if mode_val == 1:   # straight
+            return float(setpoint), float(setpoint)
+        elif mode_val == 2: # pivot in place
+            return float(setpoint), -float(setpoint)
+        else:               # arc (simple fixed ratio; refine later if desired)
+            RATIO = 0.6
+            return float(setpoint), float(setpoint) * RATIO
 
     # --------------------------------------------------------------------------
     ### FINITE STATE MACHINE
@@ -93,9 +112,6 @@ class MotorControlTask:
                 self.left_controller.reset()
                 self.right_controller.reset()
 
-                # Get start time
-                self.start.put(millis())
-
                 self.state = self.S1_WAIT_FOR_ENABLE # set next state
 
             ### 1: WAITING STATE -----------------------------------------------
@@ -109,8 +125,15 @@ class MotorControlTask:
                         except Exception as e:
                             print(f"Battery refresh failed: {e}")
 
+                    # Zero encoders
                     self.left_encoder.zero()
                     self.right_encoder.zero()
+
+                    # Log a timestamp to zero the time right when the motors are enabled
+                    self.t0 = millis()
+                    self.start_time.put(self.t0)
+
+                    # Enable motors
                     self.left_motor.enable()
                     self.right_motor.enable()
                     
@@ -126,19 +149,22 @@ class MotorControlTask:
                     self.right_controller.reset()
                     self.abort.put(0)  # Reset abort flag after handling it
                     self.mtr_enable.put(0)  # Clear enable flag
-
                     self.state = self.S1_WAIT_FOR_ENABLE
+                    yield self.state
                     continue
 
                 # Update encoders
                 self.left_encoder.update()
                 self.right_encoder.update()
 
-                # Get current velocities and positions
-                left_pos = self.left_encoder.get_position()
-                right_pos = self.right_encoder.get_position()
-                left_vel = self.left_encoder.get_velocity()
-                right_vel = self.right_encoder.get_velocity()
+                # Calculate the exact timestamp of the measurements
+                t = millis() - self.t0
+
+                # Get current positions and velocities (in raw units, counts and counts/s, for data streaming)
+                left_pos = self.left_encoder.get_position_counts()
+                right_pos = self.right_encoder.get_position_counts()
+                left_vel = self.left_encoder.get_velocity_counts_s()
+                right_vel = self.right_encoder.get_velocity_counts_s()
 
                 ### Determine which control mode to use:
                 # 0 = Effort (open loop)
