@@ -16,6 +16,7 @@ import numpy as np
 import os
 import queue as local_queue
 import time
+import math
 
 key = ''                    # Stores value of key pressed as a string
 running = False             # Set when motor testing is progress
@@ -54,6 +55,15 @@ user_prompt = '''\r\nCommand keys:
     h      : Help / show this menu
     ctrl-c : Interrupt this program
 '''
+
+# --------------------------------------------------------------------------
+# CONSTANTS FOR UNIT CONVERSIONS
+GEAR_RATIO = 3952/33  # Gear ratio of motor to wheel (~120)
+CPR_MOTOR = 12 # Counts per rev of the motor shaft (before gearbox)
+CPR_WHEEL = GEAR_RATIO*CPR_MOTOR  # Counts per rev of the wheel (~1440)
+RAD_PER_COUNT = 2 * math.pi / CPR_WHEEL  # Radians per count
+WHEEL_RADIUS_MM = 35  # Wheel radius in mm
+# --------------------------------------------------------------------------
 
 # ==============================================================================
 # HELPER FUNCTIONS
@@ -267,33 +277,45 @@ while True:
                     elif selected == 'v':
                         control_mode = 1
                         print("Selected Velocity mode")
-                        gains = input("Enter setpoint, Kp, and Ki separated by a comma (e.g., 40,1.5,0.1): ")
+                        gains = input("Enter setpoint (mm/s), Kp, and Ki separated by a comma (e.g., 40,1.5,0.1): ")
                         try:
                             sp_str, kp_str, ki_str = gains.split(',')
-                            setpoint = int(sp_str)
+                            # Convert user's setpoint from mm/s to rad/s
+                            setpoint_mm_s = float(sp_str) # mm/s
+                            setpoint_rad_s = setpoint_mm_s / WHEEL_RADIUS_MM  # rad/s
                             kp = float(kp_str)
                             ki = float(ki_str)
-                            kp_int = int(kp * 100)
-                            ki_int = int(ki * 100)
-                            line = f'v{setpoint:04d}{kp_int:04d}{ki_int:04d}'
+                            # Scale setpoint and gains (*100) for transmission
+                            setpoint_scaled = int(setpoint_rad_s * 100)
+                            kp_scaled = int(kp * 100)
+                            ki_scaled = int(ki * 100)
+                            # Semd as 4-digit integers
+                            line = f'v{setpoint_scaled:04d}{kp_scaled:04d}{ki_scaled:04d}'
+                            # Store setpoint in mm/s for the data log
+                            setpoint = setpoint_mm_s
                         except ValueError:
                             print("Invalid format. Please enter two numbers separated by a comma.")
 
                     elif selected == 'l':
                         control_mode = 2
                         print("Selected Line Following mode")
-                        gains = input("Enter Kp, Ki, K_line, and target separated by commas (e.g., 1.5,0.1,2.0,0.5): ")
+                        gains = input("Enter Kp, Ki, K_line, and target (mm/s) separated by commas (e.g., 1.5,0.1,2.0,0.5): ")
                         try:
                             kp_str, ki_str, k_line_str, target_str = gains.split(',')
+                            # Convert user's setpoint from mm/s to rad/s
+                            setpoint_mm_s = float(target_str) # mm/s
+                            setpoint_rad_s = setpoint_mm_s / WHEEL_RADIUS_MM  # rad/s
                             kp = float(kp_str)
                             ki = float(ki_str)
                             k_line = float(k_line_str)
-                            target = float(target_str)
-                            kp_int = int(kp * 100)
-                            ki_int = int(ki * 100)
-                            k_line_int = int(k_line * 100)
-                            target_int = int(target * 100)
-                            line = f'l{kp_int:04d}{ki_int:04d}{k_line_int:04d}{target_int:04d}'
+                            # Scale setpoint and gains (*100) for transmission
+                            target_scaled = int(setpoint_rad_s * 100)
+                            kp_scaled = int(kp * 100)
+                            ki_scaled = int(ki * 100)
+                            k_line_scaled = int(k_line * 100)
+                            line = f'l{kp_scaled:04d}{ki_scaled:04d}{k_line_scaled:04d}{target_scaled:04d}'
+                            # Store setpoint in mm/s for the data log
+                            setpoint = setpoint_mm_s
                         except ValueError:
                             print("Invalid format. Please enter four numbers separated by commas.")
                     

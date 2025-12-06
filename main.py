@@ -194,19 +194,19 @@ def main():
     mtr_enable = task_share.Share('B', name='Motor Enable Flag')
     stream_data = task_share.Share('B', name='Stream Data Flag')
     abort = task_share.Share('B', name='Abort Flag')
+    run_observer = task_share.Share('B', name='Run Observer Flag')
     read_IMU_flg = task_share.Share('B', name='Read IMU flag')
     motor_data_ready = task_share.Share('B', name='Motor Data Ready Flag')
     obsv_data_ready = task_share.Share('B', name='Observer Data Ready Flag')
     bumpt = task_share.Share('B', name='Bump Triggered Flag')
 
-       # --- Data streaming shares...
+    # --- Data streaming shares...
     ack_end = task_share.Share('B', name='ACK End of Stream Flag')
 
     # --- Spectator Task shares...
     abs_x_sh = task_share.Share('f', name='Absolute X Position Share')
     abs_y_sh = task_share.Share('f', name='Absolute Y Position Share')
     abs_theta_sh = task_share.Share('f', name='Absolute Theta Share')
-
     #
     #
     # ------------------------------- Queues -----------------------------
@@ -245,7 +245,7 @@ def main():
     motor_task_obj = MotorControlTask(left_motor, right_motor,
                                       left_encoder, right_encoder,
                                       battery,
-                                      eff, mtr_enable, motor_data_ready, abort, driving_mode, setpoint, kp, ki, control_mode, start,
+                                      eff, mtr_enable, motor_data_ready, run_observer, abort, driving_mode, setpoint, kp, ki, control_mode, start,
                                       time_sh, left_pos_sh, right_pos_sh, left_vel_sh, right_vel_sh,
                                       left_sp_sh, right_sp_sh, left_eff_sh, right_eff_sh)
 
@@ -270,12 +270,16 @@ def main():
     
     read_IMU_task_obj = ReadIMUTask(imu, left_pos_sh, right_pos_sh, psi_sh, psi_dot_sh, read_IMU_flg)
 
-    state_estimation_task_obj = StateEstimationTask(start, obsv_data_ready, obsv_time_sh, 
+    state_estimation_task_obj = StateEstimationTask(start,
+                                                    run_observer,
+                                                    obsv_data_ready,
+                                                    obsv_time_sh, 
                                                     left_pos_sh, right_pos_sh,
                                                     left_vel_sh, right_vel_sh,
                                                     psi_sh, psi_dot_sh,
                                                     left_eff_sh, right_eff_sh,
-                                                    battery, imu, obsv_sL_sh, obsv_sR_sh, obsv_psi_sh, obsv_psi_dot_sh, obsv_left_vel_sh, obsv_right_vel_sh, obsv_s_sh, obsv_yaw_sh)
+                                                    battery,
+                                                    obsv_sL_sh, obsv_sR_sh, obsv_psi_sh, obsv_psi_dot_sh, obsv_left_vel_sh, obsv_right_vel_sh, obsv_s_sh, obsv_yaw_sh)
     
     bump_task_obj = BumpTask(abort, bump_pin='H0')
 
