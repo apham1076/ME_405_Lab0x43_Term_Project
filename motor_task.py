@@ -150,16 +150,15 @@ class MotorControlTask:
                     self.abort.put(0)  # Reset abort flag after handling it
                     self.mtr_enable.put(0)  # Clear enable flag
                     self.state = self.S1_WAIT_FOR_ENABLE
-                    yield self.state
                     continue
 
                 # Update encoders
                 self.left_encoder.update()
                 self.right_encoder.update()
 
+                # --- Get raw data for storing to the shares ---
                 # Calculate the exact timestamp of the measurements
                 t = millis() - self.t0
-
                 # Get current positions and velocities (in raw units, counts and counts/s, for data streaming)
                 left_pos = self.left_encoder.get_position("counts")
                 right_pos = self.right_encoder.get_position("counts")
@@ -197,7 +196,8 @@ class MotorControlTask:
                     right_eff = self.right_controller.run(right_vel)
 
                 # ----------------------------------------------------------
-                # MODE 2: LINE FOLLOWING (outer + inner loop)    
+                # MODE 2: LINE FOLLOWING (outer + inner loop)  
+                # ----------------------------------------------------------  
 
                 elif self.control_mode.get() == 2:
                     left_eff = self.left_controller.run(left_vel)
@@ -209,9 +209,6 @@ class MotorControlTask:
                 self.left_motor.set_effort(float(left_eff))
                 self.right_motor.set_effort(float(right_eff))
                 # ----------------------------------------------------------
-
-                # Calculate the exact timestamp of the measurement
-                t = millis() - self.start.get()
 
                 # Write data samples to shares (for other tasks using them)
                 self.time_sh.put(int(t))
