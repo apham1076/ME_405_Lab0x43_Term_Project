@@ -38,7 +38,7 @@ class StateEstimationTask:
         self.right_eff_sh = right_eff_sh
         self.battery = battery
 
-        self.start = start
+        self.start = start  
         self.obsv_time_sh = obsv_time_sh
         self.obsv_sL_sh = obsv_sL_sh
         self.obsv_sR_sh = obsv_sR_sh
@@ -58,12 +58,12 @@ class StateEstimationTask:
 
         self.V_nom = self.battery.read_voltage()
 
-        self.A_D = np.array([[0, 0, 0.1331, 0],
+        self.A_D = np.array([[0, 0, 0.1331*100, 0],
                              [0, 0, 0.1331, 0],
                              [0, 0, 0, 0],
                              [0, 0, 0, 0]])
 
-        self.B_D = np.array([[0.0406, 0.0373, -0.0666, -0.0666, 0, -2.0123],
+        self.B_D = np.array([[0.0406, 0.0373, -0.0666*100, -0.0666*100, 0, -2.0123],
                              [0.0373, 0.0406, -0.0666, -0.0666, 0, 2.0123],
                              [0, 0, 0.5, 0.5, 0, 0],
                              [0, 0, -0.0698, 0.0698, 0.9902, 0.0001]])
@@ -107,6 +107,7 @@ class StateEstimationTask:
                 psi = self.psi_sh.get() / 1000
                 psi_dot = self.psi_dot_sh.get() / 1000
 
+                # print("State Estimation Task: V_L =", V_L, "V_R =", V_R, "s_L =", s_L, "s_R =", s_R, "psi =", psi, "psi_dot =", psi_dot)
                 # Form u_star
                 u_star = np.array([[V_L],
                                     [V_R],

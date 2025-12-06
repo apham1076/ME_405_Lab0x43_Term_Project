@@ -7,6 +7,7 @@
 # ==============================================================================
 
 import gc
+from time import sleep_ms
 
 class GCTask:
     """Task to periodically run garbage collection."""
@@ -16,5 +17,7 @@ class GCTask:
 
     def run(self):
         while True:
+            # print("Running garbage collection...")
+            # print("Free memory before GC:", gc.mem_free())
             gc.collect()  # Run garbage collection
-            yield  # Yield control back to the scheduler
+            yield # Yield control back to the scheduler

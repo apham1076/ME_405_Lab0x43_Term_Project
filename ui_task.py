@@ -16,6 +16,7 @@
 # from pyb import USB_VCP
 # from pyb import UART
 from time import ticks_ms, ticks_diff
+import gc
 
 class UITask:
     """Reads user input from Bluetooth UART (UART5), interprets commands, and sets. Reads user input from the Bluetooth UART (UART5). Commands are sent from PC via test.py (VS Code terminal)."""
@@ -100,6 +101,9 @@ class UITask:
         """Generator that checks PuTTY for commands and updates flags"""
         while True: # run infinite iterations of the FSM
             ### 0: INIT STATE --------------------------------------------------
+            # print("UITask: Performing garbage collection at start of run...")
+            # print("Free memory before GC:", gc.mem_free())
+            # gc.collect()
             if (self.state == self.S0_INIT):
                 self.col_start.put(0)
                 self.col_done.put(0)
