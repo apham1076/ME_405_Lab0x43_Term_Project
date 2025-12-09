@@ -21,7 +21,7 @@ class SteeringTask:
     def __init__(self, ir_array, battery,
                  control_mode, ir_cmd,
                  left_sp_sh, right_sp_sh,
-                 k_line, lf_target):
+                 k_line, lf_target, bias):
         # Hardware
         self.ir = ir_array
         self.battery = battery
@@ -37,6 +37,7 @@ class SteeringTask:
         self.k_line_param = 0.0 # cached line-following gain
         self.v_target_param = 0.0 # cached nominal translational speed
         self._have_params = False # flag to indicate if params have been loaded, set true when S2 entered
+        self.bias = bias    # centroid bias to influence line following
 
         # Lost-line behavior
         self.search_speed = 0.5 # fraction of v_target to creep forward while searching
@@ -89,6 +90,7 @@ class SteeringTask:
             # S0: INIT ---------------------------------------------------------
             if self.state == self.S0_INIT:
                 # Nothing special to init beyond being explicit
+                self.bias.put(0.0)
                 self._publish(0.0, 0.0) # ensure motors are stopped
                 self.state = self.S1_WAIT_ENABLE
 
@@ -122,7 +124,7 @@ class SteeringTask:
                         idx_min = min(self.ir.sensor_index)
                         idx_max = max(self.ir.sensor_index)
                         half_span = 0.5 * (idx_max - idx_min) if idx_max > idx_min else 1.0
-                        error_norm = (centroid - center) / half_span # -1 (far left) to +1 (far right)
+                        error_norm = (centroid - center) / half_span + self.bias.get() # -1 (far left) to +1 (far right)
 
                         correction = self.k_line_param * error_norm # steering correction
                         v_left = self.v_target_param + correction # correct steering

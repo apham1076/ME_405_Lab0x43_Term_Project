@@ -11,8 +11,9 @@ class PathPlanningTask:
 
     # Examples states of the FSM
     S0_INIT = 0
-    S1_WAITING = 1
-    S2_SEG1 = 2
+    S1_SEG1 = 1
+    S2_SEG2 = 2
+    S3_SEG3 = 3
 
     ### Initialize the object's attributes
     # --------------------------------------------------------------------------
@@ -35,14 +36,14 @@ class PathPlanningTask:
         while True:
             if state == self.S0_INIT:
                 # Initialization code here
-                state = self.S1_WAITING
+                state = self.S1_SEG1
 
-            elif state == self.S1_WAITING:
-                # Waiting code here
-                state = self.S2_RUNNING
-
-            elif state == self.S2_RUNNING:
+            elif state == self.S1_SEG1:
                 # Running code here
-                state = self.S1_WAITING
+                state = self.S2_SEG2
+            
+            elif state == self.S2_SEG2:
+                # Running code here
+                state = self.S3_SEG3
 
             yield self.state # Yield control to allow other tasks to run

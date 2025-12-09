@@ -375,7 +375,7 @@ while True:
                 else:
                     print("Starting test...")
                     running = True
-                    First = True
+                    first = True
                     ser.write(b'r')
             elif key == 'k':
                 if running:
@@ -544,7 +544,7 @@ while True:
                 sleep(0.2)
                 # Start test
                 ser.write(b'r')
-                First = True
+                first = True
                 running = True
         
         # Handle serial input
@@ -553,7 +553,7 @@ while True:
             if ser.in_waiting:
                 # print("\r\nWe are reading you loud and clear!")
                 if running:
-                    if First:
+                    if first:
                          # Determine what kind of run to create
                         if control_mode == 0:
                             mode_name = "effort"
@@ -574,7 +574,7 @@ while True:
                         print(f"Run {run_count} created in {mode_name} mode (size={sample_size})")
 
                         streaming = True
-                        First = False
+                        first = False
 
                     elif streaming:
                         # Read all the available bytes in the UART buffer
@@ -583,7 +583,8 @@ while True:
                             frame_buffer += chunk
 
                         # For complete <S> ... <E> frames, extract lines
-                        while "<S>" in frame_buffer and "<E>" in frame_buffer and first_frame:
+                        while "<S>" in frame_buffer and "<E>" in frame_buffer:
+
                             start = frame_buffer.find("<S>")
                             end = frame_buffer.find("<E>", start)
 
@@ -598,10 +599,8 @@ while True:
                             if frame == "#END":
                                 print("Received end of stream marker from Romi. Hit 'd' to print data.")
 
-                                # first = True
                                 running = False
                                 streaming = False
-                                first_frame = False
                                 frame_buffer = ""  # Clear buffer
                                 sleep(0.2)
                                 break
@@ -616,11 +615,6 @@ while True:
 
                             print(f"{frame}")
 
-                            # size = runs.get(run_name, {}).get('size')
-                            # if idx < 0 or idx >= size:
-                            #     print(f"[Rejected] Index {idx} out of range (size={size})")
-                            #     continue
-
                             # Store the values
                             runs[run_name]["motor_data"].loc[idx,"_time"] = float(time_s)
                             runs[run_name]["motor_data"].loc[idx, "_left_pos"] = float(left_pos)
@@ -628,55 +622,6 @@ while True:
                             runs[run_name]["motor_data"].loc[idx, "_left_vel"] = float(left_vel)
                             runs[run_name]["motor_data"].loc[idx, "_right_vel"] = float(right_vel)
 
-                        # while "<S>" in frame_buffer and "<E>" in frame_buffer:
-                        #     start = frame_buffer.find("<S>")
-                        #     end = frame_buffer.find("<E>", start)
-
-                        #     if end == -1: # if there is no <E> found, break
-                        #         break # incomplete frame
-
-                        #     # Extract the inside contents
-                        #     frame = frame_buffer[start+3 : end]
-                        #     frame_buffer = frame_buffer[end+3:]  # Remove processed frame
-
-                        #     # END OF STREAM CHECK
-                        #     if frame == "#END2":
-                        #         print("Received end of stream marker 2 from Romi. Hit 'd' to print data.")
-                        #         # Acknowledge end of stream
-                        #         try:
-                        #             ser.write(b'ACK_END\n')
-                        #         except Exception:
-                        #             pass
-                        #         first_frame = True
-                        #         first = True
-                        #         streaming = False
-                        #         sleep(0.2)
-                        #         continue
-
-                        #     # For a normal observer frame, parse the CSV payload
-                        #     try:
-                        #         # idx_str, time_s, sL, sR, psi, psi_dot = frame.split(',')
-                        #         idx_str, time_s, omega_L, omega_R, s, yaw = frame.split(',')
-                        #         idx = int(idx_str)
-                        #     except ValueError:
-                        #         print(f"[Rejected] Bad observer frame contents: '{frame}'")
-                        #         continue
-
-                        #     obsv_size = runs.get(run_name, {}).get('obsv_size')
-                        #     if idx < 0 or idx >= obsv_size:
-                        #         print(f"[Rejected] Observer index {idx} out of range (size={obsv_size})")
-                        #         continue
-
-                        #     # Store the observer values
-                        #     runs[run_name]["obsv_data"].loc[idx,"_obsv_time"] = float(time_s)
-                        #     # runs[run_name]["obsv_data"].loc[idx, "_obsv_sL"] = float(sL)
-                        #     # runs[run_name]["obsv_data"].loc[idx, "_obsv_sR"] = float(sR)
-                        #     # runs[run_name]["obsv_data"].loc[idx, "_obsv_psi"] = float(psi)
-                        #     # runs[run_name]["obsv_data"].loc[idx, "_obsv_psi_dot"] = float(psi_dot)
-                        #     runs[run_name]["obsv_data"].loc[idx, "_obsv_left_vel"] = float(omega_L)
-                        #     runs[run_name]["obsv_data"].loc[idx, "_obsv_right_vel"] = float(omega_R)
-                        #     runs[run_name]["obsv_data"].loc[idx, "_obsv_s"] = float(s)
-                        #     runs[run_name]["obsv_data"].loc[idx, "_obsv_yaw"] = float(yaw)
                 else:
                     pass
             else:
