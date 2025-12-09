@@ -73,7 +73,7 @@ class ClosedLoop:
         # Final clamp on output (clamp effort to safe limits)
         u = max(min(u, self.effort_max), self.effort_min)
 
-        print(f"CL Controller | SP: {self.sp_sh.get():.2f}, FB: {fb:.2f}, Error: {error:.2f}, Effort: {u:.2f}, Gain: {gain:.3f}")
+        # print(f"CL Controller | SP: {self.sp_sh.get():.2f}, FB: {fb:.2f}, Error: {error:.2f}, Effort: {u:.2f}, Gain: {gain:.3f}")
         
         self.output = u
         self.last_output = u

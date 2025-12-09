@@ -28,7 +28,9 @@ class StreamTask:
                     time_q, left_pos_q, right_pos_q, left_vel_q, right_vel_q,
                     obsv_time_q, obsv_sL_q, obsv_sR_q, obsv_psi_q, obsv_psi_dot_q,
                     obsv_left_vel_q, obsv_right_vel_q, obsv_s_q, obsv_yaw_q,
-                    control_mode, setpoint, kp, ki, k_line, lf_target):
+                    control_mode, setpoint, kp, ki, k_line, lf_target,
+                    time_sh, left_pos_sh, right_pos_sh, left_vel_sh, right_vel_sh,
+                    motor_data_ready):
 
          # Serial interface (Bluetooth UART)
         self.ser = uart
@@ -36,6 +38,7 @@ class StreamTask:
         # Flags
         self.col_done = col_done
         self.stream_data = stream_data
+        self.motor_data_ready = motor_data_ready
         
         # Control parameters
         self.eff = eff
@@ -45,6 +48,13 @@ class StreamTask:
         self.ki = ki
         self.k_line = k_line
         self.lf_target = lf_target
+
+        # Shares
+        self.time_sh = time_sh
+        self.left_pos_sh = left_pos_sh
+        self.right_pos_sh = right_pos_sh
+        self.left_vel_sh = left_vel_sh
+        self.right_vel_sh = right_vel_sh
 
         # Queues
         self.time_q = time_q
@@ -63,6 +73,8 @@ class StreamTask:
         self.obsv_right_vel_q = obsv_right_vel_q
         self.obsv_s_q = obsv_s_q
         self.obsv_yaw_q = obsv_yaw_q
+
+        self.lines_sent = 0
 
        
         # ensure FSM starts in state S0_INIT
@@ -83,6 +95,7 @@ class StreamTask:
             ### 1: WAIT FOR TRIGGER STATE --------------------------------------
             elif (self.state == self.S1_WAIT_FOR_TRIGGER):
                 if self.stream_data.get():
+                    print("Stream Task: starting data stream...")
                     self.state = self.S2_STREAM_DATA # set next state
                 
             ### 2: STREAM DATA STATE -------------------------------------------
@@ -114,65 +127,79 @@ class StreamTask:
                 # self.ser.write(line.encode()) # write the line over Bluetooth
                 # yield self.state # write only one line then yield
 
-                # while we still have items in queue
-                index = 0 # sample index number (sent to PC for alignment)
-                while self.time_q.any():
-                    # Get items from the queues
-                    t = self.time_q.get()
-                    pL = self.left_pos_q.get()
-                    pR = self.right_pos_q.get()
-                    vL = self.left_vel_q.get()
-                    vR = self.right_vel_q.get()
-                    # Put it all into a CSV-style line stamped with the index
-                    # Build a framed message with delimiters for better PC parsing
-                    payload = f"{index},{t},{pL},{pR},{vL},{vR}"
+                # # while we still have items in queue
+                # index = 0 # sample index number (sent to PC for alignment)
+                # while self.time_q.any():
+                #     # Get items from the queues
+                #     t = self.time_q.get()
+                #     pL = self.left_pos_q.get()
+                #     pR = self.right_pos_q.get()
+                #     vL = self.left_vel_q.get()
+                #     vR = self.right_vel_q.get()
+                #     # Put it all into a CSV-style line stamped with the index
+                #     # Build a framed message with delimiters for better PC parsing
+                #     payload = f"{index},{t},{pL},{pR},{vL},{vR}"
 
-                    framed = f"<S>{payload}<E>" # these start and end delimeters will help us process data on the PC side
-                    # Send the line over Bluetooth
-                    self.ser.write(framed.encode() + b"\n")
-                    # Increment the sample index
-                    index += 1
-                    # Only write one line, then yield
-                    yield self.state
+                #     framed = f"<S>{payload}<E>" # these start and end delimeters will help us process data on the PC side
+                #     # Send the line over Bluetooth
+                #     self.ser.write(framed.encode() + b"\n")
+                #     # Increment the sample index
+                #     index += 1
+                #     # Only write one line, then yield
+                #     yield self.state
                 
-                # Once all samples have been sent, mark the end of the stream
-                self.ser.write(b"<S>#END1<E>\n") # explicit end marker for PC
-                yield self.state
+                # # Once all samples have been sent, mark the end of the stream
+                # self.ser.write(b"<S>#END1<E>\n") # explicit end marker for PC
+                # yield self.state
 
-                index = 0 # sample index number (sent to PC for alignment)
-                while self.obsv_time_q.any():
-                    # Get items from the queues
-                    t = self.obsv_time_q.get()
-                    # sL = self.obsv_sL_q.get()
-                    # sR = self.obsv_sR_q.get()
-                    # psi = self.obsv_psi_q.get()
-                    # psi_dot = self.obsv_psi_dot_q.get()
-                    omega_L = self.obsv_left_vel_q.get()
-                    omega_R = self.obsv_right_vel_q.get()
-                    s = self.obsv_s_q.get()
-                    yaw = self.obsv_yaw_q.get()
-                    # Put it all into a CSV-style line stamped with the index
-                    # Build a framed message with delimiters for better PC parsing
-                    # payload = f"{index},{t},{sL},{sR},{psi},{psi_dot}"
-                    payload = f"{index},{t},{omega_L},{omega_R},{s},{yaw}"
-                    # payload = f"{index},{t},{sL:.3f},{sR:.3f},{psi:.3f},{psi_dot:.3f}"
+                # index = 0 # sample index number (sent to PC for alignment)
+                # while self.obsv_time_q.any():
+                #     # Get items from the queues
+                #     t = self.obsv_time_q.get()
+                #     # sL = self.obsv_sL_q.get()
+                #     # sR = self.obsv_sR_q.get()
+                #     # psi = self.obsv_psi_q.get()
+                #     # psi_dot = self.obsv_psi_dot_q.get()
+                #     omega_L = self.obsv_left_vel_q.get()
+                #     omega_R = self.obsv_right_vel_q.get()
+                #     s = self.obsv_s_q.get()
+                #     yaw = self.obsv_yaw_q.get()
+                #     # Put it all into a CSV-style line stamped with the index
+                #     # Build a framed message with delimiters for better PC parsing
+                #     # payload = f"{index},{t},{sL},{sR},{psi},{psi_dot}"
+                #     payload = f"{index},{t},{omega_L},{omega_R},{s},{yaw}"
+                #     # payload = f"{index},{t},{sL:.3f},{sR:.3f},{psi:.3f},{psi_dot:.3f}"
 
-                    framed = f"<S>{payload}<E>" # these start and end delimeters will help us process data on the PC side
-                    # Send the line over Bluetooth
-                    self.ser.write(framed.encode() + b"\n")
-                    # Increment the sample index
-                    index += 1
-                    # Only write one line, then yield
+                #     framed = f"<S>{payload}<E>" # these start and end delimeters will help us process data on the PC side
+                #     # Send the line over Bluetooth
+                #     self.ser.write(framed.encode() + b"\n")
+                #     # Increment the sample index
+                #     index += 1
+                #     # Only write one line, then yield
+
+                if self.motor_data_ready.get():
+                    self.motor_data_ready.put(0)
+                    if self.lines_sent < 300:
+                        t = self.time_sh.get()
+                        pL = self.left_pos_sh.get()
+                        pR = self.right_pos_sh.get()
+                        vL = self.left_vel_sh.get()
+                        vR = self.right_vel_sh.get()
+                        # Put it all into a CSV-style line stamped with the index
+                        payload = f"{self.lines_sent},{t},{pL},{pR},{vL},{vR}"
+                        print(payload)
+                        framed = f"<S>{payload}<E>" # these start and end delimeters will help us process data on the PC side
+                        # Send the line ove r Bluetooth
+                        self.ser.write(framed.encode() + b"\n")
+                        self.lines_sent += 1
+                    else:
+                        # Send end of stream marker
+                        self.ser.write(b"<S>#END<E>\n") # explicit end marker for
+                        # Reset flags
+                        self.stream_data.put(0)
+                        self.lines_sent = 0
+                        self.state = self.S1_WAIT_FOR_TRIGGER # go back to wait state
+
                     yield self.state
-
-                # Once all samples have been sent, mark the end of the stream
-                self.ser.write(b"<S>#END2<E>\n") # explicit end marker for PC
-
-                # Do NOT block waiting for ACK here; ack handling will be done in UI task
-                # Reset flags
-                self.stream_data.put(0)
-                self.col_done.put(0) # reset done flag for next test
-
-                self.state = self.S1_WAIT_FOR_TRIGGER # go back to wait state
 
             yield self.state

@@ -1,12 +1,5 @@
 # Script to run on PC to run motor characterization test and perform data collection
 
-# Last modified: 11-13-25 7:30 PM
-
-# # ************* NOTES **************
-
-# ************* TO-DO **************
-
-
 from serial import Serial, SerialException
 from time import sleep
 import matplotlib.pyplot as plt
@@ -37,6 +30,7 @@ done = False
 # mode = 1                   # 1, 2, 3 = straight, pivot, arc
 queue = local_queue.Queue()  # Queue to hold tests
 queuing = False              # Set when queuing tests
+creating_run = False       # Set when creating a new run
 test_origin = "manual"      # tracks how the current test started: "manual" or "queue"
 
 control_mode_dict = {0: "effort", 1: "velocity", 2: "line following"}
@@ -95,18 +89,18 @@ def create_run(control_mode, control_val, driving_mode, run_num, size):
     v2 = np.zeros(size)
     ctrl = np.zeros(size)  # Store control value (effort or setpoint)
 
-    obsv_size = size // 2
-    obsv_time = np.zeros(obsv_size)
-    sL = np.zeros(obsv_size)
-    sR = np.zeros(obsv_size)
-    psi = np.zeros(obsv_size)
-    psi_dot = np.zeros(obsv_size)
-    omega_L = np.zeros(obsv_size)
-    omega_R = np.zeros(obsv_size)
-    s = np.zeros(obsv_size)
-    yaw = np.zeros(obsv_size)
+    # obsv_size = size // 2
+    # obsv_time = np.zeros(obsv_size)
+    # sL = np.zeros(obsv_size)
+    # sR = np.zeros(obsv_size)
+    # psi = np.zeros(obsv_size)
+    # psi_dot = np.zeros(obsv_size)
+    # omega_L = np.zeros(obsv_size)
+    # omega_R = np.zeros(obsv_size)
+    # s = np.zeros(obsv_size)
+    # yaw = np.zeros(obsv_size)
 
-    df1 = pd.DataFrame({
+    df = pd.DataFrame({
         "_time": time,
         "_control": ctrl,
         "_left_pos": p1,
@@ -115,19 +109,19 @@ def create_run(control_mode, control_val, driving_mode, run_num, size):
         "_right_vel": v2
     })
 
-    df2 = pd.DataFrame({
-        "_obsv_time": obsv_time,
-        # "_obsv_sL": sL,
-        # "_obsv_sR": sR,
-        # "_obsv_psi": psi,
-        # "_obsv_psi_dot": psi_dot,
-        "_obsv_left_vel": omega_L,
-        "_obsv_right_vel": omega_R,
-        "_obsv_s": s,
-        "_obsv_yaw": yaw
-    })
+    # df2 = pd.DataFrame({
+    #     "_obsv_time": obsv_time,
+    #     "_obsv_sL": sL,
+    #     "_obsv_sR": sR,
+    #     "_obsv_psi": psi,
+    #     "_obsv_psi_dot": psi_dot,
+    #     "_obsv_left_vel": omega_L,
+    #     "_obsv_right_vel": omega_R,
+    #     "_obsv_s": s,
+    #     "_obsv_yaw": yaw
+    # })
 
-    return {"control_val": control_val, "run_num": run_num, "control_mode": control_mode_dict[control_mode], "driving_mode": driving_mode_dict[driving_mode], "size": size, "obsv_size": obsv_size, "motor_data": df1, "obsv_data": df2}
+    return {"control_val": control_val, "run_num": run_num, "control_mode": control_mode_dict[control_mode], "driving_mode": driving_mode_dict[driving_mode], "size": size, "motor_data": df}
 
 # ------------------------------------------------------------------------------
 # Function to clean DataFrame by removing all-zero rows except leading zeros
@@ -381,11 +375,14 @@ while True:
                 else:
                     print("Starting test...")
                     running = True
+                    First = True
                     ser.write(b'r')
             elif key == 'k':
                 if running:
                     # Kill motors
                     ser.write(b'k')
+                    running = False
+                    streaming = False
                     queuing = False
                     print("End test. Stop motors")
                 else:
@@ -520,182 +517,6 @@ while True:
                         print(f"Failed to save CSV for {run_name}: {e}")
 
                 continue
-
-                if not runs:
-                    print("No runs available to display or save.")
-                else:
-                    print("Select target:")
-                    print("  l : Latest run")
-                    print("  a : All runs")
-                    print("  c : Cancel")
-                    target = input("Enter choice (l/a/c): ").strip().lower()
-                    if target == 'c' or target == '':
-                        print("Operation cancelled.")
-                        continue
-
-                    print("Create plots? (y/n): ")
-                    create_plots = input().strip().lower() == 'y'
-
-                    if create_plots:
-                        # Prompt user for which data channels to plot
-                        print("Select data to plot (comma-separated):")
-                        print("  1 : left motor velocity")
-                        print("  2 : right motor velocity")
-                        print("  3 : left motor position")
-                        print("  4 : right motor position")
-                        data_sel = input("Enter choices (e.g. 1,2,3): ").strip()
-                        if not data_sel:
-                            print("No data selections made. Skipping plots.")
-                            create_plots = False
-                        else:
-                            # map selection to dataframe columns and short codes
-                            sel_map = {
-                                '1': ('_left_vel', 'Left velocity', 'lv'),
-                                '2': ('_right_vel', 'Right velocity', 'rv'),
-                                '3': ('_left_pos', 'Left position', 'lp'),
-                                '4': ('_right_pos', 'Right position', 'rp')
-                            }
-                            chosen = []
-                            for token in [t.strip() for t in data_sel.split(',')]:
-                                if token in sel_map and token not in chosen:
-                                    chosen.append(token)
-                            if not chosen:
-                                print("No valid data selections found. Skipping plots.")
-                                create_plots = False
-
-                    def normalize_mode(mode_val):
-                        try:
-                            return mode_val[0].lower()
-                        except Exception:
-                            return 'e'
-
-                    if target == 'l':
-                        run_name = f'run{run_count}'
-                        meta = runs.get(run_name)
-                        if not meta:
-                            print(f"Run {run_name} not found.")
-                            continue
-
-                        df = meta["motor_data"]
-                        df_clean, removed = clean_data(df, mode='all')
-                        if removed:
-                            print(f"Removed {removed} all-zero rows from {run_name} before plotting/saving")
-
-                        mode_char = normalize_mode(meta.get('mode', 'E'))
-                        control_val = meta.get('control_val', 'unknown')
-
-                        if mode_char == 'v':
-                            params = meta.get('params', {}) or {}
-                            kp = params.get('kp', 0.0) * 100
-                            ki = params.get('ki', 0.0) * 100
-                            label = f"SP={control_val} Kp={kp:.2f} Ki={ki:.2f}"
-                            base_name = f"{run_name}_V_sp{control_val}_Kp{kp:.2f}_Ki{ki:.2f}"
-                        else:
-                            label = f"Effort={control_val}"
-                            base_name = f"{run_name}_E_eff{control_val}"
-
-                        # Always save complete CSV with all data columns
-                        try:
-                            csv_name = os.path.join(csv_dir, base_name + ".csv")
-                            cols = ["_time", "_left_pos", "_right_pos", "_left_vel", "_right_vel"]
-                            cols = [c for c in cols if c in df_clean.columns]
-                            df_clean[cols].to_csv(csv_name, index=False)
-                            print(f"Saved complete motor data to {csv_name}")
-                        except Exception as e:
-                            print(f"Failed to save CSV for {run_name}: {e}")
-
-                        if create_plots:
-                            # Save separate plot per selected channel for this single run
-                            for k in chosen:
-                                col, readable, code = sel_map[k]
-                                try:
-                                    plt.figure()
-                                    plt.plot(df_clean["_time"], df_clean[col], label=label)
-                                    plt.xlabel("Time, [ms]")
-                                    plt.ylabel(readable)
-                                    try:
-                                        plt.legend()
-                                    except Exception:
-                                        pass
-                                    fig_name = os.path.join(plots_dir, base_name + "_" + code + ".png")
-                                    plt.savefig(fig_name)
-                                    plt.close()
-                                    print(f"Saved figure to {fig_name}")
-                                except Exception as e:
-                                    print(f"Failed to save figure {code} for {run_name}: {e}")
-
-                        print(user_prompt)
-
-                    elif target == 'a':
-                        # Save individual CSVs for all runs and optionally create combined plots
-                        for run_name, meta in runs.items():
-                            df = meta["motor_data"]
-                            df_clean, removed = clean_data(df, mode='all')
-                            if removed:
-                                print(f"Removed {removed} all-zero rows from {run_name} before saving")
-
-                            mode_char = normalize_mode(meta.get('mode', 'E'))
-                            control_val = meta.get('control_val', 'unknown')
-
-                            if mode_char == 'v':
-                                kp = meta.get('params', {}).get('kp', 0) if meta.get('params') else 0
-                                ki = meta.get('params', {}).get('ki', 0) if meta.get('params') else 0
-                                base_name = f"{run_name}_V_sp{control_val}_Kp{kp:.2f}_Ki{ki:.2f}"
-                            else:
-                                base_name = f"{run_name}_E_eff{control_val}"
-
-                            # Save complete CSV with all data columns
-                            try:
-                                csv_name = os.path.join(csv_dir, base_name + ".csv")
-                                cols = ["_time", "_left_pos", "_right_pos", "_left_vel", "_right_vel"]
-                                cols = [c for c in cols if c in df_clean.columns]
-                                df_clean[cols].to_csv(csv_name, index=False)
-                                print(f"Saved complete motor data to {csv_name}")
-                            except Exception as e:
-                                print(f"Failed to save CSV for {run_name}: {e}")
-
-                        # Create combined plots if requested
-                        if create_plots:
-                            for k in chosen:
-                                col, readable, code = sel_map[k]
-                                plt.figure()
-                                
-                                for run_name, meta in runs.items():
-                                    df = meta["motor_data"]
-                                    df_clean, removed = clean_data(df, mode='all')
-
-                                    mode_char = normalize_mode(meta.get('mode', 'E'))
-                                    control_val = meta.get('control_val', 'unknown')
-
-                                    if mode_char == 'v':
-                                        kp = meta.get('params', {}).get('kp', 0) if meta.get('params') else 0
-                                        ki = meta.get('params', {}).get('ki', 0) if meta.get('params') else 0
-                                        label = f"{run_name} (V) sp={control_val} Kp={kp:.2f} Ki={ki:.2f}"
-                                    else:
-                                        label = f"{run_name} (E) eff={control_val}"
-
-                                    try:
-                                        plt.plot(df_clean["_time"], df_clean[col], label=label)
-                                    except Exception as e:
-                                        print(f"Failed to add plot {readable} for {run_name}: {e}")
-
-                                try:
-                                    plt.xlabel("Time, [ms]")
-                                    plt.ylabel(readable)
-                                    plt.legend()
-                                    fig_all = os.path.join(plots_dir, f"all_runs_{code}.png")
-                                    plt.savefig(fig_all)
-                                    plt.close()
-                                    print(f"Saved plot of all runs for {readable} to '{fig_all}'")
-                                except Exception as e:
-                                    print(f"Failed to save combined plot for {readable}: {e}")
-
-                        print(user_prompt)
-                    else:
-                        print("Unknown target choice. Press 'd' to try again.")
-                        print(user_prompt)
-                        pass
-            
             elif key == 'h':
                 # Print helpful prompt
                 print(user_prompt)
@@ -723,6 +544,7 @@ while True:
                 sleep(0.2)
                 # Start test
                 ser.write(b'r')
+                First = True
                 running = True
         
         # Handle serial input
@@ -731,25 +553,18 @@ while True:
             if ser.in_waiting:
                 # print("\r\nWe are reading you loud and clear!")
                 if running:
-                    ch = ser.read().decode()
-                    if ch == 'q':
-                        print("Testing is done. Press 's' to stream data")
-                        # print(user_prompt)
-                        sleep(0.1)
-                        ser.write(b's')  # Request data streaming
-                        streaming = True
-                        running = False
-                elif streaming:
-                    # Create new run for the run
-                    if first:
+                    if First:
+                         # Determine what kind of run to create
                         if control_mode == 0:
                             mode_name = "effort"
                             params = None
                         elif control_mode == 1:
                             mode_name = "velocity"
                             params = {'setpoint': setpoint, 'kp': kp, 'ki': ki}
-                        sample_size = 200    # Default sample size
-
+                        else:
+                            mode_name = "line_following"
+                            params = {'setpoint': setpoint, 'kp': kp, 'ki': ki, 'k_line': k_line}
+                        sample_size = 200    # Default sample size\
                         # Create new run for motor data
                         run_count += 1
                         run_name = f'run{run_count}'
@@ -758,9 +573,10 @@ while True:
                             runs[run_name]['params'] = params
                         print(f"Run {run_count} created in {mode_name} mode (size={sample_size})")
 
-                        first = False
-                    
-                    else:
+                        streaming = True
+                        First = False
+
+                    elif streaming:
                         # Read all the available bytes in the UART buffer
                         chunk = ser.read(ser.in_waiting or 1).decode()
                         if chunk:
@@ -779,15 +595,12 @@ while True:
                             frame_buffer = frame_buffer[end+3:]  # Remove processed frame
 
                             # END OF STREAM CHECK
-                            if frame == "#END1":
-                                print("Received end of stream marker 1 from Romi. Hit 'd' to print data.")
-                                # Acknowledge end of stream
-                                try:
-                                    ser.write(b'ACK_END\n')
-                                except Exception:
-                                    pass
+                            if frame == "#END":
+                                print("Received end of stream marker from Romi. Hit 'd' to print data.")
+
                                 # first = True
-                                # streaming = False
+                                running = False
+                                streaming = False
                                 first_frame = False
                                 frame_buffer = ""  # Clear buffer
                                 sleep(0.2)
@@ -801,10 +614,12 @@ while True:
                                 print(f"[Rejected] Bad frame contents: '{frame}'")
                                 continue
 
-                            size = runs.get(run_name, {}).get('size')
-                            if idx < 0 or idx >= size:
-                                print(f"[Rejected] Index {idx} out of range (size={size})")
-                                continue
+                            print(f"{frame}")
+
+                            # size = runs.get(run_name, {}).get('size')
+                            # if idx < 0 or idx >= size:
+                            #     print(f"[Rejected] Index {idx} out of range (size={size})")
+                            #     continue
 
                             # Store the values
                             runs[run_name]["motor_data"].loc[idx,"_time"] = float(time_s)
@@ -813,55 +628,55 @@ while True:
                             runs[run_name]["motor_data"].loc[idx, "_left_vel"] = float(left_vel)
                             runs[run_name]["motor_data"].loc[idx, "_right_vel"] = float(right_vel)
 
-                        while "<S>" in frame_buffer and "<E>" in frame_buffer:
-                            start = frame_buffer.find("<S>")
-                            end = frame_buffer.find("<E>", start)
+                        # while "<S>" in frame_buffer and "<E>" in frame_buffer:
+                        #     start = frame_buffer.find("<S>")
+                        #     end = frame_buffer.find("<E>", start)
 
-                            if end == -1: # if there is no <E> found, break
-                                break # incomplete frame
+                        #     if end == -1: # if there is no <E> found, break
+                        #         break # incomplete frame
 
-                            # Extract the inside contents
-                            frame = frame_buffer[start+3 : end]
-                            frame_buffer = frame_buffer[end+3:]  # Remove processed frame
+                        #     # Extract the inside contents
+                        #     frame = frame_buffer[start+3 : end]
+                        #     frame_buffer = frame_buffer[end+3:]  # Remove processed frame
 
-                            # END OF STREAM CHECK
-                            if frame == "#END2":
-                                print("Received end of stream marker 2 from Romi. Hit 'd' to print data.")
-                                # Acknowledge end of stream
-                                try:
-                                    ser.write(b'ACK_END\n')
-                                except Exception:
-                                    pass
-                                first_frame = True
-                                first = True
-                                streaming = False
-                                sleep(0.2)
-                                continue
+                        #     # END OF STREAM CHECK
+                        #     if frame == "#END2":
+                        #         print("Received end of stream marker 2 from Romi. Hit 'd' to print data.")
+                        #         # Acknowledge end of stream
+                        #         try:
+                        #             ser.write(b'ACK_END\n')
+                        #         except Exception:
+                        #             pass
+                        #         first_frame = True
+                        #         first = True
+                        #         streaming = False
+                        #         sleep(0.2)
+                        #         continue
 
-                            # For a normal observer frame, parse the CSV payload
-                            try:
-                                # idx_str, time_s, sL, sR, psi, psi_dot = frame.split(',')
-                                idx_str, time_s, omega_L, omega_R, s, yaw = frame.split(',')
-                                idx = int(idx_str)
-                            except ValueError:
-                                print(f"[Rejected] Bad observer frame contents: '{frame}'")
-                                continue
+                        #     # For a normal observer frame, parse the CSV payload
+                        #     try:
+                        #         # idx_str, time_s, sL, sR, psi, psi_dot = frame.split(',')
+                        #         idx_str, time_s, omega_L, omega_R, s, yaw = frame.split(',')
+                        #         idx = int(idx_str)
+                        #     except ValueError:
+                        #         print(f"[Rejected] Bad observer frame contents: '{frame}'")
+                        #         continue
 
-                            obsv_size = runs.get(run_name, {}).get('obsv_size')
-                            if idx < 0 or idx >= obsv_size:
-                                print(f"[Rejected] Observer index {idx} out of range (size={obsv_size})")
-                                continue
+                        #     obsv_size = runs.get(run_name, {}).get('obsv_size')
+                        #     if idx < 0 or idx >= obsv_size:
+                        #         print(f"[Rejected] Observer index {idx} out of range (size={obsv_size})")
+                        #         continue
 
-                            # Store the observer values
-                            runs[run_name]["obsv_data"].loc[idx,"_obsv_time"] = float(time_s)
-                            # runs[run_name]["obsv_data"].loc[idx, "_obsv_sL"] = float(sL)
-                            # runs[run_name]["obsv_data"].loc[idx, "_obsv_sR"] = float(sR)
-                            # runs[run_name]["obsv_data"].loc[idx, "_obsv_psi"] = float(psi)
-                            # runs[run_name]["obsv_data"].loc[idx, "_obsv_psi_dot"] = float(psi_dot)
-                            runs[run_name]["obsv_data"].loc[idx, "_obsv_left_vel"] = float(omega_L)
-                            runs[run_name]["obsv_data"].loc[idx, "_obsv_right_vel"] = float(omega_R)
-                            runs[run_name]["obsv_data"].loc[idx, "_obsv_s"] = float(s)
-                            runs[run_name]["obsv_data"].loc[idx, "_obsv_yaw"] = float(yaw)
+                        #     # Store the observer values
+                        #     runs[run_name]["obsv_data"].loc[idx,"_obsv_time"] = float(time_s)
+                        #     # runs[run_name]["obsv_data"].loc[idx, "_obsv_sL"] = float(sL)
+                        #     # runs[run_name]["obsv_data"].loc[idx, "_obsv_sR"] = float(sR)
+                        #     # runs[run_name]["obsv_data"].loc[idx, "_obsv_psi"] = float(psi)
+                        #     # runs[run_name]["obsv_data"].loc[idx, "_obsv_psi_dot"] = float(psi_dot)
+                        #     runs[run_name]["obsv_data"].loc[idx, "_obsv_left_vel"] = float(omega_L)
+                        #     runs[run_name]["obsv_data"].loc[idx, "_obsv_right_vel"] = float(omega_R)
+                        #     runs[run_name]["obsv_data"].loc[idx, "_obsv_s"] = float(s)
+                        #     runs[run_name]["obsv_data"].loc[idx, "_obsv_yaw"] = float(yaw)
                 else:
                     pass
             else:

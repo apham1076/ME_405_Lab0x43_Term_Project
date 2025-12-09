@@ -199,6 +199,7 @@ class UITask:
                         ki_int = int(ki_str)
                         kp = kp_int / 100.0
                         ki = ki_int / 100.0
+                        setpoint = setpoint / 100.0  # convert to rad/s
                         self.setpoint.put(setpoint)
                         self.kp.put(kp)
                         self.ki.put(ki)
@@ -240,29 +241,27 @@ class UITask:
                         self.abort.put(0)
                         self.mtr_enable.put(1)
 
-                        if self.control_mode.get() in (0, 1):
-                            self.col_start.put(1)  # start data collection only for open-loop or velocity control
-                            # Clear queues
-                            self.time_q.clear()
-                            self.left_pos_q.clear()
-                            self.right_pos_q.clear()
-                            self.left_vel_q.clear()
-                            self.right_vel_q.clear()
-                            # Change state to monitor test
-                            self.state = self.S3_MONITOR_TEST
-                        else:
-                            # Line-following mode does not collect data (runs indefinitely until stopped)
-                            self.col_start.put(0)
-                            # remain in WAIT state, don't auto-stop
-                            print("Line-follow mode active; running indefinitely.")
+                        # Tell PC to expect data stream
+                        self.ser.write(b'q')
+
+                        self.stream_data.put(1)
+                        # self.col_start.put(1)  # start data collection only for open-loop or velocity control
+                        # # Clear queues
+                        # self.time_q.clear()
+                        # self.left_pos_q.clear()
+                        # self.right_pos_q.clear()
+                        # self.left_vel_q.clear()
+                        # self.right_vel_q.clear()
+                        # Change state to monitor test
+                        self.state = self.S3_MONITOR_TEST
 
                 # 'k' → KILL (STOP)
                 elif cmd == 'k':
                     print("Stopping test")
                     self.abort.put(1)  # Set abort flag first
                     self.mtr_enable.put(0)  # Then disable motors
-                    self.col_start.put(0)  # Stop data collection
-                    self.ser.write(b'q')  # Tell PC test is done
+                    self.stream_data.put(0)  # Stop streaming
+                    # self.col_start.put(0)  # Stop data collection
 
                 # 's' → STREAM
                 elif cmd == 's':
@@ -330,21 +329,13 @@ class UITask:
                         pass
                     else:
                         lower = text.lower()
-                        # Handle ACK_END from PC (stream end acknowledgement)
-                        if 'ack_end' in lower and self.ack_end:
-                            try:
-                                self.ack_end.put(1)
-                            except Exception:
-                                pass
-                            # remove ack token for further processing
-                            lower = lower.replace('ack_end', '')
 
                         # If a 'k' kill command is present, honor it
                         if 'k' in lower:
                             print("Stopping test")
                             self.abort.put(1)  # Set abort flag first
                             self.mtr_enable.put(0)  # Then disable motors
-                            self.col_start.put(0)  # Stop data collection
+                            # self.col_start.put(0)  # Stop data collection
                             self.ser.write(b'q')  # Tell PC test is done
                             self.state = self.S1_WAIT_FOR_COMMAND
                             yield self.state
@@ -354,14 +345,14 @@ class UITask:
                                 self.ser.read(1)
 
                 # Then, check for normal completion if no kill command
-                elif not self.mtr_enable.get() or not self.col_start.get() or self.col_done.get():
+                elif not self.mtr_enable.get() or not self.stream_data.get():
                     # Tell PC test is testing is done
-                    self.ser.write(b'q')
+                    # self.ser.write(b'q')
                     # print("Test completed")
                     self.abort.put(1)
                     self.mtr_enable.put(0)
-                    self.col_start.put(0)
-                    self.col_done.put(0)
+                    # self.col_start.put(0)
+                    # self.col_done.put(0)
                     self.state = self.S1_WAIT_FOR_COMMAND
                 
                 yield self.state

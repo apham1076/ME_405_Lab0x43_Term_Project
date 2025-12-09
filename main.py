@@ -53,9 +53,7 @@ from steering_task import SteeringTask
 from state_estimation_task import StateEstimationTask
 from read_IMU_task import ReadIMUTask
 from IMU_sensor import IMU
-from bump_task import BumpTask
-from gc_task import GCTask
-from spectator_task import SpectatorTask
+# from gc_task import GCTask
 from os import listdir
 
 def main():
@@ -149,7 +147,7 @@ def main():
 
     # --- Motor control shares...
     eff = task_share.Share('f', name='Requested Effort')  # float effort percent
-    setpoint = task_share.Share('h', name='Velocity Setpoint')  # 'h' for signed 16-bit to handle larger velocity values
+    setpoint = task_share.Share('f', name='Velocity Setpoint')  # 'h' for signed 16-bit to handle larger velocity values
     kp = task_share.Share('f', name='Proportional Gain')  # 'f' for float to store Kp
     ki = task_share.Share('f', name='Integral Gain')  # 'f' for float to store Ki
     left_eff_sh = task_share.Share('f', name='Left Motor Effort Share')
@@ -261,7 +259,9 @@ def main():
                                  time_q, left_pos_q, right_pos_q, left_vel_q, right_vel_q,
                                  obsv_time_q, obsv_sL_q, obsv_sR_q, obsv_psi_q, obsv_psi_dot_q,
                                  obsv_left_vel_q, obsv_right_vel_q, obsv_s_q, obsv_yaw_q,
-                                 control_mode, setpoint, kp, ki, k_line, lf_target)
+                                 control_mode, setpoint, kp, ki, k_line, lf_target,
+                                 time_sh, left_pos_sh, right_pos_sh, left_vel_sh, right_vel_sh,
+                                 motor_data_ready)
 
     steering_task_obj = SteeringTask(ir_array, battery,
                                  control_mode, ir_cmd,
@@ -281,12 +281,12 @@ def main():
                                                     battery,
                                                     obsv_sL_sh, obsv_sR_sh, obsv_psi_sh, obsv_psi_dot_sh, obsv_left_vel_sh, obsv_right_vel_sh, obsv_s_sh, obsv_yaw_sh)
     
-    bump_task_obj = BumpTask(abort, bump_pin='H0')
+    # bump_task_obj = BumpTask(abort, bump_pin='H0')
 
-    gc_task_obj = GCTask()
+    # gc_task_obj = GCTask()
 
-    spectator_task_obj = SpectatorTask(start,
-                                       left_pos_sh, right_pos_sh, abs_x_sh, abs_y_sh, abs_theta_sh)
+    # spectator_task_obj = SpectatorTask(start,
+    #                                    left_pos_sh, right_pos_sh, abs_x_sh, abs_y_sh, abs_theta_sh)
 
 	# Create costask.Task WRAPPERS. (If trace is enabled for any task, memory will be allocated for state transition tracing, and the application will run out of memory after a while and quit. Therefore, use tracing only for debugging and set trace to False when it's not needed)
     _motor_task = cotask.Task(motor_task_obj.run, name='Motor Control Task', priority=3, period=20, profile=True, trace=False)
@@ -303,23 +303,23 @@ def main():
 
     _state_estimation_task = cotask.Task(state_estimation_task_obj.run, name='State Estimation Task', priority=2, period=20, profile=True, trace=False)
 
-    _bump_task = cotask.Task(bump_task_obj.run, name='Bump Task', priority=4, period=20, profile=True, trace=False)
+    # _bump_task = cotask.Task(bump_task_obj.run, name='Bump Task', priority=4, period=20, profile=True, trace=False)
 
-    _gc_task = cotask.Task(gc_task_obj.run, name='Garbage Collector Task', priority=2, period=40, profile=True, trace=False)
+    # _gc_task = cotask.Task(gc_task_obj.run, name='Garbage Collector Task', priority=2, period=60, profile=True, trace=False)
 
-    _spectator_task = cotask.Task(spectator_task_obj.run, name='Spectator Task', priority=2, period=20, profile=True, trace=False)
+    # _spectator_task = cotask.Task(spectator_task_obj.run, name='Spectator Task', priority=2, period=20, profile=True, trace=False)
 
 	# Now add (append) the tasks to the scheduler list
     cotask.task_list.append(_motor_task)
-    cotask.task_list.append(_data_collection_task)
+    # cotask.task_list.append(_data_collection_task)
     cotask.task_list.append(_ui_task)
     cotask.task_list.append(_stream_task)
     cotask.task_list.append(_steering_task)
     # cotask.task_list.append(_state_estimation_task)
-    cotask.task_list.append(_read_IMU_task)
+    # cotask.task_list.append(_read_IMU_task)
     # cotask.task_list.append(_bump_task)
-    cotask.task_list.append(_gc_task)
-    cotask.task_list.append(_spectator_task)
+    # cotask.task_list.append(_gc_task)
+    # cotask.task_list.append(_spectator_task)
 
     ### The scheduler is ready to start ###
 

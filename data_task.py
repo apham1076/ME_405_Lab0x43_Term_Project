@@ -135,18 +135,18 @@ class DataCollectionTask:
                         self.right_vel_q.put(self.right_vel_sh.get())
                         self.motor_data_ready.put(0)
 
-                    if self.obsv_data_ready.get():
-                        self.obsv_time_q.put(self.obsv_time_sh.get())
-                        # self.obsv_sL_q.put(self.obsv_sL_sh.get())
-                        # self.obsv_sR_q.put(self.obsv_sR_sh.get())
-                        # self.obsv_psi_q.put(self.obsv_psi_sh.get())
-                        # self.obsv_psi_dot_q.put(self.obsv_psi_dot_sh.get())
-                        # self.obsv_data_ready.put(0)
-                        self.obsv_left_vel_q.put(self.obsv_left_vel_sh.get())
-                        self.obsv_right_vel_q.put(self.obsv_right_vel_sh.get())
-                        self.obsv_s_q.put(self.obsv_s_sh.get())
-                        self.obsv_yaw_q.put(self.obsv_yaw_sh.get())
-                        self.obsv_data_ready.put(0)
+                    # if self.obsv_data_ready.get():
+                    #     self.obsv_time_q.put(self.obsv_time_sh.get())
+                    #     # self.obsv_sL_q.put(self.obsv_sL_sh.get())
+                    #     # self.obsv_sR_q.put(self.obsv_sR_sh.get())
+                    #     # self.obsv_psi_q.put(self.obsv_psi_sh.get())
+                    #     # self.obsv_psi_dot_q.put(self.obsv_psi_dot_sh.get())
+                    #     # self.obsv_data_ready.put(0)
+                    #     self.obsv_left_vel_q.put(self.obsv_left_vel_sh.get())
+                    #     self.obsv_right_vel_q.put(self.obsv_right_vel_sh.get())
+                    #     self.obsv_s_q.put(self.obsv_s_sh.get())
+                    #     self.obsv_yaw_q.put(self.obsv_yaw_sh.get())
+                    #     self.obsv_data_ready.put(0)
 
                 else:
                     print("Queues full or abort signal received, stopping data collection.")
