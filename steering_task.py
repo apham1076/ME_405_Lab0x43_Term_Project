@@ -17,6 +17,7 @@ class SteeringTask:
     S1_WAIT_ENABLE = 1
     S2_FOLLOW = 2
     S3_LOST = 3
+    S4_PIVOT = 4
 
     def __init__(self, ir_array, battery,
                  control_mode, mtr_enable,
@@ -36,9 +37,6 @@ class SteeringTask:
         self.k_line_sh = k_line # share for line-following gain
         self.lf_target_sh = lf_target # share for line-following target speed
         # Local copies (to be updated on S1-->S2 transition)
-        self.k_line_param = 0.0 # cached line-following gain
-        self.v_target_param = 0.0 # cached nominal translational speed
-        self._have_params = False # flag to indicate if params have been loaded, set true when S2 entered
         self.bias = bias # centroid bias to influence line 
         self.abs_x_sh = abs_x_sh
         self.abs_y_sh = abs_y_sh
@@ -61,11 +59,11 @@ class SteeringTask:
     ### HELPER FUNCTIONS
     # --------------------------------------------------------------------------
     def _compute_clamp_bound(self):
-        """Compute the maximum speed clamp based on current parameters."""
+        """Compute the maximum speed clamp."""
         idx_min = min(self.ir.sensor_index)
         idx_max = max(self.ir.sensor_index)
         half_span = 0.5 * (idx_max - idx_min) if idx_max > idx_min else 1.0
-        max_sp = abs(self.v_target_param) + abs(self.k_line_param) * half_span
+        max_sp = abs(self.lf_target_sh.get()) + abs(self.k_line_sh.get()) * half_span
         return max(max_sp, 1.0) # avoid zero clamp
 
     # --------------------------------------------------------------------------
@@ -92,62 +90,45 @@ class SteeringTask:
                 self._publish(0.0, 0.0) # ensure motors are stopped
                 if self.control_mode.get() == 2: # if line following enabled
                     self.state = self.S2_FOLLOW # go to FOLLOW state
+                elif self.control_mode.get() == 3:
+                    self.state = self.S2_FOLLOW # go to FOLLOW state
 
             # S2: FOLLOW LINE --------------------------------------------------
             elif self.state == self.S2_FOLLOW:
-                # ==============================================================
-                # TEMPORARY: for path planning task, always update k_line and lf_target shares
-                self.k_line_param = self.k_line_sh.get()
-                self.v_target_param = self.lf_target_sh.get()
-                # ==============================================================
+                if self.control_mode.get() == 2:
+                    if self.mtr_enable.get():
+                        # print("SteeringTask: Line-following active.")
+                        # Read gains and recalculate clamp
+                        centroid, seen = self.ir.get_centroid() # get line centroid
+                        if not seen:
+                            # No line detected -> go to LOST
+                            self.state = self.S3_LOST
+                        else:
+                            center = self.ir.center_index() # ideal centroid index
+                            # Normalize error to [-1, 1] based on sensor index span
+                            idx_min = min(self.ir.sensor_index)
+                            idx_max = max(self.ir.sensor_index)
+                            half_span = 0.5 * (idx_max - idx_min) if idx_max > idx_min else 1.0
+                            error_norm = (centroid - center) / half_span + self.bias.get() # -1 (far left) to +1 (far right)
 
-                # If motors are disabled, set the param flag False so that fresh params are loaded on next entry (after next enable)
-                if not self.mtr_enable.get():
-                    self._have_params = False # reset param flag
-                    self._publish(0.0, 0.0) # ensure motors are stopped
-                    # Stay in S2_FOLLOW (don't transition to S1) since control_mode may still be 2
-                    yield self.state
-                    continue
-
-                # On entry to S2, load parameters (or reload if have_params was set False)
-                if not self._have_params:
-                    self.k_line_param = self.k_line_sh.get()
-                    self.v_target_param = self.lf_target_sh.get()
-                    self._have_params = True
-
-                if self.control_mode.get() != 2: # if line following disabled
-                    self._publish(0.0, 0.0) # ensure motors are stopped
-                    self._have_params = False # reset param flag
-                    self.state = self.S1_WAIT_ENABLE # go to WAIT ENABLE
+                            correction = self.k_line_sh.get() * error_norm # steering correction
+                            v_left = self.lf_target_sh.get() + correction # correct steering
+                            v_right = self.lf_target_sh.get() - correction # correct steering
+                            # print(f"SteeringTask: centroid={centroid:.2f}, error_norm={error_norm:.2f}, correction={correction:.2f}, v_left={v_left:.2f}, v_right={v_right:.2f}")
+                            self._publish(v_left, v_right)
                 else:
-                    # Read gains and recalculate clamp
-                    centroid, seen = self.ir.get_centroid() # get line centroid
-                    if not seen:
-                        # No line detected -> go to LOST
-                        self.state = self.S3_LOST
-                    else:
-                        center = self.ir.center_index() # ideal centroid index
-                        # Normalize error to [-1, 1] based on sensor index span
-                        idx_min = min(self.ir.sensor_index)
-                        idx_max = max(self.ir.sensor_index)
-                        half_span = 0.5 * (idx_max - idx_min) if idx_max > idx_min else 1.0
-                        error_norm = (centroid - center) / half_span + self.bias.get() # -1 (far left) to +1 (far right)
-
-                        correction = self.k_line_param * error_norm # steering correction
-                        v_left = self.v_target_param + correction # correct steering
-                        v_right = self.v_target_param - correction # correct steering
-                        
-                        self._publish(v_left, v_right)
+                    # print("SteeringTask: Line-following disabled.")
+                    self._publish(0.0, 0.0) # ensure motors are stopped
+                    self.state = self.S1_WAIT_ENABLE # go to WAIT ENABLE
 
             # S3: LOST LINE --------------------------------------------------
             elif self.state == self.S3_LOST:
                 if self.control_mode.get() != 2: # if line following disabled
                     self._publish(0.0, 0.0) # ensure motors are stopped
-                    self._have_params = False # reset param flag
                     self.state = self.S1_WAIT_ENABLE # go to WAIT ENABLE state
                 else:
                     # Gentle creep to reacquire (or set both to 0.0 if you prefer a stop)
-                    v = self.search_speed * self.v_target_param
+                    v = self.search_speed * self.lf_target_sh.get()
                     self._publish(v, v)
 
                     # Quick check for line reacquisition
@@ -155,5 +136,10 @@ class SteeringTask:
                     norm = self.ir.read()
                     if sum(norm) > 0.05: # reacquire threshold
                         self.state = self.S2_FOLLOW # consider line reacquired
+
+            # S4: PIVOT IN PLACE ------------------------------------------------
+            elif self.state == self.S4_PIVOT:
+                # (not implemented)
+                pass
 
             yield self.state

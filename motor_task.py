@@ -169,32 +169,28 @@ class MotorControlTask:
                 # Get current positions and velocities (in raw units, counts and counts/s, for data streaming)
                 left_pos = self.left_encoder.get_position("counts")
                 right_pos = self.right_encoder.get_position("counts")
-                left_vel = self.left_encoder.get_velocity("counts/s")
-                right_vel = self.right_encoder.get_velocity("counts/s")
+                left_vel_fb = self.left_encoder.get_velocity("counts/s")
+                right_vel_fb = self.right_encoder.get_velocity("counts/s")
 
                 # --------------------------------------------------------------
                 ### Determine left and right efforts based on control mode
                 # 0 = Effort; 1 = Velocity; 2 = Line Follow
-                # --------------------------------------------------------------
-                    # ----------------------------------------------------------
-                    # MODE 0: EFFORT (open loop control)
+
+                # ----------------------------------------------------------
+                # MODE 0: EFFORT (open loop control)
                 if self.control_mode.get() == 0:
                     left_eff, right_eff = self._split_setpoints(self.driving_mode.get(), self.eff.get())
 
-                    # ----------------------------------------------------------
-                    # MODE 1: VELOCITY (closed-loop velocity control)
-                elif self.control_mode.get() == 1:
-                    self.left_sp_sh.put(float(self.setpoint.get()))
-                    self.right_sp_sh.put(float(self.setpoint.get()))
+                # ----------------------------------------------------------
+                # MODE 1: VELOCITY (closed-loop velocity control) or MODE 2: LINE FOLLOWING (outer + inner loop)
+                else:
+                    # IF MODE 1: VELOCITY apply user setpoint
+                    if self.control_mode.get() == 1:
+                        self.left_sp_sh.put(float(self.setpoint.get()))
+                        self.right_sp_sh.put(float(self.setpoint.get()))
                     # Calculate control efforts
-                    left_eff = self.left_controller.run(left_vel)
-                    right_eff = self.right_controller.run(right_vel)
-
-                    # ----------------------------------------------------------
-                    # MODE 2: LINE FOLLOWING (outer + inner loop)
-                elif self.control_mode.get() == 2:
-                    left_eff = self.left_controller.run(left_vel)
-                    right_eff = self.right_controller.run(right_vel)
+                    left_eff = self.left_controller.run(left_vel_fb)
+                    right_eff = self.right_controller.run(right_vel_fb)
 
                 # --------------------------------------------------------------
                 # Apply efforts
@@ -206,8 +202,8 @@ class MotorControlTask:
                 self.time_sh.put(int(t))
                 self.left_pos_sh.put(int(left_pos))
                 self.right_pos_sh.put(int(right_pos))
-                self.left_vel_sh.put(int(left_vel))
-                self.right_vel_sh.put(int(right_vel))
+                self.left_vel_sh.put(int(left_vel_fb))
+                self.right_vel_sh.put(int(right_vel_fb))
                 
                 # Store efforts in shares for monitoring
                 self.left_eff_sh.put(float(left_eff))

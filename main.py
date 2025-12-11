@@ -46,7 +46,7 @@ from spectator_task import SpectatorTask
 from path_planning_task import PathPlanningTask
 # from data_task import DataCollectionTask
 # from state_estimation_task import StateEstimationTask
-# from read_IMU_task import ReadIMUTask
+from read_IMU_task import ReadIMUTask
 # from bump_task import BumpTask
 from os import listdir
 
@@ -160,6 +160,9 @@ def main():
     k_line = task_share.Share('f', name='LineFollow K_line')
     lf_target = task_share.Share('f', name='LineFollow Target')
     bias = task_share.Share('f', name='LineFollow Centroid Bias')
+    heading = task_share.Share('f', name='Heading Share')
+    heading_offset = task_share.Share('f', name='Heading Offset Share')
+
     # Initialize line following shares...
     left_sp_sh.put(0.0)
     right_sp_sh.put(0.0)
@@ -260,7 +263,7 @@ def main():
     #                                                 battery,
     #                                                 obsv_sL_sh, obsv_sR_sh, obsv_psi_sh, obsv_psi_dot_sh, obsv_left_vel_sh, obsv_right_vel_sh, obsv_s_sh, obsv_yaw_sh)
 
-    # read_IMU_task_obj = ReadIMUTask(imu, left_pos_sh, right_pos_sh, psi_sh, psi_dot_sh, read_IMU_flg)
+    read_IMU_task_obj = ReadIMUTask(imu, heading, heading_offset, read_IMU_flg)
     
     # bump_task_obj = BumpTask(abort, bump_pin='H0')
 
@@ -287,7 +290,7 @@ def main():
 
     # _state_estimation_task = cotask.Task(state_estimation_task_obj.run, name='State Estimation Task', priority=2, period=20, profile=True, trace=False)
 
-    # _read_IMU_task = cotask.Task(read_IMU_task_obj.run, name='Read IMU Task', priority=1, period=20, profile=True, trace=False)
+    _read_IMU_task = cotask.Task(read_IMU_task_obj.run, name='Read IMU Task', priority=1, period=20, profile=True, trace=False)
 
     # _bump_task = cotask.Task(bump_task_obj.run, name='Bump Task', priority=4, period=20, profile=True, trace=False)
 
@@ -304,7 +307,7 @@ def main():
     cotask.task_list.append(_path_planning_task)
     # cotask.task_list.append(_data_collection_task)
     # cotask.task_list.append(_state_estimation_task)
-    # cotask.task_list.append(_read_IMU_task)
+    cotask.task_list.append(_read_IMU_task)
     # cotask.task_list.append(_bump_task)
 
     # ==========================================================================
