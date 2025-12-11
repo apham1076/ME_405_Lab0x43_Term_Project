@@ -31,13 +31,14 @@ class UITask:
                  mtr_enable, stream_data, abort,
                  eff, driving_mode, setpoint, kp, ki, control_mode,
                  uart, battery, imu, ir_array,
-                 k_line, lf_target, planning):
+                 k_line, lf_target, planning, game_origin_mode):
         
         # Flags
         self.mtr_enable = mtr_enable
         self.stream_data = stream_data
         self.abort = abort
         self.planning = planning
+        self.game_origin_mode = game_origin_mode
         
         # Shares
         self.eff = eff
@@ -180,9 +181,11 @@ class UITask:
                 elif cmd == 'z':   # Toggle path planning mode
                     if self.planning.get():
                         self.planning.put(0)
+                        self.game_origin_mode.put(0)  # Clear game origin mode when path planning is disabled
                         print("Path planning mode DISABLED.")
                     else:
                         self.planning.put(1)
+                        self.game_origin_mode.put(1)  # Set game origin mode when path planning is enabled
                         print("Path planning mode ENABLED.")
                 
                 # 'v': BATTERY VOLTAGE

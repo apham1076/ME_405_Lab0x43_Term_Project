@@ -21,7 +21,9 @@ class SteeringTask:
     def __init__(self, ir_array, battery,
                  control_mode, mtr_enable,
                  left_sp_sh, right_sp_sh,
-                 k_line, lf_target, bias):
+                 k_line, lf_target, bias,
+                 abs_x_sh, abs_y_sh, abs_theta_sh,
+                 nav_target_x_sh, nav_target_y_sh, nav_speed_sh):
         # Hardware
         self.ir = ir_array
         self.battery = battery
@@ -29,7 +31,7 @@ class SteeringTask:
         # Shares
         self.left_sp_sh = left_sp_sh # share for left motor velocity setpoint
         self.right_sp_sh = right_sp_sh # share for right motor velocity setpoint
-        self.control_mode = control_mode # 0: effort, 1: velocity, 2: line-following
+        self.control_mode = control_mode # 0: effort, 1: velocity, 2: line-following, 3: waypoint navigation
         self.mtr_enable = mtr_enable # share for motor enable flag
         self.k_line_sh = k_line # share for line-following gain
         self.lf_target_sh = lf_target # share for line-following target speed
@@ -37,7 +39,13 @@ class SteeringTask:
         self.k_line_param = 0.0 # cached line-following gain
         self.v_target_param = 0.0 # cached nominal translational speed
         self._have_params = False # flag to indicate if params have been loaded, set true when S2 entered
-        self.bias = bias # centroid bias to influence line following
+        self.bias = bias # centroid bias to influence line 
+        self.abs_x_sh = abs_x_sh
+        self.abs_y_sh = abs_y_sh
+        self.abs_theta_sh = abs_theta_sh
+        self.nav_target_x_sh = nav_target_x_sh
+        self.nav_target_y_sh = nav_target_y_sh
+        self.nav_speed_sh = nav_speed_sh
 
         # Lost-line behavior
         self.search_speed = 0.5 # fraction of v_target to creep forward while searching
@@ -67,7 +75,6 @@ class SteeringTask:
         v_right = max(min(v_right, max_sp), -max_sp)
         self.left_sp_sh.put(v_left)
         self.right_sp_sh.put(v_right)
-        # print("Max speed clamp: {:.2f}, Published v_left: {:.2f}, v_right: {:.2f}".format(max_sp, v_left, v_right))
 
     # --------------------------------------------------------------------------
     ### FINITE STATE MACHINE
@@ -86,8 +93,13 @@ class SteeringTask:
                 if self.control_mode.get() == 2: # if line following enabled
                     self.state = self.S2_FOLLOW # go to FOLLOW state
 
-            # S2: FOLLOW LINE -------------------------------------------------
+            # S2: FOLLOW LINE --------------------------------------------------
             elif self.state == self.S2_FOLLOW:
+                # ==============================================================
+                # TEMPORARY: for path planning task, always update k_line and lf_target shares
+                self.k_line_param = self.k_line_sh.get()
+                self.v_target_param = self.lf_target_sh.get()
+                # ==============================================================
 
                 # If motors are disabled, set the param flag False so that fresh params are loaded on next entry (after next enable)
                 if not self.mtr_enable.get():
@@ -124,7 +136,7 @@ class SteeringTask:
                         correction = self.k_line_param * error_norm # steering correction
                         v_left = self.v_target_param + correction # correct steering
                         v_right = self.v_target_param - correction # correct steering
-                        # print(f"Centroid: {centroid:.2f}, Error norm: {error_norm:.3f}, Correction: {correction:.3f}, v_left: {v_left:.2f}, v_right: {v_right:.2f}")
+                        
                         self._publish(v_left, v_right)
 
             # S3: LOST LINE --------------------------------------------------

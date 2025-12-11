@@ -30,6 +30,7 @@ class SpectatorTask:
     ### Initialize the object's attributes
     # --------------------------------------------------------------------------
     def __init__(self, run_observer,
+                 game_origin_mode,
                  left_pos_sh, right_pos_sh, total_s_sh,
                  abs_x_sh, abs_y_sh, abs_theta_sh,
                  x0_mm=0.0, y0_mm=0.0, theta0_rad=0.0):
@@ -42,7 +43,7 @@ class SpectatorTask:
         self.abs_y_sh = abs_y_sh
         self.abs_theta_sh = abs_theta_sh
 
-        # World-frame initial pose (able to be changed)
+        # World-frame initial pose
         self.x0_mm = float(x0_mm)
         self.y0_mm = float(y0_mm)
         self.theta0_rad = float(theta0_rad)
@@ -54,6 +55,7 @@ class SpectatorTask:
 
         # Flags
         self.run_observer = run_observer
+        self.game_origin_mode = game_origin_mode
 
         self.state = self.S0_INIT # Start in the INIT state
 
@@ -81,11 +83,18 @@ class SpectatorTask:
         """!
         At the start of a run, reset the accumulated pose and previous encoder counts.
         """
+        # If in "game origin" mode, override the configured initial pose
+        if self.game_origin_mode.get():
+            # In "game origin" mode: set to (X0, Y0, Theta0) = (100, 800, 0)
+            self.x0_mm = 100.0
+            self.y0_mm = 800.0
+            self.theta0_rad = 0.0
 
-        # Set pose to the configured initial world-frame pose
-        self.x_mm      = self.x0_mm
-        self.y_mm      = self.y0_mm
-        self.theta_rad = self.theta0_rad
+        # Otherwise, use the configured initial pose
+        else:
+            self.x0_mm = self.x0_mm
+            self.y0_mm = self.y0_mm
+            self.theta0_rad = self.theta0_rad
 
         # Push those to the shares so other tasks see the reset immediately
         self.abs_x_sh.put(self.x_mm)
@@ -114,6 +123,7 @@ class SpectatorTask:
         while True:
             ### 0: INIT STATE --------------------------------------------------
             if self.state == self.S0_INIT:
+                self.game_origin_mode.put(0)  # Default to normal world frame
                 # Initialize pose in world frame based on configured initial pose
                 self._reset_odometry()
                 # Transition to WAITING state

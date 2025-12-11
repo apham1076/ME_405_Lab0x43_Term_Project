@@ -80,12 +80,12 @@ def main():
     # Create IR sensor array object
     # Define the physical pins we are *currently* using, left-to-right order.
     # These are the MCU pins connected to the array.
-    IR_pins = [ Pin.cpu.A0,  # physical index 1  (leftmost used)
+    IR_pins = [ Pin.cpu.C4,  # physical index 1  (leftmost used)
                 Pin.cpu.A6,  # physical index 2
                 Pin.cpu.A1,  # physical index 3
                 Pin.cpu.A7,  # physical index 4
                 Pin.cpu.A4,  # physical index 5
-                Pin.cpu.C4,  # physical index 6 (might be broken)
+                Pin.cpu.A0,  # physical index 6 (might be broken)
                 Pin.cpu.B0,  # physical index 7
                 Pin.cpu.B1,  # physical index 8
                 Pin.cpu.C1,  # physical index 9
@@ -167,6 +167,17 @@ def main():
     lf_target.put(0.0)
     bias.put(0.0)
     # --------------------------------------------------------------------------
+    # Spectator shares...
+    total_s_sh = task_share.Share('f', name='Total Displacement Share')
+    abs_x_sh = task_share.Share('f', name='Absolute X Position Share')
+    abs_y_sh = task_share.Share('f', name='Absolute Y Position Share')
+    abs_theta_sh = task_share.Share('f', name='Absolute Theta Share')
+    # --------------------------------------------------------------------------
+    # Navigation shares...
+    nav_target_x_sh = task_share.Share('f', name='Navigation Target X Share')
+    nav_target_y_sh = task_share.Share('f', name='Navigation Target Y Share')
+    nav_speed_sh = task_share.Share('f', name='Navigation Speed Share')
+    # --------------------------------------------------------------------------
     # State Estimation shares...
     # psi_sh = task_share.Share('f', name='Yaw Angle Share')
     # psi_dot_sh = task_share.Share('f', name='Yaw Rate Share')
@@ -189,12 +200,7 @@ def main():
     motor_data_ready = task_share.Share('B', name='Motor Data Ready Flag')
     obsv_data_ready = task_share.Share('B', name='Observer Data Ready Flag')
     planning = task_share.Share('B', name='Path Planning Mode Flag')
-    # --------------------------------------------------------------------------
-    # Spectator Task shares...
-    total_s_sh = task_share.Share('f', name='Total Displacement Share')
-    abs_x_sh = task_share.Share('f', name='Absolute X Position Share')
-    abs_y_sh = task_share.Share('f', name='Absolute Y Position Share')
-    abs_theta_sh = task_share.Share('f', name='Absolute Theta Share')
+    game_origin_mode = task_share.Share('B', name='Game Origin Mode Flag')
     #
     # ------------------------------- QUEUES -----------------------------------
     # (none for now)
@@ -205,7 +211,7 @@ def main():
     ui_task_obj = UITask(mtr_enable, stream_data, abort,
                          eff, driving_mode, setpoint, kp, ki, control_mode,
                          uart, battery, imu, ir_array,
-                         k_line, lf_target, planning)
+                         k_line, lf_target, planning, game_origin_mode)
 
     motor_task_obj = MotorControlTask(left_motor, right_motor,
                                       left_encoder, right_encoder,
@@ -220,17 +226,20 @@ def main():
                                  motor_data_ready, abort, total_s_sh, abs_x_sh, abs_y_sh, abs_theta_sh)
 
     steering_task_obj = SteeringTask(ir_array, battery,
-                                 control_mode, mtr_enable,
-                                 left_sp_sh, right_sp_sh,
-                                 k_line, lf_target, bias)
+                                     control_mode, mtr_enable,
+                                     left_sp_sh, right_sp_sh,
+                                     k_line, lf_target, bias,
+                                     abs_x_sh, abs_y_sh, abs_theta_sh,
+                                     nav_target_x_sh, nav_target_y_sh, nav_speed_sh)
 
     gc_task_obj = GCTask()
 
     spectator_task_obj = SpectatorTask(run_observer,
+                                       game_origin_mode,
                                        left_pos_sh, right_pos_sh, total_s_sh,
                                        abs_x_sh, abs_y_sh, abs_theta_sh)
     
-    path_planning_task_obj = PathPlanningTask(planning, bias, total_s_sh, abs_x_sh, abs_y_sh, abs_theta_sh, kp, ki, k_line, lf_target, control_mode, abort, mtr_enable, setpoint)
+    path_planning_task_obj = PathPlanningTask(planning, bias, total_s_sh, abs_x_sh, abs_y_sh, abs_theta_sh, kp, ki, k_line, lf_target, control_mode, abort, mtr_enable, setpoint, stream_data)
 
     # data_task_obj = DataCollectionTask(col_start, col_done,
     #                                    mtr_enable, abort, motor_data_ready, obsv_data_ready,
