@@ -13,24 +13,26 @@ import math
 
 key = ''                    # Stores value of key pressed as a string
 running = False             # Set when motor testing is progress
-streaming = False           # Set when data streaming is in progress
+streaming = False           # True when we are in the middle of receiving streamed data frames
+print_stream_frames = True  # Toggle printing of incoming data frames
+stream_expected = True      # MCU streaming service is enabled flag (default ON since MCU starts with streaming enabled)
 first_frame = True          # Set on first data stream to create run entry
 runs = {}                   # Dict to contain runs
 run_count = 0               # Number of runs
 frame_buffer = ""           # Buffer for delimiter-framed lines
 control_mode = 0            # 0 = effort mode, 1 = velocity mode, 2 = line follow mode
 driving_mode = 0            # 0 = straight line, 1 = arc, 2 = pivot
-effort = 0                 # Current effort value
-setpoint = 0               # Current velocity setpoint in rad/s
+effort = 0                  # Current effort value
+setpoint = 0                # Current velocity setpoint in rad/s
 kp = 0.0                    # Current proportional gain
 ki = 0.0                    # Current integral gain
 k_line = 0.0                # Current line following gain
 first = True
 done = False
-# mode = 1                   # 1, 2, 3 = straight, pivot, arc
-queue = local_queue.Queue()  # Queue to hold tests
-queuing = False              # Set when queuing tests
-creating_run = False       # Set when creating a new run
+# mode = 1                  # 1, 2, 3 = straight, pivot, arc
+queue = local_queue.Queue() # Queue to hold tests
+queuing = False             # Set when queuing tests
+creating_run = False        # Set when creating a new run
 test_origin = "manual"      # tracks how the current test started: "manual" or "queue"
 
 control_mode_dict = {0: "effort", 1: "velocity", 2: "line following"}
@@ -42,7 +44,8 @@ user_prompt = '''\r\nCommand keys:
     u      : Queue tests
     r      : Run test
     k      : Kill (stop) motors
-    s      : Stream data
+    s      : Toggle live data streaming ON/OFF
+    p      : Toggle printing of streamed data frames
     d      : Save complete data to CSV and optionally create plots
     b      : Check battery voltage (prints to this terminal)
     c      : Calibrate sensors: IR sensors or IMU
@@ -183,6 +186,7 @@ def clean_data(df, cols=None, mode='all'):
 
     removed = len(df) - len(cleaned)
     return cleaned, removed
+
 # ------------------------------------------------------------------------------
 # Function to perform START / ACK handshake for data streaming
 def start_stream_handshake(ser, timeout=2.0, retries=3):
@@ -221,7 +225,7 @@ except Exception as e:
 
 # Establish Bluetooth connection
 try:
-    ser = Serial('COM3', baudrate=115200, timeout=1)
+    ser = Serial('COM9', baudrate=115200, timeout=1)
 except SerialException:
     print("Unable to connect to port")
 
@@ -250,7 +254,6 @@ while True:
                         print("Selected Effort mode")
                         # Accept a single key (0-9 or 'a') or an integer percentage 0-100
                         key_in = input("Enter effort key (0-9 or 'a' for 100%) or percent (0-100): ").strip()
-                        
                         # Only use key_to_eff for single characters
                         if len(key_in) == 1:
                             eff_val = key_to_eff(key_in)
@@ -377,6 +380,7 @@ while True:
                     running = True
                     first = True
                     ser.write(b'r')
+
             elif key == 'k':
                 if running:
                     # Kill motors
@@ -385,34 +389,29 @@ while True:
                     streaming = False
                     queuing = False
                     print("End test. Stop motors")
+                    # Flush any pending MCU responses (like #END) so they don't interfere with the next test.
+                    try:
+                        sleep(0.2)
+                        while ser.in_waiting:
+                            ser.read(ser.in_waiting)
+                    except Exception:
+                        pass
                 else:
                     print("Motors are already off")
+
             elif key == 's':
-                if running:
-                    print("Test is already running, cannot stream data now.")
-                elif streaming:
-                    print("Data is already streaming.")
+                if stream_expected:
+                    print("Requesting MCU to STOP streaming...")
+                    ser.write(b's') # Toggles MCU streaming OFF
+                    stream_expected = False
                 else:
-                    # # Start handshake with MCU
-                    # ok = start_stream_handshake(ser)
-                    # if not ok:
-                    #     # Fallback: try legacy single-char start for compatibility
-                    #     try:
-                    #         ser.write(b's')
-                    #     except Exception:
-                    #         pass
-                    #     print("Stream handshake failed; sent legacy 's' command (best-effort).")
-                    # else:
-                    #     print("MCU acknowledged streaming request")
-
-                    ser.write(b's')
-
-                    # Flush any initial bytes
-                    # if ser.in_waiting:
-                    #     ser.read()
-
-                    print("Data streaming to PC...")
-                    streaming = True
+                    print("Requesting MCU to START streaming...")
+                    ser.write(b's') # Toggles MCU streaming ON
+                    stream_expected = True
+            
+            elif key == 'p':
+                print_stream_frames = not print_stream_frames
+                print(f"Printing streamed frames: {print_stream_frames}")
 
             elif key == 'n':
                 if running:
@@ -423,7 +422,6 @@ while True:
                     print("Toggle driving mode")
                     driving_mode = (driving_mode + 1) % 3
                     ser.write(b'n')
-
 
             elif key == 'c':
                 if running:
@@ -481,15 +479,25 @@ while True:
                 except Exception as e:
                     print(f"Warning: could not create output directories: {e}")
                 
-                
                 # Save data to CSV
                 for run_name, meta in runs.items():
+                    # Skip runs that have no metadata (e.g., created with streaming disabled)
+                    if meta is None:
+                        print(f"Skipping {run_name}: no data recorded (streaming was OFF).")
+                        continue
+
                     df1 = meta.get('motor_data')
-                    df2 = meta.get('obsv_data')
-                    _control_mode = meta.get('control_mode')
-                    _control_val = meta.get('control_val')
-                    _driving_mode = meta.get('driving_mode')
-                    df = pd.concat([df1, df2], axis=1)
+                    df2 = meta.get('obsv_data', None)  # may not exist
+
+                    if df1 is None:
+                        print(f"Skipping {run_name}: no motor_data present.")
+                        continue
+
+                    # If observer data exists, concat; otherwise just use df1
+                    if df2 is not None:
+                        df = pd.concat([df1, df2], axis=1)
+                    else:
+                        df = df1
 
                     if _control_mode == "effort":
                         run_code = 'E'
@@ -564,14 +572,21 @@ while True:
                         else:
                             mode_name = "line_following"
                             params = {'setpoint': setpoint, 'kp': kp, 'ki': ki, 'k_line': k_line}
-                        sample_size = 200    # Default sample size\
-                        # Create new run for motor data
+
+                        sample_size = 200    # Default sample size
+                        if not stream_expected:
+                            sample_size = 0    # No data expected
+                        # Create new run for motor data ONLY if we expect streaming from MCU
                         run_count += 1
                         run_name = f'run{run_count}'
-                        runs[run_name] = create_run(control_mode, effort, driving_mode, run_count, sample_size)
-                        if params:
-                            runs[run_name]['params'] = params
-                        print(f"Run {run_count} created in {mode_name} mode (size={sample_size})")
+                        if stream_expected:
+                            runs[run_name] = create_run(control_mode, effort, driving_mode, run_count, sample_size)
+                            if params:
+                                runs[run_name]['params'] = params
+                            print(f"Run {run_count} created in {mode_name} mode (size={sample_size})")
+                        else:
+                            runs[run_name] = None
+                            print(f"Run {run_count} started in {mode_name} mode with streaming DISABLED (no DataFrame).")
 
                         streaming = True
                         first = False
@@ -613,14 +628,18 @@ while True:
                                 print(f"[Rejected] Bad frame contents: '{frame}'")
                                 continue
 
-                            print(f"{frame}")
+                            # Print the frame if enabled
+                            if print_stream_frames:
+                                print(f"{frame}")
 
-                            # Store the values
-                            runs[run_name]["motor_data"].loc[idx,"_time"] = float(time_s)
-                            runs[run_name]["motor_data"].loc[idx, "_left_pos"] = float(left_pos)
-                            runs[run_name]["motor_data"].loc[idx, "_right_pos"] = float(right_pos)
-                            runs[run_name]["motor_data"].loc[idx, "_left_vel"] = float(left_vel)
-                            runs[run_name]["motor_data"].loc[idx, "_right_vel"] = float(right_vel)
+                            # Store the values only if we have a DataFrame for this run
+                            if stream_expected and runs.get(run_name) is not None:
+                                df = runs[run_name]["motor_data"]
+                                df.loc[idx, "_time"]      = float(time_s)
+                                df.loc[idx, "_left_pos"]  = float(left_pos)
+                                df.loc[idx, "_right_pos"] = float(right_pos)
+                                df.loc[idx, "_left_vel"]  = float(left_vel)
+                                df.loc[idx, "_right_vel"] = float(right_vel)
 
                 else:
                     pass

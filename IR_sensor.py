@@ -11,23 +11,22 @@ class IRArray:
     """
 # ----------------------------------------------------------------------
     def __init__(self,
-                 pins,
-                 tim: Timer,
-                 samples: int = 100,
+                 tim_num: int,
+                 samples: int,
+                 IR_pins,
                  sensor_indices=None):
         """
         Args:
-            pins: list of Pin.cpu.<X> constants (order: left -> right across the robot)
-            tim:  Timer configured with a sampling frequency for calibration
-            samples: number of samples to average in calibration
-            sensor_indices: optional list of physical board indices corresponding to the pins list
-                            (example: [1,3,5,7,9,11] if only odd sensors are populated)
-                            If None, indices default to [1..N] in the given order.
+            tim_num: Timer number for creating a timer for ADC sampling
+            samples: Number of samples to average in calibration
+            IR_pins: List of Pin.cpu.<X> constants (order: left -> right)
+            sensor_indices: Optional list of physical board indices corresponding to the IR_pins list
+                            (example: [1,3,5,7,9,11] if only odd sensors are populated). If None, indices default to [1..N] in the given order.
         """
-        self.tim = tim
+        self.tim_obj = Timer(tim_num, freq = 20000) # 20 kHz timer for sampling from IR sensors
         self.samples = int(samples)
-        # Create ADCs internally in the driver from pins specified in main.py
-        self.adcs = [ADC(Pin(p)) for p in pins]
+        # Create ADCs internally in the driver from IR_pins specified in main.py
+        self.adcs = [ADC(Pin(p)) for p in IR_pins]
         self.num = len(self.adcs)
         self.white_cal = False
         self.black_cal = False
@@ -37,7 +36,7 @@ class IRArray:
             self.sensor_index = list(range(1, self.num + 1))
         else:
             if len(sensor_indices) != self.num:
-                raise ValueError("sensor_indices length must match pins length")
+                raise ValueError("sensor_indices length must match IR_pins length")
             self.sensor_index = list(sensor_indices)
 
         # Calibration data
@@ -56,7 +55,7 @@ class IRArray:
         Returns the list of averages (float) in the same order as sensor_index.
         """
         bufs = [array.array('H', [0] * self.samples) for _ in range(self.num)]
-        ADC.read_timed_multi(tuple(self.adcs), tuple(bufs), self.tim)
+        ADC.read_timed_multi(tuple(self.adcs), tuple(bufs), self.tim_obj)
         avgs = [sum(b) / len(b) for b in bufs]
 
         if color == 'b':
@@ -100,7 +99,7 @@ class IRArray:
                 if len(black_vals) == self.num and len(white_vals) == self.num:
                     self.black = black_vals
                     self.white = white_vals
-                    print("[IR CALIBRATION] Loaded from IR_cal.txt")
+                    print("Black and White calibration data loaded.")
                 else:
                     print("[IR CALIBRATION] Calibration file sensor count mismatch; using defaults")
             else:
@@ -111,7 +110,7 @@ class IRArray:
         """
         Single-shot read on all channels, normalized to [0,1].
         0 ~ white (background), 1 ~ black (line).
-        Returns list of floats, same order as pins / sensor_index.
+        Returns list of floats, same order as IR_pins / sensor_index.
         """
         out = []
         for i, adc in enumerate(self.adcs):
@@ -152,4 +151,4 @@ class IRArray:
         Returns the ideal center location in index space.
         For arbitrary index sets, use average of min and max (center of span).
         """
-        return 0.5 * (min(self.sensor_index) + max(self.sensor_index)) - 1
+        return 0.5 * (min(self.sensor_index) + max(self.sensor_index))

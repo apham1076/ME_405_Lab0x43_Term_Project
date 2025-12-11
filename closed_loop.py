@@ -4,10 +4,18 @@
 # ==============================================================================
 
 from time import ticks_diff, ticks_ms
-from math import pi
+import math
 
 class ClosedLoop:
     """Proportional-Integral (PI) controller for velocity control in rad/s."""
+
+    # --------------------------------------------------------------------------
+    # CONSTANTS
+    GEAR_RATIO = 3952/33  # Gear ratio of motor to wheel (~120)
+    CPR_MOTOR = 12 # Counts per rev of the motor shaft (before gearbox)
+    CPR_WHEEL = GEAR_RATIO*CPR_MOTOR  # Counts per rev of the wheel (~1440)
+    RAD_PER_COUNT = 2 * math.pi / CPR_WHEEL  # Radians per count
+    # --------------------------------------------------------------------------
 
     def __init__(self,
                  kp, ki,
@@ -46,17 +54,19 @@ class ClosedLoop:
         self.last_time = now
 
         # Convert velocity from count/s to rad/s
-        cpr = 1440
-        fb *= 2*pi / cpr
+        fb *= self.RAD_PER_COUNT
         
         # --- Core PI control ---
         error = self.sp_sh.get() - fb
-        self.integrator += error * dt
+
+        # Calculate tentative integrator 
+        self.integrator += (error * dt)
         
-        # Clamp integrator to reasonable bounds based on output limits (prevent windup)
-        # max_integral = (self.effort_max - self.kp.get() * error) / (self.ki.get() + 1e-6)
-        # min_integral = (self.effort_min - self.kp.get() * error) / (self.ki.get() + 1e-6)
-        # self.integrator = max(min(self.integrator, max_integral), min_integral)
+        # Anti-windup: Only update intgrator if it doesn't result in over-saturation
+        # Simple clamping method
+        max_integral = (self.effort_max - self.kp.get() * error) / (self.ki.get() + 1e-6)
+        min_integral = (self.effort_min - self.kp.get() * error) / (self.ki.get() + 1e-6)
+        self.integrator = max(min(self.integrator, max_integral), min_integral)
         
         # Base PI output (without droop compensation)
         u = self.kp.get() * error + self.ki.get() * self.integrator

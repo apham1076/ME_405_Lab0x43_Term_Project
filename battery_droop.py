@@ -42,8 +42,8 @@ class Battery:
     #---------------------------------------------------------------------------
     def droop_gain(self, refresh=False):
         """Return droop gain, caching after first measurement. Set refresh=True to re-measure."""
-        # Only re-measure if requested or no cached value yet
-        if self._cached_gain is not None or refresh:
+        # Read the battery voltage only if it is not cached or if a refresh is explicity requested
+        if self._cached_gain is None or refresh:
             V_batt = self.read_voltage()
             # Avoid division by zero or very low voltage (ADC may be disconnected)
             if V_batt <= 0.5:

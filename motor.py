@@ -9,16 +9,16 @@ class Motor:
                  PWM_pin: Pin,
                  DIR_pin: Pin,
                  nSLP_pin: Pin,
-                 tim: int,
-                 chan: int):
+                 tim_num: int,
+                 chan_num: int):
         '''Initializes a Motor object'''
         self.PWM_pin = Pin(PWM_pin, mode=Pin.OUT_PP, value=0)
         self.DIR_pin = Pin(DIR_pin, mode=Pin.OUT_PP, value=0)
         self.nSLP_pin = Pin(nSLP_pin, mode=Pin.OUT_PP, value=0)
-        self.tim_obj = Timer(tim, freq=20000)
-        self.chan_obj = self.tim_obj.channel(chan, pin=self.PWM_pin, mode=Timer.PWM, pulse_width_percent = 0)
-        self.effort = 0 # match effort to initialized PWM percent (0)
-        self.enabled = False # initialize the "enabled" flag as LOW
+        self.tim_obj = Timer(tim_num, freq=20000)
+        self.chan_obj = self.tim_obj.channel(chan_num, pin=self.PWM_pin, mode=Timer.PWM, pulse_width_percent = 0) # set initial PWM to 0%
+        self.effort = 0 # match initial effort to initialized PWM percent (0)
+        self.enabled = False # initialize the "motor enabled" flag as LOW
     
     def set_effort(self, effort: float):
         '''Sets the present effort requested from the motor based on an input value between -100 and 100'''

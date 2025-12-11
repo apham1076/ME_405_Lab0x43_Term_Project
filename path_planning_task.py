@@ -17,12 +17,12 @@ class PathPlanningTask:
 
     ### Initialize the object's attributes
     # --------------------------------------------------------------------------
-    def __init__(self, param1, param2, param3, param4):
+    def __init__(self, bias, param2, param3, param4):
 
         # Shares
         
         # Parameters
-        self.param1 = param1
+        self.bias = bias
         self.param2 = param2
         self.param3 = param3
         self.param4 = param4

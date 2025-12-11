@@ -74,15 +74,15 @@ class MotorControlTask:
     ### HELPER FUNCTIONS
     # --------------------------------------------------------------------------
     ### Split setpoints for left and right motors based on driving mode
-    def _split_setpoints(self, mode_val, setpoint):
+    def _split_setpoints(self, driving_mode_val, setpoint):
         """
-        mode 1: straight  -> (spL, spR) = ( sp,  sp)
-        mode 2: pivot     -> (spL, spR) = ( sp, -sp)
-        mode 3: arc       -> (spL, spR) = ( sp, sp*RATIO )
+        mode 0: straight  -> (spL, spR) = ( sp,  sp)
+        mode 1: pivot     -> (spL, spR) = ( sp, -sp)
+        mode 2: arc       -> (spL, spR) = ( sp, sp*RATIO )
         """
-        if mode_val == 1:   # straight
+        if driving_mode_val == 0:   # straight
             return float(setpoint), float(setpoint)
-        elif mode_val == 2: # pivot in place
+        elif driving_mode_val == 1: # pivot in place
             return float(setpoint), -float(setpoint)
         else:               # arc (simple fixed ratio; refine later if desired)
             RATIO = 0.6
@@ -171,29 +171,17 @@ class MotorControlTask:
                 left_vel = self.left_encoder.get_velocity("counts/s")
                 right_vel = self.right_encoder.get_velocity("counts/s")
 
-                ### Determine which control mode to use:
-                # 0 = Effort (open loop)
-                # 1 = Velocity (closed loop)
-                # 2 = Line Follow (outer + inner loop)
-
-                # ----------------------------------------------------------
-                # MODE 0: EFFORT (open loop control)
-                # ----------------------------------------------------------
+                # --------------------------------------------------------------
+                ### Determine left and right efforts based on control mode
+                # 0 = Effort; 1 = Velocity; 2 = Line Follow
+                # --------------------------------------------------------------
+                    # ----------------------------------------------------------
+                    # MODE 0: EFFORT (open loop control)
                 if self.control_mode.get() == 0:
-                    _driving_mode = self.driving_mode.get()
-                    _eff = self.eff.get()
-                    if _driving_mode == 1:
-                        left_eff = _eff
-                        right_eff = _eff
-                    elif _driving_mode == 2:
-                        left_eff = _eff
-                        right_eff = -_eff
-                    else:
-                        left_eff = _eff
-                        right_eff = 0.6*_eff
-                # ----------------------------------------------------------
-                # MODE 1: VELOCITY (closed-loop velocity control)
-                # ----------------------------------------------------------
+                    left_eff, right_eff = self._split_setpoints(self.driving_mode.get(), self.eff.get())
+
+                    # ----------------------------------------------------------
+                    # MODE 1: VELOCITY (closed-loop velocity control)
                 elif self.control_mode.get() == 1:
                     self.left_sp_sh.put(float(self.setpoint.get()))
                     self.right_sp_sh.put(float(self.setpoint.get()))
@@ -201,20 +189,17 @@ class MotorControlTask:
                     left_eff = self.left_controller.run(left_vel)
                     right_eff = self.right_controller.run(right_vel)
 
-                # ----------------------------------------------------------
-                # MODE 2: LINE FOLLOWING (outer + inner loop)  
-                # ----------------------------------------------------------  
-
+                    # ----------------------------------------------------------
+                    # MODE 2: LINE FOLLOWING (outer + inner loop)
                 elif self.control_mode.get() == 2:
                     left_eff = self.left_controller.run(left_vel)
                     right_eff = self.right_controller.run(right_vel)
 
-                # print("Left effort:", left_eff, ". Right effort:", right_eff)
-
+                # --------------------------------------------------------------
                 # Apply efforts
                 self.left_motor.set_effort(float(left_eff))
                 self.right_motor.set_effort(float(right_eff))
-                # ----------------------------------------------------------
+                # --------------------------------------------------------------
 
                 # Write data samples to shares (for other tasks using them)
                 self.time_sh.put(int(t))

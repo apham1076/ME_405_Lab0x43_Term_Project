@@ -15,20 +15,21 @@ class Encoder:
     # --------------------------------------------------------------------------
 
     def __init__(self,
-                 tim_num: int,
                  chA_pin: Pin,
-                 chB_pin: Pin):
+                 chB_pin: Pin,
+                 tim_num: int):
         '''Initializes an Encoder object'''
-        self.AR = 65535         # Auto-reload value for 16-bit timer
-        self.tim = Timer(tim_num, prescaler=0, period=self.AR) # freq is ignored
         self.chA_pin = Pin(chA_pin)
         self.chB_pin = Pin(chB_pin)
-        self.tim.channel(1, mode=Timer.ENC_AB, pin=self.chA_pin)
-        self.tim.channel(2, mode=Timer.ENC_AB, pin=self.chB_pin)
+        self.AR = 65535 # Auto-reload value for 16-bit timer
+        self.tim_obj = Timer(tim_num, prescaler=0, period=self.AR)
+        # Note that for this timer, we are not setting a frequency. Instead, the encoders ouput pulses that will drive the timer. We just set the period to tell the timer (which will be a counter) when to roll over.
+        self.tim_obj.channel(1, mode=Timer.ENC_AB, pin=self.chA_pin)
+        self.tim_obj.channel(2, mode=Timer.ENC_AB, pin=self.chB_pin)
 
         # Internal states
         self.position_counts   = 0     # Total accumulated position counts
-        self.prev_count = self.tim.counter() # initialize from current counter
+        self.prev_count = self.tim_obj.counter() # initialize from current counter
         self.delta = 0      # Change in count between last two updates
         self.prev_time = ticks_us()    # Time from most recent update
         self.dt         = 0     # Amount of time between last two updates
@@ -39,7 +40,7 @@ class Encoder:
         '''Update encoder count and compute velocity.'''
 
         # Read current count and compute delta
-        curr_count = self.tim.counter() # read current count from timer
+        curr_count = self.tim_obj.counter() # read current count from timer
         delta = curr_count - self.prev_count # delta is change in counts
 
         # Check if delta is out of range (handle 16-bit over/underflow)
@@ -74,7 +75,7 @@ class Encoder:
     def zero(self):
         '''Zero the encoder position.'''
         self.position_counts = 0
-        self.prev_count = self.tim.counter()
+        self.prev_count = self.tim_obj.counter()
         self.prev_time = ticks_us()
 
     # --------------------------------------------------------------------------

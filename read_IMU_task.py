@@ -7,7 +7,6 @@ class ReadIMUTask:
 
     def __init__(self, imu, left_pos_sh, right_pos_sh, psi_sh, psi_dot_sh, read_IMU_flg):
         
-
         self.imu = imu
         self.left_pos_sh = left_pos_sh
         self.right_pos_sh = right_pos_sh
