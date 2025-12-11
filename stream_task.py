@@ -63,6 +63,7 @@ class StreamTask:
         while True: # run infinite iterations of the state machine
             ### 0: INIT STATE --------------------------------------------------
             if (self.state == self.S0_INIT):
+                self.stream_data.put(1)  # DEFAULT: streaming ON
                 self.sent_end = 0 # flag to track if END marker has been sent
                 self.lines_sent = 0 # initialize line counter to zero
                 self.state = self.S1_WAIT_FOR_TRIGGER # set next state

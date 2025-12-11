@@ -378,9 +378,26 @@ while True:
                     print("Data is streaming.")
                 else:
                     print("Starting test...")
+                    # Flush buffer
+                    # Clear out any stale flags (like #END from toggling streaming off)
+                    try:
+                        while ser.in_waiting:
+                            ser.read(ser.in_waiting)
+                    except Exception:
+                        pass
                     running = True
                     first = True
                     ser.write(b'r')
+            
+            # Send a 'z' to Romi to tell it to enter path planning mode
+            elif key == 'z':
+                if running:
+                    print("Cannot enter path planning mode while test is running")
+                elif streaming:
+                    print("Cannot enter path planning mode while data is streaming")
+                else:
+                    print("Entering path planning mode...")
+                    ser.write(b'z')
 
             elif key == 'k':
                 if running:

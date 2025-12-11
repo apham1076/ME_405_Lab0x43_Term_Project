@@ -177,6 +177,6 @@ class SpectatorTask:
                 self.abs_theta_sh.put(self.theta_rad)
 
                 # For debugging: print the estimated pose
-                print(total_s_mm, self.x_mm, self.y_mm, self.theta_rad)
+                print(f"{total_s_mm}, {self.x_mm}, {self.y_mm}, {self.theta_rad}")
 
             yield self.state # Yield control to allow other tasks to run
