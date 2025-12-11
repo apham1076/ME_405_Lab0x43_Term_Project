@@ -43,6 +43,7 @@ from steering_task import SteeringTask
 from IMU_sensor import IMU
 from gc_task import GCTask
 from spectator_task import SpectatorTask
+from path_planning_task import PathPlanningTask
 # from data_task import DataCollectionTask
 # from state_estimation_task import StateEstimationTask
 # from read_IMU_task import ReadIMUTask
@@ -189,7 +190,7 @@ def main():
     read_IMU_flg = task_share.Share('B', name='Read IMU flag')
     motor_data_ready = task_share.Share('B', name='Motor Data Ready Flag')
     obsv_data_ready = task_share.Share('B', name='Observer Data Ready Flag')
-    bumpt = task_share.Share('B', name='Bump Triggered Flag')
+    planning = task_share.Share('B', name='Path Planning Mode Flag')
     # --------------------------------------------------------------------------
     # Spectator Task shares...
     total_s_sh = task_share.Share('f', name='Total Displacement Share')
@@ -206,7 +207,7 @@ def main():
     ui_task_obj = UITask(mtr_enable, stream_data, abort,
                          eff, driving_mode, setpoint, kp, ki, control_mode,
                          uart, battery, imu,
-                         ir_cmd, k_line, lf_target)
+                         ir_cmd, k_line, lf_target, planning)
 
     motor_task_obj = MotorControlTask(left_motor, right_motor,
                                       left_encoder, right_encoder,
@@ -230,6 +231,8 @@ def main():
     spectator_task_obj = SpectatorTask(run_observer,
                                        left_pos_sh, right_pos_sh, total_s_sh,
                                        abs_x_sh, abs_y_sh, abs_theta_sh)
+    
+    path_planning_task_obj = PathPlanningTask(planning, bias, total_s_sh, kp, ki, k_line, lf_target, control_mode, abort, mtr_enable)
 
     # data_task_obj = DataCollectionTask(col_start, col_done,
     #                                    mtr_enable, abort, motor_data_ready, obsv_data_ready,
@@ -271,6 +274,8 @@ def main():
 
     _spectator_task = cotask.Task(spectator_task_obj.run, name='Spectator Task', priority=2, period=20, profile=True, trace=False)
 
+    _path_planning_task = cotask.Task(path_planning_task_obj.run, name='Path Planning Task', priority=2, period=40, profile=True, trace=False)
+
     # _data_collection_task = cotask.Task(data_task_obj.run, name='Data Collection Task', priority=2, period=20, profile=True, trace=False)
 
     # _state_estimation_task = cotask.Task(state_estimation_task_obj.run, name='State Estimation Task', priority=2, period=20, profile=True, trace=False)
@@ -289,6 +294,7 @@ def main():
     cotask.task_list.append(_steering_task)
     cotask.task_list.append(_gc_task)
     cotask.task_list.append(_spectator_task)
+    cotask.task_list.append(_path_planning_task)
     # cotask.task_list.append(_data_collection_task)
     # cotask.task_list.append(_state_estimation_task)
     # cotask.task_list.append(_read_IMU_task)

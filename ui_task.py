@@ -30,12 +30,13 @@ class UITask:
                  mtr_enable, stream_data, abort,
                  eff, driving_mode, setpoint, kp, ki, control_mode,
                  uart, battery, imu,
-                 ir_cmd, k_line, lf_target):
+                 ir_cmd, k_line, lf_target, planning):
         
         # Flags
         self.mtr_enable = mtr_enable
         self.stream_data = stream_data
         self.abort = abort
+        self.planning = planning
         
         # Shares
         self.eff = eff
@@ -191,6 +192,15 @@ class UITask:
                 elif cmd == 'b':   # Calibrate on BLACK line
                     if self.ir_cmd: self.ir_cmd.put(2)
 
+                elif cmd == 'z':   # Toggle path planning mode
+                    if self.planning.get():
+                        self.planning.put(0)
+                        print("Path planning mode DISABLED.")
+                    else:
+                        self.planning.put(1)
+                        print("Path planning mode ENABLED.")
+
+
                 else:
                     pass
 
@@ -209,6 +219,13 @@ class UITask:
                             self.mtr_enable.put(0) # Then disable motors
                             self.ser.write(b'q')  # Tell PC test is done
                             self.state = self.S1_WAIT_FOR_COMMAND # set back to waiting
+                        if 's' in key:
+                            if self.stream_data.get():
+                                print("Stopping data stream.")
+                                self.stream_data.put(0) # Turn OFF streaming
+                            else:
+                                print("Starting data stream.")
+                                self.stream_data.put(1) # Turn ON streaming
                     except Exception:
                         pass # Handle decoding errors gracefully
 

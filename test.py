@@ -44,7 +44,6 @@ user_prompt = '''\r\nCommand keys:
     u      : Queue tests
     r      : Run test
     k      : Kill (stop) motors
-    n      : Toggle driving mode (straight, pivot, arc)
     s      : Toggle live data streaming ON/OFF
     p      : Toggle printing of streamed data frames
     d      : Save complete data to CSV and optionally create plots
