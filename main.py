@@ -232,7 +232,7 @@ def main():
                                        left_pos_sh, right_pos_sh, total_s_sh,
                                        abs_x_sh, abs_y_sh, abs_theta_sh)
     
-    path_planning_task_obj = PathPlanningTask(planning, bias, total_s_sh, kp, ki, k_line, lf_target, control_mode, abort, mtr_enable)
+    path_planning_task_obj = PathPlanningTask(planning, bias, total_s_sh, kp, ki, k_line, lf_target, control_mode, abort, mtr_enable, setpoint)
 
     # data_task_obj = DataCollectionTask(col_start, col_done,
     #                                    mtr_enable, abort, motor_data_ready, obsv_data_ready,

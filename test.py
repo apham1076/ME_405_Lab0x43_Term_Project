@@ -225,7 +225,7 @@ except Exception as e:
 
 # Establish Bluetooth connection
 try:
-    ser = Serial('COM9', baudrate=115200, timeout=1)
+    ser = Serial('COM3', baudrate=115200, timeout=1)
 except SerialException:
     print("Unable to connect to port")
 
@@ -516,21 +516,21 @@ while True:
                     else:
                         df = df1
 
-                    if _control_mode == "effort":
+                    if control_mode == "effort":
                         run_code = 'E'
-                    elif _control_mode == "velocity":
+                    elif control_mode == "velocity":
                         run_code = 'V'
                     else:
                         run_code = 'LF'
 
-                    if _driving_mode == "straight":
+                    if driving_mode == "straight":
                         driving_code = "STR"
-                    elif _driving_mode == "pivot":
+                    elif driving_mode == "pivot":
                         driving_code = "PV"
                     else:
                         driving_code = "ARC"
 
-                    base_name = f"{run_name}_{run_code}_{_control_val}_{driving_code}"
+                    base_name = f"{run_name}_{run_code}_{driving_code}"
                     try:
                         csv_name = os.path.join(csv_dir, base_name + ".csv")
                         # cols = ["_time", "_left_pos", "_right_pos", "_left_vel", "_right_vel", "_obsv_time", "_obsv_sL", "_obsv_sR", "_obsv_psi", "_obsv_psi_dot"]
