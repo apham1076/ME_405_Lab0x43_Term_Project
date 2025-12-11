@@ -68,6 +68,15 @@ class IRArray:
                 self.white[i] = float(v)
             label = "WHITE"
             self.white_cal = True
+        
+        print("\r\n[IR CALIBRATION] {} averages:".format(label))
+        print(" Index | Average (counts)")
+        print("-------+------------------")
+        for idx, val in zip(self.sensor_index, avgs):
+            print(f" {idx:5d} | {val:7.1f}")
+        print(f"  min  | {min(avgs):7.1f}")
+        print(f"  max  | {max(avgs):7.1f}")
+        print("")
 
         # Save to file if both calibrations done
         if self.black_cal and self.white_cal:
@@ -77,15 +86,6 @@ class IRArray:
                 f.write(black_line + "\n")
                 f.write(white_line + "\n")
             print("[IR CALIBRATION] Calibration data saved to IR_cal.txt")
-
-        print("\r\n[IR CALIBRATION] {} averages:".format(label))
-        print(" Index | Average (counts)")
-        print("-------+------------------")
-        for idx, val in zip(self.sensor_index, avgs):
-            print(f" {idx:5d} | {val:7.1f}")
-        print(f"  min  | {min(avgs):7.1f}")
-        print(f"  max  | {max(avgs):7.1f}")
-        print("")
 
         return avgs
     

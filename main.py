@@ -54,7 +54,7 @@ from os import listdir
 # MAIN FUNCTION:
 # ==============================================================================
 def main():
-    print("\r\n=== ME405 Scheduler Start ===")
+    print("\r\n=== ME405 Scheduler Start ===\r\n")
     # MAX_SAMPLES = 5
     # OBSV_SAMPLES = MAX_SAMPLES // 2  # Observer collects half the samples
     
@@ -157,14 +157,12 @@ def main():
     # Line following shares...
     left_sp_sh = task_share.Share('f', name='LF Left Setpoint')
     right_sp_sh = task_share.Share('f', name='LF Right Setpoint')
-    ir_cmd = task_share.Share('B', name='IR Calibrate Cmd')
     k_line = task_share.Share('f', name='LineFollow K_line')
     lf_target = task_share.Share('f', name='LineFollow Target')
     bias = task_share.Share('f', name='LineFollow Centroid Bias')
     # Initialize line following shares...
     left_sp_sh.put(0.0)
     right_sp_sh.put(0.0)
-    ir_cmd.put(0)
     k_line.put(0.0)
     lf_target.put(0.0)
     bias.put(0.0)
@@ -206,8 +204,8 @@ def main():
     # ==========================================================================
     ui_task_obj = UITask(mtr_enable, stream_data, abort,
                          eff, driving_mode, setpoint, kp, ki, control_mode,
-                         uart, battery, imu,
-                         ir_cmd, k_line, lf_target, planning)
+                         uart, battery, imu, ir_array,
+                         k_line, lf_target, planning)
 
     motor_task_obj = MotorControlTask(left_motor, right_motor,
                                       left_encoder, right_encoder,
@@ -219,10 +217,10 @@ def main():
     stream_task_obj = StreamTask(eff, stream_data, uart,
                                  control_mode, setpoint, kp, ki, k_line, lf_target,
                                  time_sh, left_pos_sh, right_pos_sh, left_vel_sh, right_vel_sh,
-                                 motor_data_ready, abort)
+                                 motor_data_ready, abort, total_s_sh, abs_x_sh, abs_y_sh, abs_theta_sh)
 
     steering_task_obj = SteeringTask(ir_array, battery,
-                                 control_mode, ir_cmd,
+                                 control_mode, mtr_enable,
                                  left_sp_sh, right_sp_sh,
                                  k_line, lf_target, bias)
 
@@ -232,7 +230,7 @@ def main():
                                        left_pos_sh, right_pos_sh, total_s_sh,
                                        abs_x_sh, abs_y_sh, abs_theta_sh)
     
-    path_planning_task_obj = PathPlanningTask(planning, bias, total_s_sh, kp, ki, k_line, lf_target, control_mode, abort, mtr_enable, setpoint)
+    path_planning_task_obj = PathPlanningTask(planning, bias, total_s_sh, abs_x_sh, abs_y_sh, abs_theta_sh, kp, ki, k_line, lf_target, control_mode, abort, mtr_enable, setpoint)
 
     # data_task_obj = DataCollectionTask(col_start, col_done,
     #                                    mtr_enable, abort, motor_data_ready, obsv_data_ready,
@@ -309,7 +307,7 @@ def main():
     
     # --------------------------------------------------------------------------
 	# Run the scheduler with the chosen scheduling algorithm. Quit if ^C pressed
-    print("Scheduler running... Press Ctrl-C to halt.\r\n")
+    print("\r\nScheduler running... Press Ctrl-C to halt.\r\n")
     while True: # attempt to run infinite iterations of the scheduler
         try:
             cotask.task_list.pri_sched()

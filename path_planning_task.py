@@ -6,6 +6,7 @@
 # This task is responsible for planning the path of the robot
 # ==============================================================================
 
+import math
 class PathPlanningTask:
     """This task is responsible for planning the path of the robot."""
 
@@ -20,7 +21,7 @@ class PathPlanningTask:
 
     ### Initialize the object's attributes
     # --------------------------------------------------------------------------
-    def __init__(self, planning, bias, total_s_sh, kp, ki, k_line, lf_target, control_mode, abort, mtr_enable, setpoint):
+    def __init__(self, planning, bias, total_s_sh, abs_x_sh, abs_y_sh, abs_theta_sh, kp, ki, k_line, lf_target, control_mode, abort, mtr_enable, setpoint):
 
         # Flags
         self.planning = planning
@@ -29,6 +30,9 @@ class PathPlanningTask:
 
         # Shares
         self.total_s_sh = total_s_sh
+        self.abs_x_sh = abs_x_sh
+        self.abs_y_sh = abs_y_sh
+        self.abs_theta_sh = abs_theta_sh
         self.setpoint = setpoint
         
         # Parameters
@@ -43,13 +47,24 @@ class PathPlanningTask:
         self.first = 1
         self.checkpoint = 0
 
-        self.state = self.S0_INIT
+        self.planning.put(0)  # Initialize planning flag to 0
+        self.state = self.S0_INIT # start the FSM in the INIT state
 
+    # --------------------------------------------------------------------------
+    ### HELPER FUNCTIONS
+    # --------------------------------------------------------------------------
+    
+
+
+    # --------------------------------------------------------------------------
+    ### FINITE STATE MACHINE
+    # --------------------------------------------------------------------------
     def run(self):
         """Main method for the PathPlanningTask FSM."""
         self.state = self.S0_INIT
 
         while True:
+            # S0: INIT ---------------------------------------------------------
             if self.state == self.S0_INIT:
                 # Initialization code here
                 if self.planning.get() and self.mtr_enable.get():
@@ -61,7 +76,7 @@ class PathPlanningTask:
                     self.control_mode.put(2)  # Line-following mode
                     print("Path Planning: Initialized")
                     self.state = self.S1_SEG1
-                
+            # S1: SEGMENT 1 ----------------------------------------------------
             elif self.state == self.S1_SEG1:
                 if self.first == 1:
                     print("Path Planning: Segment 1 started.")
@@ -80,7 +95,7 @@ class PathPlanningTask:
                     # Continue line-following
                     self.bias.put(0.0)
                     self.state = self.S2_SEG2
-            
+            # S2: SEGMENT 2 ----------------------------------------------------
             elif self.state == self.S2_SEG2:
                 if self.first == 1:
                     print("Path Planning: Segment 2 started.")
@@ -88,8 +103,9 @@ class PathPlanningTask:
 
                 if self.total_s_sh.get() > self.threshold[2]:
                     if self.checkpoint < 2:
+                        # Diamond maneuver
                         print("Checkpoint 2 reached.")
-                        # Turn off line-following, pass through diamond
+                        # Turn off line-following and pass through diamond
                         self.setpoint.put(4.0)
                         self.control_mode.put(1)  # Velocity mode
                         self.checkpoint += 1
@@ -99,7 +115,7 @@ class PathPlanningTask:
                     self.control_mode.put(2)  # Line-following mode
                     self.first = 1
                     self.state = self.S3_SEG3
-
+            # S3: SEGMENT 3 ----------------------------------------------------
             elif self.state == self.S3_SEG3:
                 if self.first == 1:
                     print("Path Planning: Segment 3 started.")

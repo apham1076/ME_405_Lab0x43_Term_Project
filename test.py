@@ -225,7 +225,7 @@ except Exception as e:
 
 # Establish Bluetooth connection
 try:
-    ser = Serial('COM3', baudrate=115200, timeout=1)
+    ser = Serial('COM9', baudrate=115200, timeout=1)
 except SerialException:
     print("Unable to connect to port")
 
@@ -377,8 +377,7 @@ while True:
                     print("Data is streaming.")
                 else:
                     print("Starting test...")
-                    # Flush buffer
-                    # Clear out any stale flags (like #END from toggling streaming off)
+                    # Flush buffer to clear out any stale flags (like #END from toggling streaming off)
                     try:
                         while ser.in_waiting:
                             ser.read(ser.in_waiting)
@@ -451,17 +450,16 @@ while True:
                     print("  2: IMU")
                     selected = input("Enter choice (1 or 2): ")
                     if selected == '1':
-                        # print("IR sensor calibration command sent to Romi.")
-                        key = input("Place Romi on white surface and press any key to continue...")
+                        ser.write(b'f')
+                        key = input("Place Romi on white surface then press any key to continue...")
                         ser.write(b'w')
-                        print("White calibration done. Now place Romi on black surface.")
-                        key = input("Place Romi on black surface and press any key to continue...")
+                        print("White calibration done.")
+                        key = input("Place Romi on black surface then press any key to continue...")
                         ser.write(b'b')
                         print("Black calibration done.")
                     elif selected == '2':
-                        # print("IMU calibration command sent to Romi.")
                         ser.write(b'i')
-                        key = input("Follow IMU calibration procedure and press any key to continue...")
+                        key = input("Follow IMU calibration procedure then press any key to continue...")
                         ser.write(b'j')
                         print("IMU calibration command sent.")
                     else:
@@ -542,6 +540,7 @@ while True:
                         print(f"Failed to save CSV for {run_name}: {e}")
 
                 continue
+
             elif key == 'h':
                 # Print helpful prompt
                 print(user_prompt)
@@ -630,8 +629,7 @@ while True:
                             # END OF STREAM CHECK
                             if frame == "#END":
                                 print("Received end of stream marker from Romi. Hit 'd' to print data.")
-
-                                running = False
+                                # running = False
                                 streaming = False
                                 frame_buffer = ""  # Clear buffer
                                 sleep(0.2)
@@ -644,7 +642,6 @@ while True:
                             except ValueError:
                                 print(f"[Rejected] Bad frame contents: '{frame}'")
                                 continue
-
                             # Print the frame if enabled
                             if print_stream_frames:
                                 print(f"{frame}")

@@ -377,7 +377,7 @@ class TaskList:
 
     ## Create some diagnostic text showing the tasks in the task list.
     def __repr__(self):
-        ret_str = 'TASK                     PRI    PERIOD    RUNS   AVG DUR   MAX ' \
+        ret_str = 'TASK                      PRI    PERIOD   RUNS    AVG DUR   MAX ' \
             'DUR  AVG LATE  MAX LATE\n'
         for pri in self.pri_list:
             for task in pri[2:]:

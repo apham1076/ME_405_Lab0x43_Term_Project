@@ -24,7 +24,7 @@ class StreamTask:
                  eff, stream_data, uart,
                  control_mode, setpoint, kp, ki, k_line, lf_target,
                  time_sh, left_pos_sh, right_pos_sh, left_vel_sh, right_vel_sh,
-                 motor_data_ready, abort):
+                 motor_data_ready, abort, total_s_sh, abs_x_sh, abs_y_sh, abs_theta_sh):
 
         # Serial interface (Bluetooth UART)
         self.ser = uart
@@ -35,13 +35,13 @@ class StreamTask:
         self.abort = abort
         
         # Control parameters
-        self.eff = eff
-        self.control_mode = control_mode
-        self.setpoint = setpoint
-        self.kp = kp
-        self.ki = ki
-        self.k_line = k_line
-        self.lf_target = lf_target
+        # self.eff = eff
+        # self.control_mode = control_mode
+        # self.setpoint = setpoint
+        # self.kp = kp
+        # self.ki = ki
+        # self.k_line = k_line
+        # self.lf_target = lf_target
 
         # Shares
         self.time_sh = time_sh
@@ -49,6 +49,10 @@ class StreamTask:
         self.right_pos_sh = right_pos_sh
         self.left_vel_sh = left_vel_sh
         self.right_vel_sh = right_vel_sh
+        # self.total_s_sh = total_s_sh
+        # self.abs_x_sh = abs_x_sh
+        # self.abs_y_sh = abs_y_sh
+        # self.abs_theta_sh = abs_theta_sh
        
         # Initial values
         self.sent_end = 0
@@ -74,25 +78,29 @@ class StreamTask:
                 if self.stream_data.get():
                     print("Stream Task: starting live data streaming...")
                     self.state = self.S2_STREAM_DATA # set next state
-                # Otherwise, fall through to the yield at the end of the loop and return back to this state the next time we enter the FSM
                 
             ### 2: STREAM DATA STATE -------------------------------------------
             elif (self.state == self.S2_STREAM_DATA):
-                # 1) If a test has been aborted, send END once but leave stream_data alone (so streaming can stay "armed" for next test)
+                # 1) If ABORT, send END once and reset counter, but leave stream_data alone (so streaming can stay "armed" for next test)
                 if self.abort.get():
                     if self.sent_end == 0:
                         self.ser.write(b"<S>#END<E>\n") # explicit end marker
                         self.sent_end = 1
-                # 2) If streaming is turned OFF explicitly, send END once and go back to WAIT_FOR_TRIGGER until re-enabled
+                    self.lines_sent = 0 # reset line counter for next stream
+
+                # 2) If streaming is turned OFF, send END once, reset counter, and go back to WAIT_FOR_TRIGGER until re-enabled
                 elif not self.stream_data.get():
                     if self.sent_end == 0:
                         self.ser.write(b"<S>#END<E>\n") # explicit end marker
                         self.sent_end = 1
+                    self.lines_sent = 0 # reset line counter for next stream
                     print("Stream Task: live data streaming ended.")
                     self.state = self.S1_WAIT_FOR_TRIGGER # set next state
 
                 # 3) Normal streaming: only send when new motor data is ready to avoid duplicates
                 elif self.motor_data_ready.get():
+                    self.sent_end = 0 # we have new data, so clear the END sent flag; next time abort/streaming off happens, we'll need to send END again exactly once
+                    # Read the relevant data from the shares
                     t = self.time_sh.get()
                     pL = self.left_pos_sh.get()
                     pR = self.right_pos_sh.get()
@@ -104,10 +112,8 @@ class StreamTask:
                     framed = f"<S>{payload}<E>" # framed packet to send; start and end delimeters help process data on the PC side
                     # Send the line over Bluetooth
                     self.ser.write(framed.encode() + b"\n")
-                    # Increment the line counter
-                    self.lines_sent += 1
-                    # Clear the data-ready flag so we don't resend the same sample
-                    self.motor_data_ready.put(0)
-                    self.sent_end = 0 # we have new data, so clear the END sent flag; next time abort/streaming off happens, we'll need to send END again exactly once
+                    
+                    self.lines_sent += 1 # Increment the line counter
+                    self.motor_data_ready.put(0) # Clear the data-ready flag (avoid duplicates)
 
             yield self.state # yield the current state for the scheduler

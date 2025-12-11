@@ -18,10 +18,11 @@ class UITask:
 
     # The states of the FSM
     S0_INIT = 0
-    S1_WAIT_FOR_COMMAND = 1
-    S2_PROCESS_COMMAND = 2
+    S1_WAIT_FOR_CMD = 1
+    S2_PROCESS_CMD = 2
     S3_MONITOR_TEST = 3
-    S4_CALIBRATION = 4
+    S4_IMU_CALIBRATION = 4
+    S5_IR_CALIBRATION = 5
 
     # --------------------------------------------------------------------------
     ### Initialize the object's attributes
@@ -29,8 +30,8 @@ class UITask:
     def __init__(self,
                  mtr_enable, stream_data, abort,
                  eff, driving_mode, setpoint, kp, ki, control_mode,
-                 uart, battery, imu,
-                 ir_cmd, k_line, lf_target, planning):
+                 uart, battery, imu, ir_array,
+                 k_line, lf_target, planning):
         
         # Flags
         self.mtr_enable = mtr_enable
@@ -41,18 +42,18 @@ class UITask:
         # Shares
         self.eff = eff
         self.driving_mode = driving_mode # 0: straight line, 1: pivot, 2: arc
-        self.setpoint = setpoint  # Share for velocity setpoint
-        self.kp = kp  # Share for proportional gain
-        self.ki = ki  # Share for integral gain
-        self.k_line = k_line  # Share for line following K_line gain
-        self.lf_target = lf_target  # Share for line following target velocity
-        self.control_mode = control_mode  # Share for control mode (effort/velocity/line-follow)
-        self.ir_cmd = ir_cmd  # Share for IR command
+        self.setpoint = setpoint  # velocity setpoint
+        self.kp = kp  # proportional gain
+        self.ki = ki  # integral gain
+        self.k_line = k_line  # line following K_line gain
+        self.lf_target = lf_target  # line following target velocity
+        self.control_mode = control_mode  # 0: effort, 1: velocity, 2: line following
 
         # Hardware
         self.ser = uart # Serial UART object
         self.battery = battery # Battery object
         self.imu = imu # IMU object
+        self.ir = ir_array # IR sensor array object
 
         # Initial values
         self.state = self.S0_INIT
@@ -69,22 +70,24 @@ class UITask:
             if (self.state == self.S0_INIT):
                 self.stream_data.put(1)  # DEFAULT: streaming ON
                 self.driving_mode.put(0) # DEFAULT: straight line mode
+                self.planning.put(0)     # DEFAULT: path planning OFF
                 self.abort.put(0)
                 self.prev_time = ticks_ms()
-                self.state = self.S1_WAIT_FOR_COMMAND
+                self.state = self.S1_WAIT_FOR_CMD
 
             ### 1: WAITING STATE -----------------------------------------------
-            elif (self.state == self.S1_WAIT_FOR_COMMAND):
+            elif (self.state == self.S1_WAIT_FOR_CMD):
                 # Wait for user input (read available bytes non-blocking)
                 if self.ser.any():
                     try:
                         self.cmd_buf = self.ser.read(1).decode()
-                        self.state = self.S2_PROCESS_COMMAND # set next state
+                        self.state = self.S2_PROCESS_CMD # set next state
                     except Exception:
                         pass # Handle decoding errors gracefully
             
             ### 2: PROCESS COMMAND STATE ---------------------------------------
-            elif self.state == self.S2_PROCESS_COMMAND:
+            elif self.state == self.S2_PROCESS_CMD:
+
                 cmd = self.cmd_buf
 
                 # 'e': EFFORT
@@ -111,7 +114,7 @@ class UITask:
                         self.kp.put(kp)
                         self.ki.put(ki)
                         self.control_mode.put(1)  # Velocity mode
-                        print(f"Velocity params set: SP={sp}, Kp={kp}, Ki={ki}")
+                        print(f"Received velocity params: SP={sp}, Kp={kp}, Ki={ki}")
                     except ValueError:
                         print("Invalid velocity command format")
 
@@ -129,7 +132,7 @@ class UITask:
                         self.k_line.put(k_line)
                         self.lf_target.put(v_target)
                         self.control_mode.put(2)  # Line-following mode
-                        print(f"LF params set: Kp={kp}, Ki={ki}, K_line={k_line}, Target Velocity={v_target}")
+                        print(f"Received LF params: Kp={kp}, Ki={ki}, K_line={k_line}, Target Velocity={v_target}")
                     except ValueError:
                         print("Invalid line-following command format")
 
@@ -173,25 +176,7 @@ class UITask:
                             print("Driving mode set to: Straight")
                         self.driving_mode.put(new_mode)
                 
-                # 'i': IMU calibration command
-                elif cmd == 'i':
-                    print("IMU calibration command received.")
-                    self.imu.set_operation_mode("ndof")
-                    self.state = self.S4_CALIBRATION
-                
-                # 'v': print current battery voltage
-                elif cmd == 'V':
-                    voltage_msg = f"{self.battery.read_voltage():.2f}\n"
-                    self.ser.write(voltage_msg.encode()) # send over Bluetooth
-                
-                # 'w': WHITE calibration command
-                elif cmd == 'w':   # Calibrate on WHITE background
-                    if self.ir_cmd: self.ir_cmd.put(1)
-
-                # 'b': BLACK calibration command
-                elif cmd == 'b':   # Calibrate on BLACK line
-                    if self.ir_cmd: self.ir_cmd.put(2)
-
+                # 'z': TOGGLE PATH PLANNING MODE
                 elif cmd == 'z':   # Toggle path planning mode
                     if self.planning.get():
                         self.planning.put(0)
@@ -199,13 +184,27 @@ class UITask:
                     else:
                         self.planning.put(1)
                         print("Path planning mode ENABLED.")
-
+                
+                # 'v': BATTERY VOLTAGE
+                elif cmd == 'V':
+                    voltage_msg = f"{self.battery.read_voltage():.2f}\n"
+                    self.ser.write(voltage_msg.encode()) # send over Bluetooth
+                
+                # 'i': IMU CALIBRATION
+                elif cmd == 'i':
+                    print("IMU calibration command received.")
+                    self.state = self.S4_IMU_CALIBRATION
+                
+                # IR CALIBRATION
+                elif cmd == 'f':
+                    print("IR sensor calibration command received.")
+                    self.state = self.S5_IR_CALIBRATION
 
                 else:
                     pass
 
-                if self.state == self.S2_PROCESS_COMMAND: # if state wasn't changed
-                    self.state = self.S1_WAIT_FOR_COMMAND # set back to waiting
+                if self.state == self.S2_PROCESS_CMD: # if state wasn't changed
+                    self.state = self.S1_WAIT_FOR_CMD # set back to waiting
 
             ### 3: MONITOR TEST STATE ------------------------------------------
             elif self.state == self.S3_MONITOR_TEST:
@@ -214,17 +213,17 @@ class UITask:
                     try:
                         key = self.ser.read(1).decode().lower()
                         if 'k' in key:
-                            print("Stopping test")
+                            print("Stopping test due to kill.")
                             self.abort.put(1) # Set abort flag first
                             self.mtr_enable.put(0) # Then disable motors
                             self.ser.write(b'q')  # Tell PC test is done
-                            self.state = self.S1_WAIT_FOR_COMMAND # set back to waiting
+                            self.state = self.S1_WAIT_FOR_CMD # set back to waiting
                         if 's' in key:
                             if self.stream_data.get():
-                                print("Stopping data stream.")
+                                print("Stopping data stream during test.")
                                 self.stream_data.put(0) # Turn OFF streaming
                             else:
-                                print("Starting data stream.")
+                                print("Starting data stream during test.")
                                 self.stream_data.put(1) # Turn ON streaming
                     except Exception:
                         pass # Handle decoding errors gracefully
@@ -234,19 +233,37 @@ class UITask:
                     # Motors have already been disabled
                     print("Test complete.")
                     self.abort.put(1) # Set abort flag??
-                    self.state = self.S1_WAIT_FOR_COMMAND # return to waiting
+                    self.state = self.S1_WAIT_FOR_CMD # return to waiting
 
             ### 4: IMU Calibration State ---------------------------------------
-            elif self.state == self.S4_CALIBRATION:
+            elif self.state == self.S4_IMU_CALIBRATION:
+                self.imu.set_operation_mode("ndof") # set to NDOF mode
                 self.curr_time = ticks_ms()
-                if ticks_diff(self.curr_time, self.prev_time) > 1000:
+                if ticks_diff(self.curr_time, self.prev_time) > 2000:
                     self.prev_time = self.curr_time
                     imu_status_bytes = self.imu.read_calibration_status()
                     print("IMU Calibration Status (sys, gyr, acc, mag):", imu_status_bytes)
+                    # stay in this state until 'j' is received
                 if self.ser.any():
                     if self.ser.read(1).decode() == 'j':
                         self.imu.read_calibration_coeffs()
                         print("IMU calibration done.")
-                        self.state = self.S1_WAIT_FOR_COMMAND
-                
+                        self.state = self.S1_WAIT_FOR_CMD # return to waiting
+            
+            ### 5: IR Calibration State ----------------------------------------
+            elif self.state == self.S5_IR_CALIBRATION:
+                if self.ser.any():
+                    cmd = self.ser.read(1).decode()
+                    # 'w': WHITE CALIBRATION
+                    if cmd == 'w':   # Calibrate on WHITE background
+                        print("Calibrating white background...")
+                        self.ir.calibrate('w')
+                        # stay in this state until after 'b' calibration
+                    # 'b': BLACK CALIBRATION
+                    elif cmd == 'b':   # Calibrate on BLACK background
+                        print("Calibrating black background...")
+                        self.ir.calibrate('b')
+                        print("IR calibration done.")
+                        self.state = self.S1_WAIT_FOR_CMD # return to waiting
+
             yield self.state

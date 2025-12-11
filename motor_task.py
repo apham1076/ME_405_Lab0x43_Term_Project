@@ -39,7 +39,7 @@ class MotorControlTask:
 
         # Shares
         self.eff = eff
-        self.driving_mode = driving_mode # 1=straight, 2=pivot, 3=arc
+        self.driving_mode = driving_mode # 0=straight, 1=pivot, 2=arc
         self.setpoint = setpoint
         self.kp = kp
         self.ki = ki
@@ -95,19 +95,19 @@ class MotorControlTask:
         while True: # run infinite iterations of the FSM
             ### 0: INIT STATE --------------------------------------------------
             if (self.state == self.S0_INIT):
-                # Zero encoders, disable motors, and initialize variables
+                # Zero encoders, disable motors
                 self.left_encoder.zero()
                 self.right_encoder.zero()
                 self.left_motor.disable()
                 self.right_motor.disable()
 
-                # Clear command and shares
+                # Clear effort command and shares
                 self.eff.put(0)
                 self.mtr_enable.put(0)
-                self.run_observer.put(0)  # Disable state estimator
+                self.run_observer.put(0)  # Disable estimator
 
                 # Set default modes
-                self.driving_mode.put(1)
+                self.driving_mode.put(0)
                 self.control_mode.put(0)
 
                 # Reset controllers
@@ -118,8 +118,9 @@ class MotorControlTask:
 
             ### 1: WAITING STATE -----------------------------------------------
             elif (self.state == self.S1_WAIT_FOR_ENABLE):
+                
                 if self.mtr_enable.get():
-
+                    # Update battery droop compensation gain
                     if self.battery is not None:
                         try:
                             gain = self.battery.refresh()
@@ -153,7 +154,7 @@ class MotorControlTask:
                     self.left_controller.reset()
                     self.right_controller.reset()
                     self.run_observer.put(0)  # Disable state estimator on transition from RUN to WAIT
-                    self.abort.put(0)  # Reset abort flag after handling it
+                    # self.abort.put(0)  # Reset abort flag after handling it; actually, leave it to UI to reset before starting a new run
                     self.mtr_enable.put(0)  # Clear enable flag
                     self.state = self.S1_WAIT_FOR_ENABLE
                     continue
