@@ -162,6 +162,8 @@ def main():
     bias = task_share.Share('f', name='LineFollow Centroid Bias')
     heading = task_share.Share('f', name='Heading Share')
     heading_offset = task_share.Share('f', name='Heading Offset Share')
+    k_heading = task_share.Share('f', name='Heading Control Gain')
+    heading_setpoint = task_share.Share('f', name='Heading Setpoint Share')
 
     # Initialize line following shares...
     left_sp_sh.put(0.0)
@@ -233,7 +235,8 @@ def main():
                                      left_sp_sh, right_sp_sh,
                                      k_line, lf_target, bias,
                                      abs_x_sh, abs_y_sh, abs_theta_sh,
-                                     nav_target_x_sh, nav_target_y_sh, nav_speed_sh)
+                                     nav_target_x_sh, nav_target_y_sh, nav_speed_sh,
+                                     heading, k_heading, heading_setpoint)
 
     gc_task_obj = GCTask()
 
@@ -242,7 +245,7 @@ def main():
                                        left_pos_sh, right_pos_sh, total_s_sh,
                                        abs_x_sh, abs_y_sh, abs_theta_sh)
     
-    path_planning_task_obj = PathPlanningTask(planning, bias, total_s_sh, abs_x_sh, abs_y_sh, abs_theta_sh, kp, ki, k_line, lf_target, control_mode, abort, mtr_enable, setpoint, stream_data)
+    path_planning_task_obj = PathPlanningTask(planning, bias, total_s_sh, abs_x_sh, abs_y_sh, abs_theta_sh, kp, ki, k_line, lf_target, control_mode, driving_mode, abort, mtr_enable, setpoint, stream_data, heading, heading_setpoint, k_heading, eff)
 
     # data_task_obj = DataCollectionTask(col_start, col_done,
     #                                    mtr_enable, abort, motor_data_ready, obsv_data_ready,
@@ -263,7 +266,7 @@ def main():
     #                                                 battery,
     #                                                 obsv_sL_sh, obsv_sR_sh, obsv_psi_sh, obsv_psi_dot_sh, obsv_left_vel_sh, obsv_right_vel_sh, obsv_s_sh, obsv_yaw_sh)
 
-    read_IMU_task_obj = ReadIMUTask(imu, heading, heading_offset, read_IMU_flg)
+    read_IMU_task_obj = ReadIMUTask(imu, heading, heading_offset, read_IMU_flg, mtr_enable)
     
     # bump_task_obj = BumpTask(abort, bump_pin='H0')
 
@@ -290,7 +293,7 @@ def main():
 
     # _state_estimation_task = cotask.Task(state_estimation_task_obj.run, name='State Estimation Task', priority=2, period=20, profile=True, trace=False)
 
-    _read_IMU_task = cotask.Task(read_IMU_task_obj.run, name='Read IMU Task', priority=1, period=20, profile=True, trace=False)
+    _read_IMU_task = cotask.Task(read_IMU_task_obj.run, name='Read IMU Task', priority=1, period=40, profile=True, trace=False)
 
     # _bump_task = cotask.Task(bump_task_obj.run, name='Bump Task', priority=4, period=20, profile=True, trace=False)
 

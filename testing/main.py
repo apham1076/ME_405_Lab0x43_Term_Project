@@ -12,7 +12,7 @@ scl = Pin('PB13', mode=Pin.ALT, alt=4)
 i2c = I2C(2, mode=I2C.CONTROLLER, baudrate=400000)
 
 # Initialize and configure motor pins
-Left_nSLP = Pin('PB3', mode=Pin.OUT_PP)
+Left_nSLP = Pin('PB4', mode=Pin.OUT_PP)
 Right_nSLP = Pin('PC9', mode=Pin.OUT_PP)
 
 # Initialize IMU object
@@ -50,6 +50,6 @@ print("Starting IMU test...")
 gc.collect()  # Run garbage collector to free up memory
 
 while True:
-    yaw_rate = imu.read_angular_velocity()[2]
-    print("Yaw rate (deg/s):", yaw_rate)
+    heading = imu.read_euler_angles()[0]  # yaw angle in degrees
+    print("Heading (degrees):", heading)
     sleep_ms(500)

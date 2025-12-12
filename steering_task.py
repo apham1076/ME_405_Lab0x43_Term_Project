@@ -17,14 +17,14 @@ class SteeringTask:
     S1_WAIT_ENABLE = 1
     S2_FOLLOW = 2
     S3_LOST = 3
-    S4_PIVOT = 4
+    S4_HEADING = 4
 
     def __init__(self, ir_array, battery,
                  control_mode, mtr_enable,
                  left_sp_sh, right_sp_sh,
                  k_line, lf_target, bias,
                  abs_x_sh, abs_y_sh, abs_theta_sh,
-                 nav_target_x_sh, nav_target_y_sh, nav_speed_sh):
+                 nav_target_x_sh, nav_target_y_sh, nav_speed_sh, heading, k_heading, heading_setpoint):
         # Hardware
         self.ir = ir_array
         self.battery = battery
@@ -36,6 +36,11 @@ class SteeringTask:
         self.mtr_enable = mtr_enable # share for motor enable flag
         self.k_line_sh = k_line # share for line-following gain
         self.lf_target_sh = lf_target # share for line-following target speed
+
+        self.k_heading = k_heading # gain for heading control
+        self.heading = heading # share for current heading
+        self.heading_setpoint = heading_setpoint # share for desired heading
+
         # Local copies (to be updated on S1-->S2 transition)
         self.bias = bias # centroid bias to influence line 
         self.abs_x_sh = abs_x_sh
@@ -54,6 +59,8 @@ class SteeringTask:
 
         # Timing
         self.last_time = millis()
+
+        self.first = 1
 
     # --------------------------------------------------------------------------
     ### HELPER FUNCTIONS
@@ -91,7 +98,7 @@ class SteeringTask:
                 if self.control_mode.get() == 2: # if line following enabled
                     self.state = self.S2_FOLLOW # go to FOLLOW state
                 elif self.control_mode.get() == 3:
-                    self.state = self.S2_FOLLOW # go to FOLLOW state
+                    self.state = self.S4_HEADING # go to FOLLOW state
 
             # S2: FOLLOW LINE --------------------------------------------------
             elif self.state == self.S2_FOLLOW:
@@ -137,9 +144,18 @@ class SteeringTask:
                     if sum(norm) > 0.05: # reacquire threshold
                         self.state = self.S2_FOLLOW # consider line reacquired
 
-            # S4: PIVOT IN PLACE ------------------------------------------------
-            elif self.state == self.S4_PIVOT:
-                # (not implemented)
-                pass
+            # S4: FOLLOW HEADING ------------------------------------------------
+            elif self.state == self.S4_HEADING:
+                if self.control_mode.get() == 3:
+                    if self.mtr_enable.get():
+                        error_norm = (self.heading.get() - self.heading_setpoint.get()) / 180
+                        correction = self.k_heading.get() * error_norm # steering correction
+                        v_left = self.lf_target_sh.get() + correction # correct steering
+                        v_right = self.lf_target_sh.get() - correction # correct steering
+                        self._publish(v_left, v_right)
+
+                else:
+                    self._publish(0.0, 0.0) # ensure motors are stopped
+                    self.state = self.S1_WAIT_ENABLE # go to WAIT ENABLE state
 
             yield self.state
