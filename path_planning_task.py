@@ -17,7 +17,8 @@ class PathPlanningTask:
     S3_SEG3 = 3
     S4_SEG4 = 4
     S5_SEG5 = 5
-    S6_DONE = 6
+    S6_SEG6 = 6
+    S9_DONE = 9
 
     CHECKPOINTS = {
         0: (100.0, 800.0),
@@ -60,7 +61,7 @@ class PathPlanningTask:
         self.control_mode = control_mode
         self.driving_mode = driving_mode
         
-        self.threshold = [580, 720, 910, 1070, 1550, 1750, 2000, 3140, 3640]  # Example thresholds for total displacement
+        self.threshold = [580, 720, 910, 1070, 1550, 1750, 2000, 3140, 3640, 4220]  # Example thresholds for total displacement
         self.first = 1
         self.checkpoint = 0
         self.pivotting = False
@@ -75,7 +76,7 @@ class PathPlanningTask:
     
     def pivot_in_place(self, effort, target):
         error = target - self.heading.get()
-        print("Pivoting to", target, "degrees. Current heading:", self.heading.get(), "Error:", error)
+        # print("Pivoting to", target, "degrees. Current heading:", self.heading.get(), "Error:", error)
         self.control_mode.put(0)  # Set to effort control mode
         self.driving_mode.put(1)  # Set to pivot mode
         if abs(error) > 5.0:
@@ -84,7 +85,7 @@ class PathPlanningTask:
             else:
                 self.eff.put(effort)
         else:
-            print("Leaving pivot function.")
+            print("Leaving pivot function. Heading ", self.heading.get())
             self.eff.put(0)
             self.pivotting = False
     # --------------------------------------------------------------------------
@@ -108,11 +109,12 @@ class PathPlanningTask:
                     self.control_mode.put(2)  # Line-following mode
                     self.total_s_sh.put(0.0)  # Reset total displacement
                     print("Path Planning: Initialized")
-                    self.state = self.S5_SEG5
+                    self.state = self.S1_SEG1
             # S1: SEGMENT 1 ----------------------------------------------------
             elif self.state == self.S1_SEG1:
                 if self.first == 1:
                     print("Path Planning: Segment 1 started.")
+                    print("Heading:", self.heading.get())
                     self.first = 0
 
                 if self.total_s_sh.get() > self.threshold[0]:
@@ -135,6 +137,7 @@ class PathPlanningTask:
             elif self.state == self.S2_SEG2:
                 if self.first == 1:
                     print("Path Planning: Segment 2 started.")
+                    print("Heading:", self.heading.get())
                     self.first = 0
 
                 if self.total_s_sh.get() > self.threshold[2]:
@@ -158,6 +161,7 @@ class PathPlanningTask:
             elif self.state == self.S3_SEG3:
                 if self.first == 1:
                     print("Path Planning: Segment 3 started.")
+                    print("Heading:", self.heading.get())
                     self.first = 0
 
                 if self.total_s_sh.get() > self.threshold[4]:
@@ -179,6 +183,7 @@ class PathPlanningTask:
             elif self.state == self.S4_SEG4:
                 if self.first == 1:
                     print("Path Planning: Segment 4 started.")
+                    print("Heading:", self.heading.get())
                     self.first = 0
 
                 if self.total_s_sh.get() > self.threshold[6]:
@@ -195,34 +200,25 @@ class PathPlanningTask:
                     self.pivotting = True
                     self.first = 1
                     self.state = self.S5_SEG5
+
             # S5: SEGMENT 5 ----------------------------------------------------
             elif self.state == self.S5_SEG5:
                 if self.first == 1:
                     print("Path Planning: Segment 5 started.")
+                    print("Heading:", self.heading.get())
                     self.pivotting = True
                     self.first = 0
                 
                 if self.maneuver == 0:
                     if self.pivotting:
-                        self.pivot_in_place(effort=10, target=180.0)  # Pivot to 180 degrees
+                        self.pivot_in_place(effort=10, target=163.3)  # Pivot to 120 degrees
                     else:
                         self.maneuver += 1
                         self.pivotting = True
                         print("First pivot complete.")
 
-                # if self.total_s_sh.get() > self.threshold[8]:
-                #     if self.checkpoint < 5:
-                #         print("Checkpoint 5 reached.")
-                #         self.checkpoint += 1
-                    
-                #     # Do control on heading
-                #     self.lf_target.put(4.0)
-                #     self.heading_setpoint.put(120.0)
-                #     self.k_heading.put(2.0)
-                #     self.control_mode.put(3)
-
                 if self.maneuver == 1:
-                    if self.checkpoint < 1:
+                    if self.checkpoint < 5:
                         print("Checkpoint 5 reached.")
                         self.checkpoint += 1
                         # Do control on heading
@@ -230,31 +226,48 @@ class PathPlanningTask:
                         self.ki.put(0.0)
                         self.k_heading.put(6.0)
                         self.lf_target.put(4.0)
-                        self.heading_setpoint.put(180.0)
+                        self.heading_setpoint.put(163.3)
                         self.control_mode.put(3)
-                # else:
-                #     print("Heading control complete. Preparing for second pivot.")
-                #     self.control_mode.put(0)
-                #     self.maneuver += 1
 
-
-                # if self.total_s_sh.get() >= 100 and self.maneuver == 1:
-                #     self.maneuver += 1
-                #     self.pivotting = True
-                #     print("Heading control complete. Preparing for second pivot.")
+                    if self.total_s_sh.get() > self.threshold[8]:
+                        self.maneuver += 1
+                        self.pivotting = True
+                        print("Heading control complete. Preparing for second pivot.")
                 
                 if self.maneuver == 2:
                     if self.pivotting:
-                        self.pivot_in_place(effort=10, target=0.0)  # Pivot to 0 degrees
+                        self.pivot_in_place(effort=10, target=180)  # Pivot to 0 degrees
                     else:
                         self.maneuver += 1
+                        self.pivotting = True
                         print("Second pivot complete.")
+                
+                if self.total_s_sh.get() > self.threshold[9]:
+                    if self.checkpoint < 6:
+                        print("Checkpoint 6 reached.")
+                        self.checkpoint += 1
+                        self.heading_setpoint.put(180.0)
+                        self.control_mode.put(3)
+                        self.maneuver += 1
                         self.first = 1
-                        self.state = self.S6_DONE
+                        self.state = self.S6_SEG6
+
+            elif self.state == self.S6_SEG6:
+                if self.first == 1:
+                    print("Path Planning: Segment 6 started.")
+                    print("Heading:", self.heading.get())
+                    self.first = 0
+
+                # Add any specific logic for Segment 6 here
+
+                if self.total_s_sh.get() > self.threshold[9]:
+                    self.first = 1
+                    self.state = self.S9_DONE
+
 
                     
             # S6: DONE ---------------------------------------------------------
-            elif self.state == self.S6_DONE:
+            elif self.state == self.S9_DONE:
                 self.abort.put(1)  # debugging stop
                 print("Path Planning: Done.")
                 self.planning.put(0)
