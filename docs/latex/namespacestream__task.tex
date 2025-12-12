@@ -1,0 +1,17 @@
+\doxysection{stream\+\_\+task Namespace Reference}
+\hypertarget{namespacestream__task}{}\label{namespacestream__task}\index{stream\_task@{stream\_task}}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classstream__task_1_1_stream_task}{Stream\+Task}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}@file stream_task.py
+@brief Task to stream data over Bluetooth if enabled.
+This module defines the StreamTask class, which implements a finite state machine (FSM) to stream data in CSV format over a Bluetooth UART interface. The task monitors a control flag to determine when to start and stop streaming, and it sends formatted data lines containing time, encoder positions, and velocities when new motor data is available.
+
+Previously, data was moved from shares into queues by data_task.py. Now, stream_task.py reads and streams data directly from shares in real time to the PC interface.
+\end{DoxyVerb}
+ 

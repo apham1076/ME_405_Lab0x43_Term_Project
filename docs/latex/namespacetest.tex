@@ -1,0 +1,750 @@
+\doxysection{test Namespace Reference}
+\hypertarget{namespacetest}{}\label{namespacetest}\index{test@{test}}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{namespacetest_aec4182054305d5922ee1254290c6ce10}{eff\+\_\+to\+\_\+key}} (\mbox{\hyperlink{namespacetest_afc9cb69adfec025427b1f3d559652b21}{eff}})
+\item 
+\mbox{\hyperlink{namespacetest_ae0b30779642efe80d3eb04eba0459a43}{key\+\_\+to\+\_\+eff}} (\mbox{\hyperlink{namespacetest_a7573407cf991ca34f068886b86251b7c}{key}})
+\item 
+\mbox{\hyperlink{namespacetest_ad820b4fadb4f3b63f888d8e0d1b74197}{create\+\_\+run}} (\mbox{\hyperlink{namespacetest_a7452cb0046ccf7e9491f2d5e88cdb55c}{control\+\_\+mode}}, control\+\_\+val, \mbox{\hyperlink{namespacetest_a21fd18b189df67bbac0155c8e807c05d}{driving\+\_\+mode}}, run\+\_\+num, size)
+\item 
+\mbox{\hyperlink{namespacetest_a480270d5e59fa1cb2f632c120f2a2188}{clean\+\_\+data}} (\mbox{\hyperlink{namespacetest_a9a93e497a6e2c865120aa795d60224b0}{df}}, \mbox{\hyperlink{namespacetest_a9156288a4b565419adaccf850a0c4492}{cols}}=None, \mbox{\hyperlink{namespacetest_a617576aa2fefc612b834de2405e2e8b2}{mode}}=\textquotesingle{}all\textquotesingle{})
+\item 
+\mbox{\hyperlink{namespacetest_a8865e9be759677a67390e7e526e22173}{start\+\_\+stream\+\_\+handshake}} (\mbox{\hyperlink{namespacetest_acb217bd4ff73a22557532a823d4cda2a}{ser}}, timeout=2.\+0, retries=3)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+str \mbox{\hyperlink{namespacetest_a7573407cf991ca34f068886b86251b7c}{key}} = \textquotesingle{}\textquotesingle{}
+\item 
+bool \mbox{\hyperlink{namespacetest_ab71690e676fc23d5daf21bb889f79a27}{running}} = False
+\item 
+bool \mbox{\hyperlink{namespacetest_ada80cd4bef10ded8839db31c254c098c}{streaming}} = False
+\item 
+bool \mbox{\hyperlink{namespacetest_afabc6d03eb874841e4aa988bf5eb081b}{print\+\_\+stream\+\_\+frames}} = True
+\item 
+bool \mbox{\hyperlink{namespacetest_ad969d65e91c50624e6d0d12bef1f1bff}{stream\+\_\+expected}} = True
+\item 
+bool \mbox{\hyperlink{namespacetest_a9652f04408f7d08edb8720bf764f2aa6}{first\+\_\+frame}} = True
+\item 
+dict \mbox{\hyperlink{namespacetest_af441dfc71cbd97962323c63bbb72232b}{runs}} = \{\}
+\item 
+int \mbox{\hyperlink{namespacetest_a66a898ed37d52626357dad223b746963}{run\+\_\+count}} = 0
+\item 
+str \mbox{\hyperlink{namespacetest_aa95239a304d0c43f4052f3b5263ae34c}{frame\+\_\+buffer}} = "{}"{}
+\item 
+int \mbox{\hyperlink{namespacetest_a7452cb0046ccf7e9491f2d5e88cdb55c}{control\+\_\+mode}} = 0
+\item 
+int \mbox{\hyperlink{namespacetest_a21fd18b189df67bbac0155c8e807c05d}{driving\+\_\+mode}} = 0
+\item 
+int \mbox{\hyperlink{namespacetest_ae1548d9049df0b30c55f08cdb7668344}{effort}} = 0
+\item 
+int \mbox{\hyperlink{namespacetest_acedd8d81e021138aa6d24c6f1180d649}{setpoint}} = 0
+\item 
+float \mbox{\hyperlink{namespacetest_ae5bb46ab1796081b582c86b6f119608c}{kp}} = 0.\+0
+\item 
+float \mbox{\hyperlink{namespacetest_ae961e7156e6b3dbfee2d22ecc9543cd0}{ki}} = 0.\+0
+\item 
+float \mbox{\hyperlink{namespacetest_a206906abf4e783c06ae7fe0c62a59544}{k\+\_\+line}} = 0.\+0
+\item 
+bool \mbox{\hyperlink{namespacetest_ae04a63cc4eb39edd24b6404817cdfe37}{first}} = True
+\item 
+bool \mbox{\hyperlink{namespacetest_a6e9473023c9a11824c8a8075ffd05fab}{done}} = False
+\item 
+\mbox{\hyperlink{namespacetest_a72fdb12802e5e44dff47427ebf217bf5}{queue}} = local\+\_\+queue.\+Queue()
+\item 
+bool \mbox{\hyperlink{namespacetest_a1abcae538fe399011e4ffe16ab92dc52}{queuing}} = False
+\item 
+bool \mbox{\hyperlink{namespacetest_a7d060b587158d041bdb56000d70e7851}{creating\+\_\+run}} = False
+\item 
+str \mbox{\hyperlink{namespacetest_a6ced71697abc3b674ebbed5725af055d}{test\+\_\+origin}} = "{}manual"{}
+\item 
+dict \mbox{\hyperlink{namespacetest_a9bfc518ae26a756cf36545c32f351657}{control\+\_\+mode\+\_\+dict}} = \{0\+: "{}effort"{}, 1\+: "{}velocity"{}, 2\+: "{}line following"{}\}
+\item 
+dict \mbox{\hyperlink{namespacetest_ab7d8c34f8699cb3bce72d4ca7ff7b177}{driving\+\_\+mode\+\_\+dict}} = \{0\+: "{}straight"{}, 1\+: "{}pivot"{}, 2\+: "{}arc"{}\}
+\item 
+str \mbox{\hyperlink{namespacetest_ad0914828b1ed8502c9d901218d0058f8}{user\+\_\+prompt}}
+\item 
+int \mbox{\hyperlink{namespacetest_a5fc7da7fcd919c580e9faeb8741c9617}{GEAR\+\_\+\+RATIO}} = 3952/33
+\item 
+int \mbox{\hyperlink{namespacetest_ae3a7884ddebc3386853df82821d9e689}{CPR\+\_\+\+MOTOR}} = 12
+\item 
+int \mbox{\hyperlink{namespacetest_a7a19c3cb7685fed0456a441c3f9ceb30}{CPR\+\_\+\+WHEEL}} = \mbox{\hyperlink{namespacetest_a5fc7da7fcd919c580e9faeb8741c9617}{GEAR\+\_\+\+RATIO}}\texorpdfstring{$\ast$}{*}\mbox{\hyperlink{namespacetest_ae3a7884ddebc3386853df82821d9e689}{CPR\+\_\+\+MOTOR}}
+\item 
+int \mbox{\hyperlink{namespacetest_a6ca95c3f2848dd4406406db09d8ba60a}{RAD\+\_\+\+PER\+\_\+\+COUNT}} = 2 \texorpdfstring{$\ast$}{*} math.\+pi / \mbox{\hyperlink{namespacetest_a7a19c3cb7685fed0456a441c3f9ceb30}{CPR\+\_\+\+WHEEL}}
+\item 
+int \mbox{\hyperlink{namespacetest_a9a599cf5689fa3e7d98b9d519ef80e74}{WHEEL\+\_\+\+RADIUS\+\_\+\+MM}} = 35
+\item 
+\mbox{\hyperlink{namespacetest_af4f2260c045cf1db306abf26d306ff17}{exist\+\_\+ok}}
+\item 
+\mbox{\hyperlink{namespacetest_acb217bd4ff73a22557532a823d4cda2a}{ser}} = Serial(\textquotesingle{}COM3\textquotesingle{}, baudrate=115200, timeout=1)
+\item 
+\mbox{\hyperlink{namespacetest_ac41a8344ce7e0c136c4e9663ecbe991a}{selected}} = input("{}Enter choice (e, v, l, or q to quit)\+: "{})
+\item 
+\mbox{\hyperlink{namespacetest_a3a2a447a7b6c04b1ee97dcf7b2b56465}{key\+\_\+in}} = input("{}Enter \mbox{\hyperlink{namespacetest_ae1548d9049df0b30c55f08cdb7668344}{effort}} \mbox{\hyperlink{namespacetest_a7573407cf991ca34f068886b86251b7c}{key}} (0-\/9 or \textquotesingle{}a\textquotesingle{} for 100\%) or percent (0-\/100)\+: "{}).strip()
+\item 
+\mbox{\hyperlink{namespacetest_a07583fa20af1bc33a9555201743ea304}{eff\+\_\+val}} = \mbox{\hyperlink{namespacetest_ae0b30779642efe80d3eb04eba0459a43}{key\+\_\+to\+\_\+eff}}(\mbox{\hyperlink{namespacetest_a3a2a447a7b6c04b1ee97dcf7b2b56465}{key\+\_\+in}})
+\item 
+str \mbox{\hyperlink{namespacetest_a893987392dee1257b3438b3bd256b7b3}{line}} = \textquotesingle{}e\textquotesingle{} + \mbox{\hyperlink{namespacetest_aec4182054305d5922ee1254290c6ce10}{eff\+\_\+to\+\_\+key}}(\mbox{\hyperlink{namespacetest_ae1548d9049df0b30c55f08cdb7668344}{effort}})
+\item 
+\mbox{\hyperlink{namespacetest_af793b3ac7e7c14ed9a8a8da9aab606ff}{gains}} = input("{}Enter \mbox{\hyperlink{namespacetest_acedd8d81e021138aa6d24c6f1180d649}{setpoint}} (mm/s), Kp, and Ki separated by a comma (e.\+g., 40,1.\+5,0.\+1)\+: "{})
+\item 
+\mbox{\hyperlink{namespacetest_a20f7f397bc9d989ab53ce10ef91d5750}{sp\+\_\+str}}
+\item 
+\mbox{\hyperlink{namespacetest_a3a736263cbdfc82ab89c409f79feecb2}{kp\+\_\+str}}
+\item 
+\mbox{\hyperlink{namespacetest_a8e341e702a9addfe7330aa773ca23d91}{ki\+\_\+str}}
+\item 
+\mbox{\hyperlink{namespacetest_af5b997959ad6de91d7defdedcdf87301}{setpoint\+\_\+mm\+\_\+s}} = float(\mbox{\hyperlink{namespacetest_a20f7f397bc9d989ab53ce10ef91d5750}{sp\+\_\+str}})
+\item 
+int \mbox{\hyperlink{namespacetest_aeccdc1405417f6c83f286c686d5806f0}{setpoint\+\_\+rad\+\_\+s}} = \mbox{\hyperlink{namespacetest_af5b997959ad6de91d7defdedcdf87301}{setpoint\+\_\+mm\+\_\+s}} / \mbox{\hyperlink{namespacetest_a9a599cf5689fa3e7d98b9d519ef80e74}{WHEEL\+\_\+\+RADIUS\+\_\+\+MM}}
+\item 
+\mbox{\hyperlink{namespacetest_a04a0c102ee3a970e2df302070bd378eb}{setpoint\+\_\+scaled}} = int(\mbox{\hyperlink{namespacetest_aeccdc1405417f6c83f286c686d5806f0}{setpoint\+\_\+rad\+\_\+s}} \texorpdfstring{$\ast$}{*} 100)
+\item 
+\mbox{\hyperlink{namespacetest_a8c711ee932ba27944887893658500ca2}{kp\+\_\+scaled}} = int(\mbox{\hyperlink{namespacetest_ae5bb46ab1796081b582c86b6f119608c}{kp}} \texorpdfstring{$\ast$}{*} 100)
+\item 
+\mbox{\hyperlink{namespacetest_a860f7c6f38187a4a57653ab3aaf62873}{ki\+\_\+scaled}} = int(\mbox{\hyperlink{namespacetest_ae961e7156e6b3dbfee2d22ecc9543cd0}{ki}} \texorpdfstring{$\ast$}{*} 100)
+\item 
+\mbox{\hyperlink{namespacetest_a197471929d21a0f061a5ba2f69b7a1f0}{k\+\_\+line\+\_\+str}}
+\item 
+\mbox{\hyperlink{namespacetest_a663b216e6d9f34c035112629f7cb6f0c}{target\+\_\+str}}
+\item 
+\mbox{\hyperlink{namespacetest_a571f5adbd6cd8f738d43d4b5490a613d}{target\+\_\+scaled}} = int(\mbox{\hyperlink{namespacetest_aeccdc1405417f6c83f286c686d5806f0}{setpoint\+\_\+rad\+\_\+s}} \texorpdfstring{$\ast$}{*} 100)
+\item 
+\mbox{\hyperlink{namespacetest_a4241e1f28988d6b3418ff1d41f780ee5}{k\+\_\+line\+\_\+scaled}} = int(\mbox{\hyperlink{namespacetest_a206906abf4e783c06ae7fe0c62a59544}{k\+\_\+line}} \texorpdfstring{$\ast$}{*} 100)
+\item 
+\mbox{\hyperlink{namespacetest_afc9cb69adfec025427b1f3d559652b21}{eff}} = input("{}Enter \mbox{\hyperlink{namespacetest_ae1548d9049df0b30c55f08cdb7668344}{effort}} \mbox{\hyperlink{namespacetest}{test}} in the following format\+: \mbox{\hyperlink{namespacetest_ad61f371a8567376d7044e5812ca9a16a}{start}}, \mbox{\hyperlink{namespacetest_a4c5dc5338be2a95cd317ab3493eb0763}{end}}, \mbox{\hyperlink{namespacetest_a2c75257418c045889282e01c6806b03a}{step}} (e.\+g., 0,100,10)\+: "{})
+\item 
+\mbox{\hyperlink{namespacetest_aff552937608aaec6716a32fb227b6705}{start\+\_\+str}}
+\item 
+\mbox{\hyperlink{namespacetest_a55cf60cd244c8042224dd2aedddd1ea7}{end\+\_\+str}}
+\item 
+\mbox{\hyperlink{namespacetest_a8f8390da418694907fc1f6817177990a}{step\+\_\+str}}
+\item 
+\mbox{\hyperlink{namespacetest_ad61f371a8567376d7044e5812ca9a16a}{start}} = int(\mbox{\hyperlink{namespacetest_aff552937608aaec6716a32fb227b6705}{start\+\_\+str}})
+\item 
+\mbox{\hyperlink{namespacetest_a4c5dc5338be2a95cd317ab3493eb0763}{end}} = int(\mbox{\hyperlink{namespacetest_a55cf60cd244c8042224dd2aedddd1ea7}{end\+\_\+str}})
+\item 
+\mbox{\hyperlink{namespacetest_a2c75257418c045889282e01c6806b03a}{step}} = int(\mbox{\hyperlink{namespacetest_a8f8390da418694907fc1f6817177990a}{step\+\_\+str}})
+\item 
+\mbox{\hyperlink{namespacetest_ac48e80191ccbf23cd4ef3306a1355815}{csv\+\_\+dir}} = os.\+path.\+join(\textquotesingle{}\mbox{\hyperlink{namespacetest_af441dfc71cbd97962323c63bbb72232b}{runs}}\textquotesingle{}, \textquotesingle{}csvs\textquotesingle{})
+\item 
+\mbox{\hyperlink{namespacetest_abd894779bff553c93ca729ee9feb66f4}{plots\+\_\+dir}} = os.\+path.\+join(\textquotesingle{}\mbox{\hyperlink{namespacetest_af441dfc71cbd97962323c63bbb72232b}{runs}}\textquotesingle{}, \textquotesingle{}plots\textquotesingle{})
+\item 
+\mbox{\hyperlink{namespacetest_a72e39339f430c5ccd9e5d433c5dfbf6a}{df1}} = meta.\+get(\textquotesingle{}motor\+\_\+data\textquotesingle{})
+\item 
+\mbox{\hyperlink{namespacetest_a6b17ab9035e211e7926b1a7193b5c330}{df2}} = meta.\+get(\textquotesingle{}obsv\+\_\+data\textquotesingle{}, None)
+\item 
+\mbox{\hyperlink{namespacetest_a9a93e497a6e2c865120aa795d60224b0}{df}} = pd.\+concat(\mbox{[}\mbox{\hyperlink{namespacetest_a72e39339f430c5ccd9e5d433c5dfbf6a}{df1}}, \mbox{\hyperlink{namespacetest_a6b17ab9035e211e7926b1a7193b5c330}{df2}}\mbox{]}, axis=1)
+\item 
+str \mbox{\hyperlink{namespacetest_a66e102e23bb72af670d02aa534ed00e0}{run\+\_\+code}} = \textquotesingle{}E\textquotesingle{}
+\item 
+str \mbox{\hyperlink{namespacetest_af460c37a7ef9440bd7524d23430521bb}{driving\+\_\+code}} = "{}STR"{}
+\item 
+str \mbox{\hyperlink{namespacetest_a1633840d9e51cca6a65e8b9ab21b1cdf}{base\+\_\+name}} = f"{}\{\mbox{\hyperlink{namespacetest_abab5999e24c6869b1ceebb2bbbba9582}{run\+\_\+name}}\}\+\_\+\{\mbox{\hyperlink{namespacetest_a66e102e23bb72af670d02aa534ed00e0}{run\+\_\+code}}\}\+\_\+\{\mbox{\hyperlink{namespacetest_af460c37a7ef9440bd7524d23430521bb}{driving\+\_\+code}}\}"{}
+\item 
+\mbox{\hyperlink{namespacetest_ad2d0319d59bf3d262f8505ab92bb671c}{csv\+\_\+name}} = os.\+path.\+join(\mbox{\hyperlink{namespacetest_ac48e80191ccbf23cd4ef3306a1355815}{csv\+\_\+dir}}, \mbox{\hyperlink{namespacetest_a1633840d9e51cca6a65e8b9ab21b1cdf}{base\+\_\+name}} + "{}.csv"{})
+\item 
+list \mbox{\hyperlink{namespacetest_a9156288a4b565419adaccf850a0c4492}{cols}} = \mbox{[}"{}\+\_\+time"{}, "{}\+\_\+left\+\_\+pos"{}, "{}\+\_\+right\+\_\+pos"{}, "{}\+\_\+left\+\_\+vel"{}, "{}\+\_\+right\+\_\+vel"{}, "{}\+\_\+obsv\+\_\+time"{}, "{}\+\_\+obsv\+\_\+left\+\_\+vel"{}, "{}\+\_\+obsv\+\_\+right\+\_\+vel"{}, "{}\+\_\+obsv\+\_\+s"{}, "{}\+\_\+obsv\+\_\+yaw"{}\mbox{]}
+\item 
+\mbox{\hyperlink{namespacetest_aafd85ce1040ec0aa8dfcfe8ff3f2de41}{index}}
+\item 
+\mbox{\hyperlink{namespacetest_af504d7455d1a455833f074005219efeb}{next\+\_\+test}} = queue.\+dequeue()
+\item 
+\mbox{\hyperlink{namespacetest_a617576aa2fefc612b834de2405e2e8b2}{mode}} = \mbox{\hyperlink{namespacetest_af504d7455d1a455833f074005219efeb}{next\+\_\+test}}\mbox{[}0\mbox{]}
+\item 
+str \mbox{\hyperlink{namespacetest_a36a0953ea392b694dfff2f42737efeca}{mode\+\_\+name}} = "{}effort"{}
+\item 
+\mbox{\hyperlink{namespacetest_ac8c54ce5876c6331a8c7535270dc951b}{params}} = None
+\item 
+int \mbox{\hyperlink{namespacetest_ae30ae1e5c1722575fa4accae5871819f}{sample\+\_\+size}} = 200
+\item 
+str \mbox{\hyperlink{namespacetest_abab5999e24c6869b1ceebb2bbbba9582}{run\+\_\+name}} = f\textquotesingle{}run\{\mbox{\hyperlink{namespacetest_a66a898ed37d52626357dad223b746963}{run\+\_\+count}}\}\textquotesingle{}
+\item 
+\mbox{\hyperlink{namespacetest_a4b7c8740ab9a8f6bfcb75cf365e507f3}{chunk}} = ser.\+read(ser.\+in\+\_\+waiting or 1).decode()
+\item 
+str \mbox{\hyperlink{namespacetest_a6d11c86ecc8cc9986d3d18fd94f8883e}{frame}} = \mbox{\hyperlink{namespacetest_aa95239a304d0c43f4052f3b5263ae34c}{frame\+\_\+buffer}}\mbox{[}\mbox{\hyperlink{namespacetest_ad61f371a8567376d7044e5812ca9a16a}{start}}+3 \+: \mbox{\hyperlink{namespacetest_a4c5dc5338be2a95cd317ab3493eb0763}{end}}\mbox{]}
+\item 
+\mbox{\hyperlink{namespacetest_aa697e5338bce24fbe7b039e53861fa3b}{idx\+\_\+str}}
+\item 
+\mbox{\hyperlink{namespacetest_aa0cfd420da6c9dbac002a7042a0ca36f}{time\+\_\+s}}
+\item 
+\mbox{\hyperlink{namespacetest_ad7ea20fa07ba1158fe68509d290f3c83}{left\+\_\+pos}}
+\item 
+\mbox{\hyperlink{namespacetest_a9c4e122a1bbe158c68f57a4a9ef8d0ad}{right\+\_\+pos}}
+\item 
+\mbox{\hyperlink{namespacetest_a823111ebd8910aa9aee6be7b12bd085e}{left\+\_\+vel}}
+\item 
+\mbox{\hyperlink{namespacetest_a19f94b7c1fa10c178624c09fc88bae56}{right\+\_\+vel}}
+\item 
+\mbox{\hyperlink{namespacetest_a43520d1afc498147f979f22b12133a62}{idx}} = int(\mbox{\hyperlink{namespacetest_aa697e5338bce24fbe7b039e53861fa3b}{idx\+\_\+str}})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}@file main.py
+@brief Script to run on PC to interface with Romi robot over Bluetooth serial.
+
+Sends commands to Romi to run tests in different control modes (effort, velocity, line following), toggles data streaming, and saves received data to CSV files with optional plotting.
+\end{DoxyVerb}
+ 
+
+\label{doc-func-members}
+\Hypertarget{namespacetest_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{namespacetest_a480270d5e59fa1cb2f632c120f2a2188}\index{test@{test}!clean\_data@{clean\_data}}
+\index{clean\_data@{clean\_data}!test@{test}}
+\doxysubsubsection{\texorpdfstring{clean\_data()}{clean\_data()}}
+{\footnotesize\ttfamily \label{namespacetest_a480270d5e59fa1cb2f632c120f2a2188} 
+test.\+clean\+\_\+data (\begin{DoxyParamCaption}\item[{}]{df}{, }\item[{}]{cols}{ = {\ttfamily None}, }\item[{}]{mode}{ = {\ttfamily \textquotesingle{}all\textquotesingle{}}}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Clean DataFrame by removing all zero rows except initial zeros up to the first non-zero data.
+
+Parameters:
+  df: pandas.DataFrame
+  cols: list of columns to check. If None, defaults to all motor_data columns.
+  mode: 'all' -> remove rows where ALL specified cols are zero;
+        'any' -> remove rows where ANY specified cols are zero.
+
+Returns: (cleaned_df, removed_count)
+\end{DoxyVerb}
+ \Hypertarget{namespacetest_ad820b4fadb4f3b63f888d8e0d1b74197}\index{test@{test}!create\_run@{create\_run}}
+\index{create\_run@{create\_run}!test@{test}}
+\doxysubsubsection{\texorpdfstring{create\_run()}{create\_run()}}
+{\footnotesize\ttfamily \label{namespacetest_ad820b4fadb4f3b63f888d8e0d1b74197} 
+test.\+create\+\_\+run (\begin{DoxyParamCaption}\item[{}]{control\+\_\+mode}{, }\item[{}]{control\+\_\+val}{, }\item[{}]{driving\+\_\+mode}{, }\item[{}]{run\+\_\+num}{, }\item[{}]{size}{}\end{DoxyParamCaption})}
+
+\Hypertarget{namespacetest_aec4182054305d5922ee1254290c6ce10}\index{test@{test}!eff\_to\_key@{eff\_to\_key}}
+\index{eff\_to\_key@{eff\_to\_key}!test@{test}}
+\doxysubsubsection{\texorpdfstring{eff\_to\_key()}{eff\_to\_key()}}
+{\footnotesize\ttfamily \label{namespacetest_aec4182054305d5922ee1254290c6ce10} 
+test.\+eff\+\_\+to\+\_\+key (\begin{DoxyParamCaption}\item[{}]{eff}{}\end{DoxyParamCaption})}
+
+\Hypertarget{namespacetest_ae0b30779642efe80d3eb04eba0459a43}\index{test@{test}!key\_to\_eff@{key\_to\_eff}}
+\index{key\_to\_eff@{key\_to\_eff}!test@{test}}
+\doxysubsubsection{\texorpdfstring{key\_to\_eff()}{key\_to\_eff()}}
+{\footnotesize\ttfamily \label{namespacetest_ae0b30779642efe80d3eb04eba0459a43} 
+test.\+key\+\_\+to\+\_\+eff (\begin{DoxyParamCaption}\item[{}]{key}{}\end{DoxyParamCaption})}
+
+\Hypertarget{namespacetest_a8865e9be759677a67390e7e526e22173}\index{test@{test}!start\_stream\_handshake@{start\_stream\_handshake}}
+\index{start\_stream\_handshake@{start\_stream\_handshake}!test@{test}}
+\doxysubsubsection{\texorpdfstring{start\_stream\_handshake()}{start\_stream\_handshake()}}
+{\footnotesize\ttfamily \label{namespacetest_a8865e9be759677a67390e7e526e22173} 
+test.\+start\+\_\+stream\+\_\+handshake (\begin{DoxyParamCaption}\item[{}]{ser}{, }\item[{}]{timeout}{ = {\ttfamily 2.0}, }\item[{}]{retries}{ = {\ttfamily 3}}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Send START and wait for ACK from MCU. Returns True if ACK received.\end{DoxyVerb}
+ 
+
+\label{doc-var-members}
+\Hypertarget{namespacetest_doc-var-members}
+\doxysubsection{Variable Documentation}
+\Hypertarget{namespacetest_a1633840d9e51cca6a65e8b9ab21b1cdf}\index{test@{test}!base\_name@{base\_name}}
+\index{base\_name@{base\_name}!test@{test}}
+\doxysubsubsection{\texorpdfstring{base\_name}{base\_name}}
+{\footnotesize\ttfamily \label{namespacetest_a1633840d9e51cca6a65e8b9ab21b1cdf} 
+str test.\+base\+\_\+name = f"{}\{\mbox{\hyperlink{namespacetest_abab5999e24c6869b1ceebb2bbbba9582}{run\+\_\+name}}\}\+\_\+\{\mbox{\hyperlink{namespacetest_a66e102e23bb72af670d02aa534ed00e0}{run\+\_\+code}}\}\+\_\+\{\mbox{\hyperlink{namespacetest_af460c37a7ef9440bd7524d23430521bb}{driving\+\_\+code}}\}"{}}
+
+\Hypertarget{namespacetest_a4b7c8740ab9a8f6bfcb75cf365e507f3}\index{test@{test}!chunk@{chunk}}
+\index{chunk@{chunk}!test@{test}}
+\doxysubsubsection{\texorpdfstring{chunk}{chunk}}
+{\footnotesize\ttfamily \label{namespacetest_a4b7c8740ab9a8f6bfcb75cf365e507f3} 
+test.\+chunk = ser.\+read(ser.\+in\+\_\+waiting or 1).decode()}
+
+\Hypertarget{namespacetest_a9156288a4b565419adaccf850a0c4492}\index{test@{test}!cols@{cols}}
+\index{cols@{cols}!test@{test}}
+\doxysubsubsection{\texorpdfstring{cols}{cols}}
+{\footnotesize\ttfamily \label{namespacetest_a9156288a4b565419adaccf850a0c4492} 
+list test.\+cols = \mbox{[}"{}\+\_\+time"{}, "{}\+\_\+left\+\_\+pos"{}, "{}\+\_\+right\+\_\+pos"{}, "{}\+\_\+left\+\_\+vel"{}, "{}\+\_\+right\+\_\+vel"{}, "{}\+\_\+obsv\+\_\+time"{}, "{}\+\_\+obsv\+\_\+left\+\_\+vel"{}, "{}\+\_\+obsv\+\_\+right\+\_\+vel"{}, "{}\+\_\+obsv\+\_\+s"{}, "{}\+\_\+obsv\+\_\+yaw"{}\mbox{]}}
+
+\Hypertarget{namespacetest_a7452cb0046ccf7e9491f2d5e88cdb55c}\index{test@{test}!control\_mode@{control\_mode}}
+\index{control\_mode@{control\_mode}!test@{test}}
+\doxysubsubsection{\texorpdfstring{control\_mode}{control\_mode}}
+{\footnotesize\ttfamily \label{namespacetest_a7452cb0046ccf7e9491f2d5e88cdb55c} 
+int test.\+control\+\_\+mode = 0}
+
+\Hypertarget{namespacetest_a9bfc518ae26a756cf36545c32f351657}\index{test@{test}!control\_mode\_dict@{control\_mode\_dict}}
+\index{control\_mode\_dict@{control\_mode\_dict}!test@{test}}
+\doxysubsubsection{\texorpdfstring{control\_mode\_dict}{control\_mode\_dict}}
+{\footnotesize\ttfamily \label{namespacetest_a9bfc518ae26a756cf36545c32f351657} 
+dict test.\+control\+\_\+mode\+\_\+dict = \{0\+: "{}effort"{}, 1\+: "{}velocity"{}, 2\+: "{}line following"{}\}}
+
+\Hypertarget{namespacetest_ae3a7884ddebc3386853df82821d9e689}\index{test@{test}!CPR\_MOTOR@{CPR\_MOTOR}}
+\index{CPR\_MOTOR@{CPR\_MOTOR}!test@{test}}
+\doxysubsubsection{\texorpdfstring{CPR\_MOTOR}{CPR\_MOTOR}}
+{\footnotesize\ttfamily \label{namespacetest_ae3a7884ddebc3386853df82821d9e689} 
+int test.\+CPR\+\_\+\+MOTOR = 12}
+
+\Hypertarget{namespacetest_a7a19c3cb7685fed0456a441c3f9ceb30}\index{test@{test}!CPR\_WHEEL@{CPR\_WHEEL}}
+\index{CPR\_WHEEL@{CPR\_WHEEL}!test@{test}}
+\doxysubsubsection{\texorpdfstring{CPR\_WHEEL}{CPR\_WHEEL}}
+{\footnotesize\ttfamily \label{namespacetest_a7a19c3cb7685fed0456a441c3f9ceb30} 
+int test.\+CPR\+\_\+\+WHEEL = \mbox{\hyperlink{namespacetest_a5fc7da7fcd919c580e9faeb8741c9617}{GEAR\+\_\+\+RATIO}}\texorpdfstring{$\ast$}{*}\mbox{\hyperlink{namespacetest_ae3a7884ddebc3386853df82821d9e689}{CPR\+\_\+\+MOTOR}}}
+
+\Hypertarget{namespacetest_a7d060b587158d041bdb56000d70e7851}\index{test@{test}!creating\_run@{creating\_run}}
+\index{creating\_run@{creating\_run}!test@{test}}
+\doxysubsubsection{\texorpdfstring{creating\_run}{creating\_run}}
+{\footnotesize\ttfamily \label{namespacetest_a7d060b587158d041bdb56000d70e7851} 
+bool test.\+creating\+\_\+run = False}
+
+\Hypertarget{namespacetest_ac48e80191ccbf23cd4ef3306a1355815}\index{test@{test}!csv\_dir@{csv\_dir}}
+\index{csv\_dir@{csv\_dir}!test@{test}}
+\doxysubsubsection{\texorpdfstring{csv\_dir}{csv\_dir}}
+{\footnotesize\ttfamily \label{namespacetest_ac48e80191ccbf23cd4ef3306a1355815} 
+test.\+csv\+\_\+dir = os.\+path.\+join(\textquotesingle{}\mbox{\hyperlink{namespacetest_af441dfc71cbd97962323c63bbb72232b}{runs}}\textquotesingle{}, \textquotesingle{}csvs\textquotesingle{})}
+
+\Hypertarget{namespacetest_ad2d0319d59bf3d262f8505ab92bb671c}\index{test@{test}!csv\_name@{csv\_name}}
+\index{csv\_name@{csv\_name}!test@{test}}
+\doxysubsubsection{\texorpdfstring{csv\_name}{csv\_name}}
+{\footnotesize\ttfamily \label{namespacetest_ad2d0319d59bf3d262f8505ab92bb671c} 
+test.\+csv\+\_\+name = os.\+path.\+join(\mbox{\hyperlink{namespacetest_ac48e80191ccbf23cd4ef3306a1355815}{csv\+\_\+dir}}, \mbox{\hyperlink{namespacetest_a1633840d9e51cca6a65e8b9ab21b1cdf}{base\+\_\+name}} + "{}.csv"{})}
+
+\Hypertarget{namespacetest_a9a93e497a6e2c865120aa795d60224b0}\index{test@{test}!df@{df}}
+\index{df@{df}!test@{test}}
+\doxysubsubsection{\texorpdfstring{df}{df}}
+{\footnotesize\ttfamily \label{namespacetest_a9a93e497a6e2c865120aa795d60224b0} 
+dict test.\+df = pd.\+concat(\mbox{[}\mbox{\hyperlink{namespacetest_a72e39339f430c5ccd9e5d433c5dfbf6a}{df1}}, \mbox{\hyperlink{namespacetest_a6b17ab9035e211e7926b1a7193b5c330}{df2}}\mbox{]}, axis=1)}
+
+\Hypertarget{namespacetest_a72e39339f430c5ccd9e5d433c5dfbf6a}\index{test@{test}!df1@{df1}}
+\index{df1@{df1}!test@{test}}
+\doxysubsubsection{\texorpdfstring{df1}{df1}}
+{\footnotesize\ttfamily \label{namespacetest_a72e39339f430c5ccd9e5d433c5dfbf6a} 
+test.\+df1 = meta.\+get(\textquotesingle{}motor\+\_\+data\textquotesingle{})}
+
+\Hypertarget{namespacetest_a6b17ab9035e211e7926b1a7193b5c330}\index{test@{test}!df2@{df2}}
+\index{df2@{df2}!test@{test}}
+\doxysubsubsection{\texorpdfstring{df2}{df2}}
+{\footnotesize\ttfamily \label{namespacetest_a6b17ab9035e211e7926b1a7193b5c330} 
+test.\+df2 = meta.\+get(\textquotesingle{}obsv\+\_\+data\textquotesingle{}, None)}
+
+\Hypertarget{namespacetest_a6e9473023c9a11824c8a8075ffd05fab}\index{test@{test}!done@{done}}
+\index{done@{done}!test@{test}}
+\doxysubsubsection{\texorpdfstring{done}{done}}
+{\footnotesize\ttfamily \label{namespacetest_a6e9473023c9a11824c8a8075ffd05fab} 
+bool test.\+done = False}
+
+\Hypertarget{namespacetest_af460c37a7ef9440bd7524d23430521bb}\index{test@{test}!driving\_code@{driving\_code}}
+\index{driving\_code@{driving\_code}!test@{test}}
+\doxysubsubsection{\texorpdfstring{driving\_code}{driving\_code}}
+{\footnotesize\ttfamily \label{namespacetest_af460c37a7ef9440bd7524d23430521bb} 
+str test.\+driving\+\_\+code = "{}STR"{}}
+
+\Hypertarget{namespacetest_a21fd18b189df67bbac0155c8e807c05d}\index{test@{test}!driving\_mode@{driving\_mode}}
+\index{driving\_mode@{driving\_mode}!test@{test}}
+\doxysubsubsection{\texorpdfstring{driving\_mode}{driving\_mode}}
+{\footnotesize\ttfamily \label{namespacetest_a21fd18b189df67bbac0155c8e807c05d} 
+tuple test.\+driving\+\_\+mode = 0}
+
+\Hypertarget{namespacetest_ab7d8c34f8699cb3bce72d4ca7ff7b177}\index{test@{test}!driving\_mode\_dict@{driving\_mode\_dict}}
+\index{driving\_mode\_dict@{driving\_mode\_dict}!test@{test}}
+\doxysubsubsection{\texorpdfstring{driving\_mode\_dict}{driving\_mode\_dict}}
+{\footnotesize\ttfamily \label{namespacetest_ab7d8c34f8699cb3bce72d4ca7ff7b177} 
+dict test.\+driving\+\_\+mode\+\_\+dict = \{0\+: "{}straight"{}, 1\+: "{}pivot"{}, 2\+: "{}arc"{}\}}
+
+\Hypertarget{namespacetest_afc9cb69adfec025427b1f3d559652b21}\index{test@{test}!eff@{eff}}
+\index{eff@{eff}!test@{test}}
+\doxysubsubsection{\texorpdfstring{eff}{eff}}
+{\footnotesize\ttfamily \label{namespacetest_afc9cb69adfec025427b1f3d559652b21} 
+test.\+eff = input("{}Enter \mbox{\hyperlink{namespacetest_ae1548d9049df0b30c55f08cdb7668344}{effort}} \mbox{\hyperlink{namespacetest}{test}} in the following format\+: \mbox{\hyperlink{namespacetest_ad61f371a8567376d7044e5812ca9a16a}{start}}, \mbox{\hyperlink{namespacetest_a4c5dc5338be2a95cd317ab3493eb0763}{end}}, \mbox{\hyperlink{namespacetest_a2c75257418c045889282e01c6806b03a}{step}} (e.\+g., 0,100,10)\+: "{})}
+
+\Hypertarget{namespacetest_a07583fa20af1bc33a9555201743ea304}\index{test@{test}!eff\_val@{eff\_val}}
+\index{eff\_val@{eff\_val}!test@{test}}
+\doxysubsubsection{\texorpdfstring{eff\_val}{eff\_val}}
+{\footnotesize\ttfamily \label{namespacetest_a07583fa20af1bc33a9555201743ea304} 
+test.\+eff\+\_\+val = \mbox{\hyperlink{namespacetest_ae0b30779642efe80d3eb04eba0459a43}{key\+\_\+to\+\_\+eff}}(\mbox{\hyperlink{namespacetest_a3a2a447a7b6c04b1ee97dcf7b2b56465}{key\+\_\+in}})}
+
+\Hypertarget{namespacetest_ae1548d9049df0b30c55f08cdb7668344}\index{test@{test}!effort@{effort}}
+\index{effort@{effort}!test@{test}}
+\doxysubsubsection{\texorpdfstring{effort}{effort}}
+{\footnotesize\ttfamily \label{namespacetest_ae1548d9049df0b30c55f08cdb7668344} 
+test.\+effort = 0}
+
+\Hypertarget{namespacetest_a4c5dc5338be2a95cd317ab3493eb0763}\index{test@{test}!end@{end}}
+\index{end@{end}!test@{test}}
+\doxysubsubsection{\texorpdfstring{end}{end}}
+{\footnotesize\ttfamily \label{namespacetest_a4c5dc5338be2a95cd317ab3493eb0763} 
+str test.\+end = int(\mbox{\hyperlink{namespacetest_a55cf60cd244c8042224dd2aedddd1ea7}{end\+\_\+str}})}
+
+\Hypertarget{namespacetest_a55cf60cd244c8042224dd2aedddd1ea7}\index{test@{test}!end\_str@{end\_str}}
+\index{end\_str@{end\_str}!test@{test}}
+\doxysubsubsection{\texorpdfstring{end\_str}{end\_str}}
+{\footnotesize\ttfamily \label{namespacetest_a55cf60cd244c8042224dd2aedddd1ea7} 
+test.\+end\+\_\+str}
+
+\Hypertarget{namespacetest_af4f2260c045cf1db306abf26d306ff17}\index{test@{test}!exist\_ok@{exist\_ok}}
+\index{exist\_ok@{exist\_ok}!test@{test}}
+\doxysubsubsection{\texorpdfstring{exist\_ok}{exist\_ok}}
+{\footnotesize\ttfamily \label{namespacetest_af4f2260c045cf1db306abf26d306ff17} 
+test.\+exist\+\_\+ok}
+
+\Hypertarget{namespacetest_ae04a63cc4eb39edd24b6404817cdfe37}\index{test@{test}!first@{first}}
+\index{first@{first}!test@{test}}
+\doxysubsubsection{\texorpdfstring{first}{first}}
+{\footnotesize\ttfamily \label{namespacetest_ae04a63cc4eb39edd24b6404817cdfe37} 
+bool test.\+first = True}
+
+\Hypertarget{namespacetest_a9652f04408f7d08edb8720bf764f2aa6}\index{test@{test}!first\_frame@{first\_frame}}
+\index{first\_frame@{first\_frame}!test@{test}}
+\doxysubsubsection{\texorpdfstring{first\_frame}{first\_frame}}
+{\footnotesize\ttfamily \label{namespacetest_a9652f04408f7d08edb8720bf764f2aa6} 
+bool test.\+first\+\_\+frame = True}
+
+\Hypertarget{namespacetest_a6d11c86ecc8cc9986d3d18fd94f8883e}\index{test@{test}!frame@{frame}}
+\index{frame@{frame}!test@{test}}
+\doxysubsubsection{\texorpdfstring{frame}{frame}}
+{\footnotesize\ttfamily \label{namespacetest_a6d11c86ecc8cc9986d3d18fd94f8883e} 
+str test.\+frame = \mbox{\hyperlink{namespacetest_aa95239a304d0c43f4052f3b5263ae34c}{frame\+\_\+buffer}}\mbox{[}\mbox{\hyperlink{namespacetest_ad61f371a8567376d7044e5812ca9a16a}{start}}+3 \+: \mbox{\hyperlink{namespacetest_a4c5dc5338be2a95cd317ab3493eb0763}{end}}\mbox{]}}
+
+\Hypertarget{namespacetest_aa95239a304d0c43f4052f3b5263ae34c}\index{test@{test}!frame\_buffer@{frame\_buffer}}
+\index{frame\_buffer@{frame\_buffer}!test@{test}}
+\doxysubsubsection{\texorpdfstring{frame\_buffer}{frame\_buffer}}
+{\footnotesize\ttfamily \label{namespacetest_aa95239a304d0c43f4052f3b5263ae34c} 
+str test.\+frame\+\_\+buffer = "{}"{}}
+
+\Hypertarget{namespacetest_af793b3ac7e7c14ed9a8a8da9aab606ff}\index{test@{test}!gains@{gains}}
+\index{gains@{gains}!test@{test}}
+\doxysubsubsection{\texorpdfstring{gains}{gains}}
+{\footnotesize\ttfamily \label{namespacetest_af793b3ac7e7c14ed9a8a8da9aab606ff} 
+test.\+gains = input("{}Enter \mbox{\hyperlink{namespacetest_acedd8d81e021138aa6d24c6f1180d649}{setpoint}} (mm/s), Kp, and Ki separated by a comma (e.\+g., 40,1.\+5,0.\+1)\+: "{})}
+
+\Hypertarget{namespacetest_a5fc7da7fcd919c580e9faeb8741c9617}\index{test@{test}!GEAR\_RATIO@{GEAR\_RATIO}}
+\index{GEAR\_RATIO@{GEAR\_RATIO}!test@{test}}
+\doxysubsubsection{\texorpdfstring{GEAR\_RATIO}{GEAR\_RATIO}}
+{\footnotesize\ttfamily \label{namespacetest_a5fc7da7fcd919c580e9faeb8741c9617} 
+int test.\+GEAR\+\_\+\+RATIO = 3952/33}
+
+\Hypertarget{namespacetest_a43520d1afc498147f979f22b12133a62}\index{test@{test}!idx@{idx}}
+\index{idx@{idx}!test@{test}}
+\doxysubsubsection{\texorpdfstring{idx}{idx}}
+{\footnotesize\ttfamily \label{namespacetest_a43520d1afc498147f979f22b12133a62} 
+test.\+idx = int(\mbox{\hyperlink{namespacetest_aa697e5338bce24fbe7b039e53861fa3b}{idx\+\_\+str}})}
+
+\Hypertarget{namespacetest_aa697e5338bce24fbe7b039e53861fa3b}\index{test@{test}!idx\_str@{idx\_str}}
+\index{idx\_str@{idx\_str}!test@{test}}
+\doxysubsubsection{\texorpdfstring{idx\_str}{idx\_str}}
+{\footnotesize\ttfamily \label{namespacetest_aa697e5338bce24fbe7b039e53861fa3b} 
+test.\+idx\+\_\+str}
+
+\Hypertarget{namespacetest_aafd85ce1040ec0aa8dfcfe8ff3f2de41}\index{test@{test}!index@{index}}
+\index{index@{index}!test@{test}}
+\doxysubsubsection{\texorpdfstring{index}{index}}
+{\footnotesize\ttfamily \label{namespacetest_aafd85ce1040ec0aa8dfcfe8ff3f2de41} 
+test.\+index}
+
+\Hypertarget{namespacetest_a206906abf4e783c06ae7fe0c62a59544}\index{test@{test}!k\_line@{k\_line}}
+\index{k\_line@{k\_line}!test@{test}}
+\doxysubsubsection{\texorpdfstring{k\_line}{k\_line}}
+{\footnotesize\ttfamily \label{namespacetest_a206906abf4e783c06ae7fe0c62a59544} 
+test.\+k\+\_\+line = 0.\+0}
+
+\Hypertarget{namespacetest_a4241e1f28988d6b3418ff1d41f780ee5}\index{test@{test}!k\_line\_scaled@{k\_line\_scaled}}
+\index{k\_line\_scaled@{k\_line\_scaled}!test@{test}}
+\doxysubsubsection{\texorpdfstring{k\_line\_scaled}{k\_line\_scaled}}
+{\footnotesize\ttfamily \label{namespacetest_a4241e1f28988d6b3418ff1d41f780ee5} 
+test.\+k\+\_\+line\+\_\+scaled = int(\mbox{\hyperlink{namespacetest_a206906abf4e783c06ae7fe0c62a59544}{k\+\_\+line}} \texorpdfstring{$\ast$}{*} 100)}
+
+\Hypertarget{namespacetest_a197471929d21a0f061a5ba2f69b7a1f0}\index{test@{test}!k\_line\_str@{k\_line\_str}}
+\index{k\_line\_str@{k\_line\_str}!test@{test}}
+\doxysubsubsection{\texorpdfstring{k\_line\_str}{k\_line\_str}}
+{\footnotesize\ttfamily \label{namespacetest_a197471929d21a0f061a5ba2f69b7a1f0} 
+test.\+k\+\_\+line\+\_\+str}
+
+\Hypertarget{namespacetest_a7573407cf991ca34f068886b86251b7c}\index{test@{test}!key@{key}}
+\index{key@{key}!test@{test}}
+\doxysubsubsection{\texorpdfstring{key}{key}}
+{\footnotesize\ttfamily \label{namespacetest_a7573407cf991ca34f068886b86251b7c} 
+test.\+key = \textquotesingle{}\textquotesingle{}}
+
+\Hypertarget{namespacetest_a3a2a447a7b6c04b1ee97dcf7b2b56465}\index{test@{test}!key\_in@{key\_in}}
+\index{key\_in@{key\_in}!test@{test}}
+\doxysubsubsection{\texorpdfstring{key\_in}{key\_in}}
+{\footnotesize\ttfamily \label{namespacetest_a3a2a447a7b6c04b1ee97dcf7b2b56465} 
+test.\+key\+\_\+in = input("{}Enter \mbox{\hyperlink{namespacetest_ae1548d9049df0b30c55f08cdb7668344}{effort}} \mbox{\hyperlink{namespacetest_a7573407cf991ca34f068886b86251b7c}{key}} (0-\/9 or \textquotesingle{}a\textquotesingle{} for 100\%) or percent (0-\/100)\+: "{}).strip()}
+
+\Hypertarget{namespacetest_ae961e7156e6b3dbfee2d22ecc9543cd0}\index{test@{test}!ki@{ki}}
+\index{ki@{ki}!test@{test}}
+\doxysubsubsection{\texorpdfstring{ki}{ki}}
+{\footnotesize\ttfamily \label{namespacetest_ae961e7156e6b3dbfee2d22ecc9543cd0} 
+test.\+ki = 0.\+0}
+
+\Hypertarget{namespacetest_a860f7c6f38187a4a57653ab3aaf62873}\index{test@{test}!ki\_scaled@{ki\_scaled}}
+\index{ki\_scaled@{ki\_scaled}!test@{test}}
+\doxysubsubsection{\texorpdfstring{ki\_scaled}{ki\_scaled}}
+{\footnotesize\ttfamily \label{namespacetest_a860f7c6f38187a4a57653ab3aaf62873} 
+test.\+ki\+\_\+scaled = int(\mbox{\hyperlink{namespacetest_ae961e7156e6b3dbfee2d22ecc9543cd0}{ki}} \texorpdfstring{$\ast$}{*} 100)}
+
+\Hypertarget{namespacetest_a8e341e702a9addfe7330aa773ca23d91}\index{test@{test}!ki\_str@{ki\_str}}
+\index{ki\_str@{ki\_str}!test@{test}}
+\doxysubsubsection{\texorpdfstring{ki\_str}{ki\_str}}
+{\footnotesize\ttfamily \label{namespacetest_a8e341e702a9addfe7330aa773ca23d91} 
+test.\+ki\+\_\+str}
+
+\Hypertarget{namespacetest_ae5bb46ab1796081b582c86b6f119608c}\index{test@{test}!kp@{kp}}
+\index{kp@{kp}!test@{test}}
+\doxysubsubsection{\texorpdfstring{kp}{kp}}
+{\footnotesize\ttfamily \label{namespacetest_ae5bb46ab1796081b582c86b6f119608c} 
+test.\+kp = 0.\+0}
+
+\Hypertarget{namespacetest_a8c711ee932ba27944887893658500ca2}\index{test@{test}!kp\_scaled@{kp\_scaled}}
+\index{kp\_scaled@{kp\_scaled}!test@{test}}
+\doxysubsubsection{\texorpdfstring{kp\_scaled}{kp\_scaled}}
+{\footnotesize\ttfamily \label{namespacetest_a8c711ee932ba27944887893658500ca2} 
+test.\+kp\+\_\+scaled = int(\mbox{\hyperlink{namespacetest_ae5bb46ab1796081b582c86b6f119608c}{kp}} \texorpdfstring{$\ast$}{*} 100)}
+
+\Hypertarget{namespacetest_a3a736263cbdfc82ab89c409f79feecb2}\index{test@{test}!kp\_str@{kp\_str}}
+\index{kp\_str@{kp\_str}!test@{test}}
+\doxysubsubsection{\texorpdfstring{kp\_str}{kp\_str}}
+{\footnotesize\ttfamily \label{namespacetest_a3a736263cbdfc82ab89c409f79feecb2} 
+test.\+kp\+\_\+str}
+
+\Hypertarget{namespacetest_ad7ea20fa07ba1158fe68509d290f3c83}\index{test@{test}!left\_pos@{left\_pos}}
+\index{left\_pos@{left\_pos}!test@{test}}
+\doxysubsubsection{\texorpdfstring{left\_pos}{left\_pos}}
+{\footnotesize\ttfamily \label{namespacetest_ad7ea20fa07ba1158fe68509d290f3c83} 
+test.\+left\+\_\+pos}
+
+\Hypertarget{namespacetest_a823111ebd8910aa9aee6be7b12bd085e}\index{test@{test}!left\_vel@{left\_vel}}
+\index{left\_vel@{left\_vel}!test@{test}}
+\doxysubsubsection{\texorpdfstring{left\_vel}{left\_vel}}
+{\footnotesize\ttfamily \label{namespacetest_a823111ebd8910aa9aee6be7b12bd085e} 
+test.\+left\+\_\+vel}
+
+\Hypertarget{namespacetest_a893987392dee1257b3438b3bd256b7b3}\index{test@{test}!line@{line}}
+\index{line@{line}!test@{test}}
+\doxysubsubsection{\texorpdfstring{line}{line}}
+{\footnotesize\ttfamily \label{namespacetest_a893987392dee1257b3438b3bd256b7b3} 
+str test.\+line = \textquotesingle{}e\textquotesingle{} + \mbox{\hyperlink{namespacetest_aec4182054305d5922ee1254290c6ce10}{eff\+\_\+to\+\_\+key}}(\mbox{\hyperlink{namespacetest_ae1548d9049df0b30c55f08cdb7668344}{effort}})}
+
+\Hypertarget{namespacetest_a617576aa2fefc612b834de2405e2e8b2}\index{test@{test}!mode@{mode}}
+\index{mode@{mode}!test@{test}}
+\doxysubsubsection{\texorpdfstring{mode}{mode}}
+{\footnotesize\ttfamily \label{namespacetest_a617576aa2fefc612b834de2405e2e8b2} 
+test.\+mode = \mbox{\hyperlink{namespacetest_af504d7455d1a455833f074005219efeb}{next\+\_\+test}}\mbox{[}0\mbox{]}}
+
+\Hypertarget{namespacetest_a36a0953ea392b694dfff2f42737efeca}\index{test@{test}!mode\_name@{mode\_name}}
+\index{mode\_name@{mode\_name}!test@{test}}
+\doxysubsubsection{\texorpdfstring{mode\_name}{mode\_name}}
+{\footnotesize\ttfamily \label{namespacetest_a36a0953ea392b694dfff2f42737efeca} 
+str test.\+mode\+\_\+name = "{}effort"{}}
+
+\Hypertarget{namespacetest_af504d7455d1a455833f074005219efeb}\index{test@{test}!next\_test@{next\_test}}
+\index{next\_test@{next\_test}!test@{test}}
+\doxysubsubsection{\texorpdfstring{next\_test}{next\_test}}
+{\footnotesize\ttfamily \label{namespacetest_af504d7455d1a455833f074005219efeb} 
+test.\+next\+\_\+test = queue.\+dequeue()}
+
+\Hypertarget{namespacetest_ac8c54ce5876c6331a8c7535270dc951b}\index{test@{test}!params@{params}}
+\index{params@{params}!test@{test}}
+\doxysubsubsection{\texorpdfstring{params}{params}}
+{\footnotesize\ttfamily \label{namespacetest_ac8c54ce5876c6331a8c7535270dc951b} 
+dict test.\+params = None}
+
+\Hypertarget{namespacetest_abd894779bff553c93ca729ee9feb66f4}\index{test@{test}!plots\_dir@{plots\_dir}}
+\index{plots\_dir@{plots\_dir}!test@{test}}
+\doxysubsubsection{\texorpdfstring{plots\_dir}{plots\_dir}}
+{\footnotesize\ttfamily \label{namespacetest_abd894779bff553c93ca729ee9feb66f4} 
+test.\+plots\+\_\+dir = os.\+path.\+join(\textquotesingle{}\mbox{\hyperlink{namespacetest_af441dfc71cbd97962323c63bbb72232b}{runs}}\textquotesingle{}, \textquotesingle{}plots\textquotesingle{})}
+
+\Hypertarget{namespacetest_afabc6d03eb874841e4aa988bf5eb081b}\index{test@{test}!print\_stream\_frames@{print\_stream\_frames}}
+\index{print\_stream\_frames@{print\_stream\_frames}!test@{test}}
+\doxysubsubsection{\texorpdfstring{print\_stream\_frames}{print\_stream\_frames}}
+{\footnotesize\ttfamily \label{namespacetest_afabc6d03eb874841e4aa988bf5eb081b} 
+bool test.\+print\+\_\+stream\+\_\+frames = True}
+
+\Hypertarget{namespacetest_a72fdb12802e5e44dff47427ebf217bf5}\index{test@{test}!queue@{queue}}
+\index{queue@{queue}!test@{test}}
+\doxysubsubsection{\texorpdfstring{queue}{queue}}
+{\footnotesize\ttfamily \label{namespacetest_a72fdb12802e5e44dff47427ebf217bf5} 
+\mbox{\hyperlink{namespacequeue}{test.\+queue}} = local\+\_\+queue.\+Queue()}
+
+\Hypertarget{namespacetest_a1abcae538fe399011e4ffe16ab92dc52}\index{test@{test}!queuing@{queuing}}
+\index{queuing@{queuing}!test@{test}}
+\doxysubsubsection{\texorpdfstring{queuing}{queuing}}
+{\footnotesize\ttfamily \label{namespacetest_a1abcae538fe399011e4ffe16ab92dc52} 
+bool test.\+queuing = False}
+
+\Hypertarget{namespacetest_a6ca95c3f2848dd4406406db09d8ba60a}\index{test@{test}!RAD\_PER\_COUNT@{RAD\_PER\_COUNT}}
+\index{RAD\_PER\_COUNT@{RAD\_PER\_COUNT}!test@{test}}
+\doxysubsubsection{\texorpdfstring{RAD\_PER\_COUNT}{RAD\_PER\_COUNT}}
+{\footnotesize\ttfamily \label{namespacetest_a6ca95c3f2848dd4406406db09d8ba60a} 
+int test.\+RAD\+\_\+\+PER\+\_\+\+COUNT = 2 \texorpdfstring{$\ast$}{*} math.\+pi / \mbox{\hyperlink{namespacetest_a7a19c3cb7685fed0456a441c3f9ceb30}{CPR\+\_\+\+WHEEL}}}
+
+\Hypertarget{namespacetest_a9c4e122a1bbe158c68f57a4a9ef8d0ad}\index{test@{test}!right\_pos@{right\_pos}}
+\index{right\_pos@{right\_pos}!test@{test}}
+\doxysubsubsection{\texorpdfstring{right\_pos}{right\_pos}}
+{\footnotesize\ttfamily \label{namespacetest_a9c4e122a1bbe158c68f57a4a9ef8d0ad} 
+test.\+right\+\_\+pos}
+
+\Hypertarget{namespacetest_a19f94b7c1fa10c178624c09fc88bae56}\index{test@{test}!right\_vel@{right\_vel}}
+\index{right\_vel@{right\_vel}!test@{test}}
+\doxysubsubsection{\texorpdfstring{right\_vel}{right\_vel}}
+{\footnotesize\ttfamily \label{namespacetest_a19f94b7c1fa10c178624c09fc88bae56} 
+test.\+right\+\_\+vel}
+
+\Hypertarget{namespacetest_a66e102e23bb72af670d02aa534ed00e0}\index{test@{test}!run\_code@{run\_code}}
+\index{run\_code@{run\_code}!test@{test}}
+\doxysubsubsection{\texorpdfstring{run\_code}{run\_code}}
+{\footnotesize\ttfamily \label{namespacetest_a66e102e23bb72af670d02aa534ed00e0} 
+str test.\+run\+\_\+code = \textquotesingle{}E\textquotesingle{}}
+
+\Hypertarget{namespacetest_a66a898ed37d52626357dad223b746963}\index{test@{test}!run\_count@{run\_count}}
+\index{run\_count@{run\_count}!test@{test}}
+\doxysubsubsection{\texorpdfstring{run\_count}{run\_count}}
+{\footnotesize\ttfamily \label{namespacetest_a66a898ed37d52626357dad223b746963} 
+int test.\+run\+\_\+count = 0}
+
+\Hypertarget{namespacetest_abab5999e24c6869b1ceebb2bbbba9582}\index{test@{test}!run\_name@{run\_name}}
+\index{run\_name@{run\_name}!test@{test}}
+\doxysubsubsection{\texorpdfstring{run\_name}{run\_name}}
+{\footnotesize\ttfamily \label{namespacetest_abab5999e24c6869b1ceebb2bbbba9582} 
+str test.\+run\+\_\+name = f\textquotesingle{}run\{\mbox{\hyperlink{namespacetest_a66a898ed37d52626357dad223b746963}{run\+\_\+count}}\}\textquotesingle{}}
+
+\Hypertarget{namespacetest_ab71690e676fc23d5daf21bb889f79a27}\index{test@{test}!running@{running}}
+\index{running@{running}!test@{test}}
+\doxysubsubsection{\texorpdfstring{running}{running}}
+{\footnotesize\ttfamily \label{namespacetest_ab71690e676fc23d5daf21bb889f79a27} 
+bool test.\+running = False}
+
+\Hypertarget{namespacetest_af441dfc71cbd97962323c63bbb72232b}\index{test@{test}!runs@{runs}}
+\index{runs@{runs}!test@{test}}
+\doxysubsubsection{\texorpdfstring{runs}{runs}}
+{\footnotesize\ttfamily \label{namespacetest_af441dfc71cbd97962323c63bbb72232b} 
+dict test.\+runs = \{\}}
+
+\Hypertarget{namespacetest_ae30ae1e5c1722575fa4accae5871819f}\index{test@{test}!sample\_size@{sample\_size}}
+\index{sample\_size@{sample\_size}!test@{test}}
+\doxysubsubsection{\texorpdfstring{sample\_size}{sample\_size}}
+{\footnotesize\ttfamily \label{namespacetest_ae30ae1e5c1722575fa4accae5871819f} 
+int test.\+sample\+\_\+size = 200}
+
+\Hypertarget{namespacetest_ac41a8344ce7e0c136c4e9663ecbe991a}\index{test@{test}!selected@{selected}}
+\index{selected@{selected}!test@{test}}
+\doxysubsubsection{\texorpdfstring{selected}{selected}}
+{\footnotesize\ttfamily \label{namespacetest_ac41a8344ce7e0c136c4e9663ecbe991a} 
+test.\+selected = input("{}Enter choice (e, v, l, or q to quit)\+: "{})}
+
+\Hypertarget{namespacetest_acb217bd4ff73a22557532a823d4cda2a}\index{test@{test}!ser@{ser}}
+\index{ser@{ser}!test@{test}}
+\doxysubsubsection{\texorpdfstring{ser}{ser}}
+{\footnotesize\ttfamily \label{namespacetest_acb217bd4ff73a22557532a823d4cda2a} 
+test.\+ser = Serial(\textquotesingle{}COM3\textquotesingle{}, baudrate=115200, timeout=1)}
+
+\Hypertarget{namespacetest_acedd8d81e021138aa6d24c6f1180d649}\index{test@{test}!setpoint@{setpoint}}
+\index{setpoint@{setpoint}!test@{test}}
+\doxysubsubsection{\texorpdfstring{setpoint}{setpoint}}
+{\footnotesize\ttfamily \label{namespacetest_acedd8d81e021138aa6d24c6f1180d649} 
+test.\+setpoint = 0}
+
+\Hypertarget{namespacetest_af5b997959ad6de91d7defdedcdf87301}\index{test@{test}!setpoint\_mm\_s@{setpoint\_mm\_s}}
+\index{setpoint\_mm\_s@{setpoint\_mm\_s}!test@{test}}
+\doxysubsubsection{\texorpdfstring{setpoint\_mm\_s}{setpoint\_mm\_s}}
+{\footnotesize\ttfamily \label{namespacetest_af5b997959ad6de91d7defdedcdf87301} 
+test.\+setpoint\+\_\+mm\+\_\+s = float(\mbox{\hyperlink{namespacetest_a20f7f397bc9d989ab53ce10ef91d5750}{sp\+\_\+str}})}
+
+\Hypertarget{namespacetest_aeccdc1405417f6c83f286c686d5806f0}\index{test@{test}!setpoint\_rad\_s@{setpoint\_rad\_s}}
+\index{setpoint\_rad\_s@{setpoint\_rad\_s}!test@{test}}
+\doxysubsubsection{\texorpdfstring{setpoint\_rad\_s}{setpoint\_rad\_s}}
+{\footnotesize\ttfamily \label{namespacetest_aeccdc1405417f6c83f286c686d5806f0} 
+int test.\+setpoint\+\_\+rad\+\_\+s = \mbox{\hyperlink{namespacetest_af5b997959ad6de91d7defdedcdf87301}{setpoint\+\_\+mm\+\_\+s}} / \mbox{\hyperlink{namespacetest_a9a599cf5689fa3e7d98b9d519ef80e74}{WHEEL\+\_\+\+RADIUS\+\_\+\+MM}}}
+
+\Hypertarget{namespacetest_a04a0c102ee3a970e2df302070bd378eb}\index{test@{test}!setpoint\_scaled@{setpoint\_scaled}}
+\index{setpoint\_scaled@{setpoint\_scaled}!test@{test}}
+\doxysubsubsection{\texorpdfstring{setpoint\_scaled}{setpoint\_scaled}}
+{\footnotesize\ttfamily \label{namespacetest_a04a0c102ee3a970e2df302070bd378eb} 
+test.\+setpoint\+\_\+scaled = int(\mbox{\hyperlink{namespacetest_aeccdc1405417f6c83f286c686d5806f0}{setpoint\+\_\+rad\+\_\+s}} \texorpdfstring{$\ast$}{*} 100)}
+
+\Hypertarget{namespacetest_a20f7f397bc9d989ab53ce10ef91d5750}\index{test@{test}!sp\_str@{sp\_str}}
+\index{sp\_str@{sp\_str}!test@{test}}
+\doxysubsubsection{\texorpdfstring{sp\_str}{sp\_str}}
+{\footnotesize\ttfamily \label{namespacetest_a20f7f397bc9d989ab53ce10ef91d5750} 
+test.\+sp\+\_\+str}
+
+\Hypertarget{namespacetest_ad61f371a8567376d7044e5812ca9a16a}\index{test@{test}!start@{start}}
+\index{start@{start}!test@{test}}
+\doxysubsubsection{\texorpdfstring{start}{start}}
+{\footnotesize\ttfamily \label{namespacetest_ad61f371a8567376d7044e5812ca9a16a} 
+str test.\+start = int(\mbox{\hyperlink{namespacetest_aff552937608aaec6716a32fb227b6705}{start\+\_\+str}})}
+
+\Hypertarget{namespacetest_aff552937608aaec6716a32fb227b6705}\index{test@{test}!start\_str@{start\_str}}
+\index{start\_str@{start\_str}!test@{test}}
+\doxysubsubsection{\texorpdfstring{start\_str}{start\_str}}
+{\footnotesize\ttfamily \label{namespacetest_aff552937608aaec6716a32fb227b6705} 
+test.\+start\+\_\+str}
+
+\Hypertarget{namespacetest_a2c75257418c045889282e01c6806b03a}\index{test@{test}!step@{step}}
+\index{step@{step}!test@{test}}
+\doxysubsubsection{\texorpdfstring{step}{step}}
+{\footnotesize\ttfamily \label{namespacetest_a2c75257418c045889282e01c6806b03a} 
+test.\+step = int(\mbox{\hyperlink{namespacetest_a8f8390da418694907fc1f6817177990a}{step\+\_\+str}})}
+
+\Hypertarget{namespacetest_a8f8390da418694907fc1f6817177990a}\index{test@{test}!step\_str@{step\_str}}
+\index{step\_str@{step\_str}!test@{test}}
+\doxysubsubsection{\texorpdfstring{step\_str}{step\_str}}
+{\footnotesize\ttfamily \label{namespacetest_a8f8390da418694907fc1f6817177990a} 
+test.\+step\+\_\+str}
+
+\Hypertarget{namespacetest_ad969d65e91c50624e6d0d12bef1f1bff}\index{test@{test}!stream\_expected@{stream\_expected}}
+\index{stream\_expected@{stream\_expected}!test@{test}}
+\doxysubsubsection{\texorpdfstring{stream\_expected}{stream\_expected}}
+{\footnotesize\ttfamily \label{namespacetest_ad969d65e91c50624e6d0d12bef1f1bff} 
+bool test.\+stream\+\_\+expected = True}
+
+\Hypertarget{namespacetest_ada80cd4bef10ded8839db31c254c098c}\index{test@{test}!streaming@{streaming}}
+\index{streaming@{streaming}!test@{test}}
+\doxysubsubsection{\texorpdfstring{streaming}{streaming}}
+{\footnotesize\ttfamily \label{namespacetest_ada80cd4bef10ded8839db31c254c098c} 
+bool test.\+streaming = False}
+
+\Hypertarget{namespacetest_a571f5adbd6cd8f738d43d4b5490a613d}\index{test@{test}!target\_scaled@{target\_scaled}}
+\index{target\_scaled@{target\_scaled}!test@{test}}
+\doxysubsubsection{\texorpdfstring{target\_scaled}{target\_scaled}}
+{\footnotesize\ttfamily \label{namespacetest_a571f5adbd6cd8f738d43d4b5490a613d} 
+test.\+target\+\_\+scaled = int(\mbox{\hyperlink{namespacetest_aeccdc1405417f6c83f286c686d5806f0}{setpoint\+\_\+rad\+\_\+s}} \texorpdfstring{$\ast$}{*} 100)}
+
+\Hypertarget{namespacetest_a663b216e6d9f34c035112629f7cb6f0c}\index{test@{test}!target\_str@{target\_str}}
+\index{target\_str@{target\_str}!test@{test}}
+\doxysubsubsection{\texorpdfstring{target\_str}{target\_str}}
+{\footnotesize\ttfamily \label{namespacetest_a663b216e6d9f34c035112629f7cb6f0c} 
+test.\+target\+\_\+str}
+
+\Hypertarget{namespacetest_a6ced71697abc3b674ebbed5725af055d}\index{test@{test}!test\_origin@{test\_origin}}
+\index{test\_origin@{test\_origin}!test@{test}}
+\doxysubsubsection{\texorpdfstring{test\_origin}{test\_origin}}
+{\footnotesize\ttfamily \label{namespacetest_a6ced71697abc3b674ebbed5725af055d} 
+str test.\+test\+\_\+origin = "{}manual"{}}
+
+\Hypertarget{namespacetest_aa0cfd420da6c9dbac002a7042a0ca36f}\index{test@{test}!time\_s@{time\_s}}
+\index{time\_s@{time\_s}!test@{test}}
+\doxysubsubsection{\texorpdfstring{time\_s}{time\_s}}
+{\footnotesize\ttfamily \label{namespacetest_aa0cfd420da6c9dbac002a7042a0ca36f} 
+test.\+time\+\_\+s}
+
+\Hypertarget{namespacetest_ad0914828b1ed8502c9d901218d0058f8}\index{test@{test}!user\_prompt@{user\_prompt}}
+\index{user\_prompt@{user\_prompt}!test@{test}}
+\doxysubsubsection{\texorpdfstring{user\_prompt}{user\_prompt}}
+{\footnotesize\ttfamily \label{namespacetest_ad0914828b1ed8502c9d901218d0058f8} 
+str test.\+user\+\_\+prompt}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ =\ \ \textcolor{stringliteral}{'''\(\backslash\)r\(\backslash\)nCommand\ keys:}}
+\DoxyCodeLine{00002\ \textcolor{stringliteral}{\ \ \ \ t\ \ \ \ \ \ :\ Select\ a\ test\ to\ run:\ Effort,\ Velocity,\ Line\ Following}}
+\DoxyCodeLine{00003\ \textcolor{stringliteral}{\ \ \ \ u\ \ \ \ \ \ :\ Queue\ tests}}
+\DoxyCodeLine{00004\ \textcolor{stringliteral}{\ \ \ \ r\ \ \ \ \ \ :\ Run\ test}}
+\DoxyCodeLine{00005\ \textcolor{stringliteral}{\ \ \ \ k\ \ \ \ \ \ :\ Kill\ (stop)\ motors}}
+\DoxyCodeLine{00006\ \textcolor{stringliteral}{\ \ \ \ s\ \ \ \ \ \ :\ Toggle\ live\ data\ streaming\ ON/OFF}}
+\DoxyCodeLine{00007\ \textcolor{stringliteral}{\ \ \ \ p\ \ \ \ \ \ :\ Toggle\ printing\ of\ streamed\ data\ frames}}
+\DoxyCodeLine{00008\ \textcolor{stringliteral}{\ \ \ \ d\ \ \ \ \ \ :\ Save\ complete\ data\ to\ CSV\ and\ optionally\ create\ plots}}
+\DoxyCodeLine{00009\ \textcolor{stringliteral}{\ \ \ \ b\ \ \ \ \ \ :\ Check\ battery\ voltage\ (prints\ to\ this\ terminal)}}
+\DoxyCodeLine{00010\ \textcolor{stringliteral}{\ \ \ \ c\ \ \ \ \ \ :\ Calibrate\ sensors:\ IR\ sensors\ or\ IMU}}
+\DoxyCodeLine{00011\ \textcolor{stringliteral}{\ \ \ \ h\ \ \ \ \ \ :\ Help\ /\ show\ this\ menu}}
+\DoxyCodeLine{00012\ \textcolor{stringliteral}{\ \ \ \ ctrl-\/c\ :\ Interrupt\ this\ program}}
+\DoxyCodeLine{00013\ \textcolor{stringliteral}{'''}}
+
+\end{DoxyCode}
+\Hypertarget{namespacetest_a9a599cf5689fa3e7d98b9d519ef80e74}\index{test@{test}!WHEEL\_RADIUS\_MM@{WHEEL\_RADIUS\_MM}}
+\index{WHEEL\_RADIUS\_MM@{WHEEL\_RADIUS\_MM}!test@{test}}
+\doxysubsubsection{\texorpdfstring{WHEEL\_RADIUS\_MM}{WHEEL\_RADIUS\_MM}}
+{\footnotesize\ttfamily \label{namespacetest_a9a599cf5689fa3e7d98b9d519ef80e74} 
+int test.\+WHEEL\+\_\+\+RADIUS\+\_\+\+MM = 35}
+

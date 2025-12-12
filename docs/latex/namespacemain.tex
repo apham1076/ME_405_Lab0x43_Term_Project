@@ -1,0 +1,45 @@
+\doxysection{main Namespace Reference}
+\hypertarget{namespacemain}{}\label{namespacemain}\index{main@{main}}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{namespacemain_a3140e9a5b6a71ffbf498198cfc471b88}{main}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}@file main.py
+@author Allan Pham and Michael Duperly
+@date December 2025
+@brief Main file for ME 405 Term Project implementing cooperative multitasking
+       with cotask scheduler.
+
+Each task is encapsulated in its own class, and communication is handled using task_share objects.
+ (shares and queues) to avoid global variables. The cotask scheduler manages task execution based on priority and period.
+
+The tasks included are:
+- UITask: Manages Bluetooth serial communication and sets motor commands.
+- MotorControlTask: Controls motors based on encoder feedback and updates shares.
+- StreamTask: Streams buffered data back to the PC via Bluetooth.
+- SteeringTask: Processes IR sensor data to compute steering corrections.
+- GCTask: Manages garbage collection to optimize memory usage.
+- SpectatorTask: Tracks the robot's position and orientation.
+- PathPlanningTask: Implements path planning algorithms for navigation.
+
+A list of inactive tasks is also provided:
+- DataCollectionTask: Collects and logs data for analysis.
+- StateEstimationTask: Implements a state observer for estimating robot states.
+- ReadIMUTask: Reads data from the IMU sensor.
+- BumpTask: Monitors bump sensors for collision detection.
+\end{DoxyVerb}
+ 
+
+\label{doc-func-members}
+\Hypertarget{namespacemain_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{namespacemain_a3140e9a5b6a71ffbf498198cfc471b88}\index{main@{main}!main@{main}}
+\index{main@{main}!main@{main}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily \label{namespacemain_a3140e9a5b6a71ffbf498198cfc471b88} 
+main.\+main (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+

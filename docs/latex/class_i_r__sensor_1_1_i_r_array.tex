@@ -1,0 +1,197 @@
+\doxysection{IR\+\_\+sensor.\+IRArray Class Reference}
+\hypertarget{class_i_r__sensor_1_1_i_r_array}{}\label{class_i_r__sensor_1_1_i_r_array}\index{IR\_sensor.IRArray@{IR\_sensor.IRArray}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_i_r__sensor_1_1_i_r_array_a0ebc2a6565092c72fda7006e972ff11f}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self, int tim\+\_\+num, int \mbox{\hyperlink{class_i_r__sensor_1_1_i_r_array_ae8f51d9f521ee5ff0fe3460994dd7159}{samples}}, IR\+\_\+pins, sensor\+\_\+indices=None)
+\item 
+\mbox{\hyperlink{class_i_r__sensor_1_1_i_r_array_a91f43d83b3e94462fd46aad399c245c8}{calibrate}} (self, str color)
+\item 
+\mbox{\hyperlink{class_i_r__sensor_1_1_i_r_array_a0c2dc53a3cb0e730007825c6aee0dd7c}{set\+\_\+calibration}} (self)
+\item 
+\mbox{\hyperlink{class_i_r__sensor_1_1_i_r_array_a4d686cb5fb9daea7d506fe661e2f1205}{read}} (self)
+\item 
+\mbox{\hyperlink{class_i_r__sensor_1_1_i_r_array_aeb11712ead341140065ecaae04a6151e}{get\+\_\+centroid}} (self)
+\item 
+\mbox{\hyperlink{class_i_r__sensor_1_1_i_r_array_ad03d13b858e785e0d91fae1a3063122d}{center\+\_\+index}} (self)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_i_r__sensor_1_1_i_r_array_a86e5d6c07e7fa4223c52a629881e0f81}{tim\+\_\+obj}} = Timer(tim\+\_\+num, freq = 20000)
+\item 
+\mbox{\hyperlink{class_i_r__sensor_1_1_i_r_array_ae8f51d9f521ee5ff0fe3460994dd7159}{samples}} = int(samples)
+\item 
+list \mbox{\hyperlink{class_i_r__sensor_1_1_i_r_array_a174d346220cdb74d6f20bffb6eb1214d}{adcs}} = \mbox{[}ADC(Pin(p)) for p in IR\+\_\+pins\mbox{]}
+\item 
+\mbox{\hyperlink{class_i_r__sensor_1_1_i_r_array_aa792dbed3e86daa37b2c6e22fa18bd4a}{num}} = len(self.\+adcs)
+\item 
+bool \mbox{\hyperlink{class_i_r__sensor_1_1_i_r_array_a7077ed1ff227a0894cf56362e7956689}{white\+\_\+cal}} = False
+\item 
+bool \mbox{\hyperlink{class_i_r__sensor_1_1_i_r_array_af661cc8655b3ec63ba0f0502d381d660}{black\+\_\+cal}} = False
+\item 
+\mbox{\hyperlink{class_i_r__sensor_1_1_i_r_array_a6216775038a435a8123e846746a980c2}{sensor\+\_\+index}} = list(range(1, self.\+num + 1))
+\item 
+list \mbox{\hyperlink{class_i_r__sensor_1_1_i_r_array_a618fb95ac39af6b040b2ded19e327f20}{black}} = \mbox{[}0.\+0\mbox{]} \texorpdfstring{$\ast$}{*} self.\+num
+\item 
+list \mbox{\hyperlink{class_i_r__sensor_1_1_i_r_array_a8702c36bb1c4d04906a5fb55849c1784}{white}} = \mbox{[}0.\+0\mbox{]} \texorpdfstring{$\ast$}{*} self.\+num
+\item 
+list \mbox{\hyperlink{class_i_r__sensor_1_1_i_r_array_a4fe0cf03c54fff10789a21a081ca202c}{norm}} = \mbox{[}0.\+0\mbox{]} \texorpdfstring{$\ast$}{*} self.\+num
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}IR sensor array driver with per-channel calibration and centroid calculation.
+- Pins are specified by the caller (in main.py); driver creates ADCs.
+- Supports flexible board index mapping (physical sensor indices printed on the board).
+- Uses read_timed_multi() for calibration; read() uses single-shot for low overhead.
+\end{DoxyVerb}
+ 
+
+\label{doc-constructors}
+\Hypertarget{class_i_r__sensor_1_1_i_r_array_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_i_r__sensor_1_1_i_r_array_a0ebc2a6565092c72fda7006e972ff11f}\index{IR\_sensor.IRArray@{IR\_sensor.IRArray}!\_\_init\_\_@{\_\_init\_\_}}
+\index{\_\_init\_\_@{\_\_init\_\_}!IR\_sensor.IRArray@{IR\_sensor.IRArray}}
+\doxysubsubsection{\texorpdfstring{\_\_init\_\_()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily \label{class_i_r__sensor_1_1_i_r_array_a0ebc2a6565092c72fda7006e972ff11f} 
+IR\+\_\+sensor.\+IRArray.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{int}]{tim\+\_\+num}{, }\item[{int}]{samples}{, }\item[{}]{IR\+\_\+pins}{, }\item[{}]{sensor\+\_\+indices}{ = {\ttfamily None}}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Args:
+    tim_num: Timer number for creating a timer for ADC sampling
+    samples: Number of samples to average in calibration
+    IR_pins: List of Pin.cpu.<X> constants (order: left -> right)
+    sensor_indices: Optional list of physical board indices corresponding to the IR_pins list
+                    (example: [1,3,5,7,9,11] if only odd sensors are populated). If None, indices default to [1..N] in the given order.
+\end{DoxyVerb}
+ 
+
+\label{doc-func-members}
+\Hypertarget{class_i_r__sensor_1_1_i_r_array_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_i_r__sensor_1_1_i_r_array_a91f43d83b3e94462fd46aad399c245c8}\index{IR\_sensor.IRArray@{IR\_sensor.IRArray}!calibrate@{calibrate}}
+\index{calibrate@{calibrate}!IR\_sensor.IRArray@{IR\_sensor.IRArray}}
+\doxysubsubsection{\texorpdfstring{calibrate()}{calibrate()}}
+{\footnotesize\ttfamily \label{class_i_r__sensor_1_1_i_r_array_a91f43d83b3e94462fd46aad399c245c8} 
+IR\+\_\+sensor.\+IRArray.\+calibrate (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{str}]{color}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Calibrate on 'w' (white background) or 'b' (black line).
+Uses read_timed_multi() to fill per-channel buffers and averages them.
+Prints a compact table of per-sensor averages for visual verification.
+Returns the list of averages (float) in the same order as sensor_index.
+
+Args:
+    color: 'w' for white calibration, 'b' for black calibration
+
+Returns:
+    avgs: List containing average readings for each sensor after calibration
+\end{DoxyVerb}
+ \Hypertarget{class_i_r__sensor_1_1_i_r_array_ad03d13b858e785e0d91fae1a3063122d}\index{IR\_sensor.IRArray@{IR\_sensor.IRArray}!center\_index@{center\_index}}
+\index{center\_index@{center\_index}!IR\_sensor.IRArray@{IR\_sensor.IRArray}}
+\doxysubsubsection{\texorpdfstring{center\_index()}{center\_index()}}
+{\footnotesize\ttfamily \label{class_i_r__sensor_1_1_i_r_array_ad03d13b858e785e0d91fae1a3063122d} 
+IR\+\_\+sensor.\+IRArray.\+center\+\_\+index (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Returns the ideal center location in index space.
+For arbitrary index sets, use average of min and max (center of span).
+\end{DoxyVerb}
+ \Hypertarget{class_i_r__sensor_1_1_i_r_array_aeb11712ead341140065ecaae04a6151e}\index{IR\_sensor.IRArray@{IR\_sensor.IRArray}!get\_centroid@{get\_centroid}}
+\index{get\_centroid@{get\_centroid}!IR\_sensor.IRArray@{IR\_sensor.IRArray}}
+\doxysubsubsection{\texorpdfstring{get\_centroid()}{get\_centroid()}}
+{\footnotesize\ttfamily \label{class_i_r__sensor_1_1_i_r_array_aeb11712ead341140065ecaae04a6151e} 
+IR\+\_\+sensor.\+IRArray.\+get\+\_\+centroid (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Compute centroid using the last normalized vector (or perform a read).
+Returns:
+    (centroid, seen)
+    centroid: float in the index space (not 0..1; uses sensor_index values)
+    seen: bool indicating if any signal was seen (sum(norm) > small eps)
+\end{DoxyVerb}
+ \Hypertarget{class_i_r__sensor_1_1_i_r_array_a4d686cb5fb9daea7d506fe661e2f1205}\index{IR\_sensor.IRArray@{IR\_sensor.IRArray}!read@{read}}
+\index{read@{read}!IR\_sensor.IRArray@{IR\_sensor.IRArray}}
+\doxysubsubsection{\texorpdfstring{read()}{read()}}
+{\footnotesize\ttfamily \label{class_i_r__sensor_1_1_i_r_array_a4d686cb5fb9daea7d506fe661e2f1205} 
+IR\+\_\+sensor.\+IRArray.\+read (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Single-shot read on all channels, normalized to [0,1].
+0 ~ white (background), 1 ~ black (line).
+
+Returns: list of floats, same order as IR_pins / sensor_index.
+\end{DoxyVerb}
+ \Hypertarget{class_i_r__sensor_1_1_i_r_array_a0c2dc53a3cb0e730007825c6aee0dd7c}\index{IR\_sensor.IRArray@{IR\_sensor.IRArray}!set\_calibration@{set\_calibration}}
+\index{set\_calibration@{set\_calibration}!IR\_sensor.IRArray@{IR\_sensor.IRArray}}
+\doxysubsubsection{\texorpdfstring{set\_calibration()}{set\_calibration()}}
+{\footnotesize\ttfamily \label{class_i_r__sensor_1_1_i_r_array_a0c2dc53a3cb0e730007825c6aee0dd7c} 
+IR\+\_\+sensor.\+IRArray.\+set\+\_\+calibration (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Set calibration data from IR_cal.txt file if it exists.\end{DoxyVerb}
+ 
+
+\label{doc-variable-members}
+\Hypertarget{class_i_r__sensor_1_1_i_r_array_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_i_r__sensor_1_1_i_r_array_a174d346220cdb74d6f20bffb6eb1214d}\index{IR\_sensor.IRArray@{IR\_sensor.IRArray}!adcs@{adcs}}
+\index{adcs@{adcs}!IR\_sensor.IRArray@{IR\_sensor.IRArray}}
+\doxysubsubsection{\texorpdfstring{adcs}{adcs}}
+{\footnotesize\ttfamily \label{class_i_r__sensor_1_1_i_r_array_a174d346220cdb74d6f20bffb6eb1214d} 
+IR\+\_\+sensor.\+IRArray.\+adcs = \mbox{[}ADC(Pin(p)) for p in IR\+\_\+pins\mbox{]}}
+
+\Hypertarget{class_i_r__sensor_1_1_i_r_array_a618fb95ac39af6b040b2ded19e327f20}\index{IR\_sensor.IRArray@{IR\_sensor.IRArray}!black@{black}}
+\index{black@{black}!IR\_sensor.IRArray@{IR\_sensor.IRArray}}
+\doxysubsubsection{\texorpdfstring{black}{black}}
+{\footnotesize\ttfamily \label{class_i_r__sensor_1_1_i_r_array_a618fb95ac39af6b040b2ded19e327f20} 
+list IR\+\_\+sensor.\+IRArray.\+black = \mbox{[}0.\+0\mbox{]} \texorpdfstring{$\ast$}{*} self.\+num}
+
+\Hypertarget{class_i_r__sensor_1_1_i_r_array_af661cc8655b3ec63ba0f0502d381d660}\index{IR\_sensor.IRArray@{IR\_sensor.IRArray}!black\_cal@{black\_cal}}
+\index{black\_cal@{black\_cal}!IR\_sensor.IRArray@{IR\_sensor.IRArray}}
+\doxysubsubsection{\texorpdfstring{black\_cal}{black\_cal}}
+{\footnotesize\ttfamily \label{class_i_r__sensor_1_1_i_r_array_af661cc8655b3ec63ba0f0502d381d660} 
+bool IR\+\_\+sensor.\+IRArray.\+black\+\_\+cal = False}
+
+\Hypertarget{class_i_r__sensor_1_1_i_r_array_a4fe0cf03c54fff10789a21a081ca202c}\index{IR\_sensor.IRArray@{IR\_sensor.IRArray}!norm@{norm}}
+\index{norm@{norm}!IR\_sensor.IRArray@{IR\_sensor.IRArray}}
+\doxysubsubsection{\texorpdfstring{norm}{norm}}
+{\footnotesize\ttfamily \label{class_i_r__sensor_1_1_i_r_array_a4fe0cf03c54fff10789a21a081ca202c} 
+IR\+\_\+sensor.\+IRArray.\+norm = \mbox{[}0.\+0\mbox{]} \texorpdfstring{$\ast$}{*} self.\+num}
+
+\Hypertarget{class_i_r__sensor_1_1_i_r_array_aa792dbed3e86daa37b2c6e22fa18bd4a}\index{IR\_sensor.IRArray@{IR\_sensor.IRArray}!num@{num}}
+\index{num@{num}!IR\_sensor.IRArray@{IR\_sensor.IRArray}}
+\doxysubsubsection{\texorpdfstring{num}{num}}
+{\footnotesize\ttfamily \label{class_i_r__sensor_1_1_i_r_array_aa792dbed3e86daa37b2c6e22fa18bd4a} 
+IR\+\_\+sensor.\+IRArray.\+num = len(self.\+adcs)}
+
+\Hypertarget{class_i_r__sensor_1_1_i_r_array_ae8f51d9f521ee5ff0fe3460994dd7159}\index{IR\_sensor.IRArray@{IR\_sensor.IRArray}!samples@{samples}}
+\index{samples@{samples}!IR\_sensor.IRArray@{IR\_sensor.IRArray}}
+\doxysubsubsection{\texorpdfstring{samples}{samples}}
+{\footnotesize\ttfamily \label{class_i_r__sensor_1_1_i_r_array_ae8f51d9f521ee5ff0fe3460994dd7159} 
+IR\+\_\+sensor.\+IRArray.\+samples = int(samples)}
+
+\Hypertarget{class_i_r__sensor_1_1_i_r_array_a6216775038a435a8123e846746a980c2}\index{IR\_sensor.IRArray@{IR\_sensor.IRArray}!sensor\_index@{sensor\_index}}
+\index{sensor\_index@{sensor\_index}!IR\_sensor.IRArray@{IR\_sensor.IRArray}}
+\doxysubsubsection{\texorpdfstring{sensor\_index}{sensor\_index}}
+{\footnotesize\ttfamily \label{class_i_r__sensor_1_1_i_r_array_a6216775038a435a8123e846746a980c2} 
+IR\+\_\+sensor.\+IRArray.\+sensor\+\_\+index = list(range(1, self.\+num + 1))}
+
+\Hypertarget{class_i_r__sensor_1_1_i_r_array_a86e5d6c07e7fa4223c52a629881e0f81}\index{IR\_sensor.IRArray@{IR\_sensor.IRArray}!tim\_obj@{tim\_obj}}
+\index{tim\_obj@{tim\_obj}!IR\_sensor.IRArray@{IR\_sensor.IRArray}}
+\doxysubsubsection{\texorpdfstring{tim\_obj}{tim\_obj}}
+{\footnotesize\ttfamily \label{class_i_r__sensor_1_1_i_r_array_a86e5d6c07e7fa4223c52a629881e0f81} 
+IR\+\_\+sensor.\+IRArray.\+tim\+\_\+obj = Timer(tim\+\_\+num, freq = 20000)}
+
+\Hypertarget{class_i_r__sensor_1_1_i_r_array_a8702c36bb1c4d04906a5fb55849c1784}\index{IR\_sensor.IRArray@{IR\_sensor.IRArray}!white@{white}}
+\index{white@{white}!IR\_sensor.IRArray@{IR\_sensor.IRArray}}
+\doxysubsubsection{\texorpdfstring{white}{white}}
+{\footnotesize\ttfamily \label{class_i_r__sensor_1_1_i_r_array_a8702c36bb1c4d04906a5fb55849c1784} 
+list IR\+\_\+sensor.\+IRArray.\+white = \mbox{[}0.\+0\mbox{]} \texorpdfstring{$\ast$}{*} self.\+num}
+
+\Hypertarget{class_i_r__sensor_1_1_i_r_array_a7077ed1ff227a0894cf56362e7956689}\index{IR\_sensor.IRArray@{IR\_sensor.IRArray}!white\_cal@{white\_cal}}
+\index{white\_cal@{white\_cal}!IR\_sensor.IRArray@{IR\_sensor.IRArray}}
+\doxysubsubsection{\texorpdfstring{white\_cal}{white\_cal}}
+{\footnotesize\ttfamily \label{class_i_r__sensor_1_1_i_r_array_a7077ed1ff227a0894cf56362e7956689} 
+bool IR\+\_\+sensor.\+IRArray.\+white\+\_\+cal = False}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\mbox{\hyperlink{_i_r__sensor_8py}{IR\+\_\+sensor.\+py}}\end{DoxyCompactItemize}

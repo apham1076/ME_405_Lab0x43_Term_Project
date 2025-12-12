@@ -853,7 +853,7 @@ FILE_VERSION_FILTER    =
 # DoxygenLayout.xml, Doxygen will parse it automatically even if the LAYOUT_FILE
 # tag is left empty.
 
-LAYOUT_FILE            =
+LAYOUT_FILE            = custom_layout.xml
 
 # The CITE_BIB_FILES tag can be used to specify one or more bib files containing
 # the reference definitions. This must be a list of .bib files. The .bib
@@ -989,7 +989,7 @@ WARN_LINE_FORMAT       = "at line $line of file $file"
 # The WARN_LOGFILE tag can be used to specify a file to which warning and error
 # messages should be written. If left blank the output is written to standard
 # error (stderr). In case the file specified cannot be opened for writing the
-# warning and error messages are written to standard error. When as file - is
+# warning and error messages are written to standard error. When as file - isf
 # specified the warning and error messages are written to standard output
 # (stdout).
 
@@ -1006,6 +1006,7 @@ WARN_LOGFILE           =
 # Note: If this tag is empty the current directory is searched.
 
 INPUT                  = src
+INPUT					+= docs/GettingStarted.md
 
 # This tag can be used to specify the character encoding of the source files
 # that Doxygen parses. Internally Doxygen uses the UTF-8 encoding. Doxygen uses
