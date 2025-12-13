@@ -31,15 +31,17 @@ This structure allows time-critical operations, such as motor updates and sensor
 ## Closed-Loop Motor Control
 Wheel encoders provide continuous feedback for closed-loop motor control. A proportional–integral controller regulates wheel velocity, allowing the robot to track commanded setpoints consistently across operating conditions.
 
-@image html images/run3_V_sp15.0_Kp5.00_Ki0.05_left_vel.png \
-"Representative closed-loop velocity response for the left motor. The controller tracks a commanded velocity setpoint using tuned proportional–integral gains, demonstrating stable and repeatable behavior." width=80%
+@image html images/run3_V_sp15.0_Kp5.00_Ki0.05_left_vel.png "Representative closed-loop velocity response for the left motor. The controller tracks a commanded velocity setpoint using tuned proportional–integral gains, demonstrating stable and repeatable behavior." width=80%
 
 ---
 
 ## Final Demonstration
 The video below shows the robot navigating the printed course during a final demonstration run and successfully reaching the designated checkpoint.
 
-@video html images/Romi_Demo.mp4 width=80%
+<video width="80%" controls>
+  <source src="images/Romi_Demo.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 ---
 
