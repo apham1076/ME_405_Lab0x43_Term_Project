@@ -39,15 +39,15 @@ Wheel encoders provide continuous feedback for closed-loop motor control. A prop
 The video below shows the robot navigating the printed course during a final demonstration run and successfully reaching the designated checkpoint.
 
 @htmlonly
-<div style="text-align: center; margin: 1em 0;">
+<div class="image" style="text-align: center;">
   <video controls width="80%">
     <source src="Romi_Demo.mp4" type="video/mp4">
     Your browser does not support the video tag.
   </video>
-  <p style="font-style: italic; font-size: 0.9em; margin-top: 0.5em;">
-    Final demonstration run of the Romi robot navigating the printed line-following course and
-    successfully reaching the designated checkpoint.
-  </p>
+  <div class="caption">
+    Final demonstration run of the Romi robot navigating the printed line-following
+    course and successfully reaching the designated checkpoint.
+  </div>
 </div>
 @endhtmlonly
 
