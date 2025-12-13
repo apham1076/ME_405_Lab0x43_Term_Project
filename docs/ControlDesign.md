@@ -28,9 +28,9 @@ Early velocity measurements derived from encoder counts exhibited significant no
 
 The progression below shows the improvement in velocity signal quality across successive step-response tests.
 
-@image html romi_all_step_responses_1.png "Initial multi-step open-loop velocity response showing significant noise."
-@image html romi_all_step_responses_2.png "Improved velocity response after revising encoder timing and sampling."
-@image html romi_all_step_responses_3.svg "Final open-loop velocity response demonstrating smooth and repeatable behavior."
+@image html romi_all_step_responses_1.png "Initial multi-step open-loop velocity response showing significant noise." width=70%
+@image html romi_all_step_responses_2.png "Improved velocity response after revising encoder timing and sampling." width=70%
+@image html romi_all_step_responses_3.svg "Final open-loop velocity response demonstrating smooth and repeatable behavior." width=70%
 
 ---
 
@@ -48,7 +48,7 @@ Line following is implemented using a cascaded control structure. An outer loop 
 
 This separation allows the line-following logic to operate independently of motor dynamics and improves robustness to disturbances such as curvature changes or brief sensor dropout.
 
-@image html cascaded_control_block_diagram.png "Cascaded control architecture combining line-following logic with inner velocity control loops."
+@image html cascaded_control_block_diagram.png "Cascaded control architecture combining line-following logic with inner velocity control loops." width=90%
 
 ---
 
