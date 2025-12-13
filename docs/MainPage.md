@@ -38,11 +38,11 @@ Wheel encoders provide continuous feedback for closed-loop motor control. A prop
 ## Final Demonstration
 The video below shows the robot navigating the printed course during a final demonstration run and successfully reaching the designated checkpoint.
 
-<div style="text-align:center;">
+@htmlonly
 <video controls width="80%">
   <source src="Romi_Demo.mp4" type="video/mp4">
 </video>
-</div>
+@endhtmlonly
 
 ---
 
