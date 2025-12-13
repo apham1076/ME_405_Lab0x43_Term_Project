@@ -28,9 +28,9 @@ Early velocity measurements derived from encoder counts exhibited significant no
 
 The progression below shows the improvement in velocity signal quality across successive step-response tests.
 
-@image html romi_all_step_responses(1).png "Initial multi-step open-loop velocity response showing significant noise."
-@image html romi_all_step_responses(2).png "Improved velocity response after revising encoder timing and sampling."
-@image html romi_all_step_responses(3).svg "Final open-loop velocity response demonstrating smooth and repeatable behavior."
+@image html romi_all_step_responses_1.png "Initial multi-step open-loop velocity response showing significant noise."
+@image html romi_all_step_responses_2.png "Improved velocity response after revising encoder timing and sampling."
+@image html romi_all_step_responses_3.svg "Final open-loop velocity response demonstrating smooth and repeatable behavior."
 
 ---
 
