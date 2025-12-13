@@ -10,7 +10,7 @@ The final system integrates closed-loop motor control, encoder-based feedback, r
 ## Line-Following Course
 The robot was evaluated on a printed line-following course used for time trials and final demonstrations.
 
-@image html images/Game_Track.svg "Printed line-following course used for time trials and final demonstration." width=80%
+@image html Game_Track.svg "Printed line-following course used for time trials and final demonstration." width=80%
 
 ---
 
@@ -31,7 +31,7 @@ This structure allows time-critical operations, such as motor updates and sensor
 ## Closed-Loop Motor Control
 Wheel encoders provide continuous feedback for closed-loop motor control. A proportional–integral controller regulates wheel velocity, allowing the robot to track commanded setpoints consistently across operating conditions.
 
-@image html images/run3_V_sp15.0_Kp5.00_Ki0.05_left_vel.png "Representative closed-loop velocity response for the left motor. The controller tracks a commanded velocity setpoint using tuned proportional–integral gains, demonstrating stable and repeatable behavior." width=80%
+@image html run3_V_sp15.0_Kp5.00_Ki0.05_left_vel.png "Representative closed-loop velocity response for the left motor. The controller tracks a commanded velocity setpoint using tuned proportional–integral gains, demonstrating stable and repeatable behavior." width=80%
 
 ---
 

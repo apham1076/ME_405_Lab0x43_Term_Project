@@ -39,7 +39,7 @@ Closed-loop velocity control was implemented using a proportional–integral (PI
 
 Controller tuning was performed empirically by evaluating step responses across a range of gains and setpoints. Gains were selected to balance responsiveness with stability while avoiding excessive overshoot or oscillation.
 
-@image html run3_V_sp15.0_Kp5.00_Ki0.05_left_vel.png "Representative closed-loop velocity response for the left motor using tuned PI gains."
+@image html run3_V_sp15.0_Kp5.00_Ki0.05_left_vel.png "Representative closed-loop velocity response for the left motor using tuned PI gains." width=80%
 
 ---
 
