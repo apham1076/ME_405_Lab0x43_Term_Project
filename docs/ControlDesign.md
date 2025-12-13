@@ -48,7 +48,7 @@ Line following is implemented using a cascaded control structure. An outer loop 
 
 This separation allows the line-following logic to operate independently of motor dynamics and improves robustness to disturbances such as curvature changes or brief sensor dropout.
 
-@image html cascaded_control_block_diagram.png "Cascaded control architecture combining line-following logic with inner velocity control loops." width=90%
+@image html cascaded_control_block_diagram.png "Cascaded control architecture combining line-following logic with inner velocity control loops." width=100%
 
 ---
 
