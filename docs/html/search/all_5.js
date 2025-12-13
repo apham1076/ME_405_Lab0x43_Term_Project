@@ -6,7 +6,7 @@ var searchData=
   ['effort_3',['effort',['../classmotor_1_1_motor.html#aae25c4229b4ba171555c56e424cd31ac',1,'motor.Motor.effort'],['../namespacetest.html#ae1548d9049df0b30c55f08cdb7668344',1,'test.effort']]],
   ['effort_5fmax_4',['effort_max',['../classclosed__loop_1_1_closed_loop.html#a66c8894ca3b3e1b1e344d34af747da7b',1,'closed_loop::ClosedLoop']]],
   ['effort_5fmin_5',['effort_min',['../classclosed__loop_1_1_closed_loop.html#a46b557e100e1add974d391cd2996dad3',1,'closed_loop::ClosedLoop']]],
-  ['electrical_20design_6',['Hardware &amp;amp; Electrical Design',['../index.html#autotoc_md32',1,'']]],
+  ['electrical_20design_6',['Hardware &amp;amp; Electrical Design',['../index.html#autotoc_md45',1,'']]],
   ['empty_7',['empty',['../classtask__share_1_1_queue.html#afee296230d2346df88ffb4b2b22208f3',1,'task_share::Queue']]],
   ['enable_8',['enable',['../classmotor_1_1_motor.html#a9f58c627d1e1d0437921b0eac5b81222',1,'motor::Motor']]],
   ['enabled_9',['enabled',['../classmotor_1_1_motor.html#a9520afc05dcc938344ad02d1cfae2f7f',1,'motor::Motor']]],
@@ -18,5 +18,5 @@ var searchData=
   ['enqueue_15',['enqueue',['../classqueue_1_1_queue.html#ac65c69ee361c4676a2540f428542e2ea',1,'queue::Queue']]],
   ['euler_5fdata_5fall_16',['EULER_DATA_ALL',['../class_i_m_u__sensor_1_1_i_m_u_1_1reg.html#a6ba19b4b204bd99e866c99dacf6c3267',1,'IMU_sensor::IMU::reg']]],
   ['exist_5fok_17',['exist_ok',['../namespacetest.html#af4f2260c045cf1db306abf26d306ff17',1,'test']]],
-  ['extension_18',['Notes on Extension',['../getting_started.html#autotoc_md29',1,'']]]
+  ['extension_18',['Notes on Extension',['../getting_started.html#autotoc_md40',1,'']]]
 ];
