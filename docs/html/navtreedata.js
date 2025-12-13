@@ -24,8 +24,10 @@
 */
 var NAVTREE =
 [
-  [ "My Python Project", "index.html", [
-    [ "Packages", "namespaces.html", [
+  [ "ME 405 Term Project", "index.html", [
+    [ "Romi Line-Following Robot", "index.html", null ],
+    [ "Getting Started", "getting_started.html", null ],
+    [ "Namespaces", "namespaces.html", [
       [ "Package List", "namespaces.html", "namespaces_dup" ],
       [ "Package Members", "namespacemembers.html", [
         [ "All", "namespacemembers.html", null ],
@@ -45,7 +47,8 @@ var NAVTREE =
     ] ],
     [ "Files", "files.html", [
       [ "File List", "files.html", "files_dup" ]
-    ] ]
+    ] ],
+    [ "Guides", "user", null ]
   ] ]
 ];
 

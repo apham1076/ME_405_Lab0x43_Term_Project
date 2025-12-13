@@ -12,7 +12,9 @@ var searchData=
   ['get_5fstate_9',['get_state',['../classmotor_1_1_motor.html#a94496898acb6cc28455c606506f4b962',1,'motor::Motor']]],
   ['get_5ftrace_10',['get_trace',['../classcotask_1_1_task.html#a51c5df87e0e707f9e3c02d9765fcbee1',1,'cotask::Task']]],
   ['get_5fvelocity_11',['get_velocity',['../classencoder_1_1_encoder.html#a2f878942acf68630cf43cb20c67bc7a6',1,'encoder::Encoder']]],
-  ['go_12',['go',['../classcotask_1_1_task.html#a8066da53e82716dc9f0495b28a89b781',1,'cotask::Task']]],
-  ['go_5fflag_13',['go_flag',['../classcotask_1_1_task.html#ad309fae1890bffafa75e9fdb33fae600',1,'cotask::Task']]],
-  ['gyro_5fdata_5fall_14',['GYRO_DATA_ALL',['../class_i_m_u__sensor_1_1_i_m_u_1_1reg.html#ad4345e319f0f34c31c221259bebe7d2e',1,'IMU_sensor::IMU::reg']]]
+  ['getting_20started_12',['Getting Started',['../getting_started.html',1,'']]],
+  ['gettingstarted_2emd_13',['GettingStarted.md',['../_getting_started_8md.html',1,'']]],
+  ['go_14',['go',['../classcotask_1_1_task.html#a8066da53e82716dc9f0495b28a89b781',1,'cotask::Task']]],
+  ['go_5fflag_15',['go_flag',['../classcotask_1_1_task.html#ad309fae1890bffafa75e9fdb33fae600',1,'cotask::Task']]],
+  ['gyro_5fdata_5fall_16',['GYRO_DATA_ALL',['../class_i_m_u__sensor_1_1_i_m_u_1_1reg.html#ad4345e319f0f34c31c221259bebe7d2e',1,'IMU_sensor::IMU::reg']]]
 ];

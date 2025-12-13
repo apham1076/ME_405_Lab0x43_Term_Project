@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['finite_20state_20machine_0',['FINITE STATE MACHINE',['../classmotor__task_1_1_motor_control_task.html#autotoc_md2',1,'FINITE STATE MACHINE'],['../classpath__planning__task_1_1_path_planning_task.html#autotoc_md5',1,'FINITE STATE MACHINE'],['../classspectator__task_1_1_spectator_task.html#autotoc_md9',1,'FINITE STATE MACHINE'],['../classsteering__task_1_1_steering_task.html#autotoc_md11',1,'FINITE STATE MACHINE'],['../classstream__task_1_1_stream_task.html#autotoc_md13',1,'FINITE STATE MACHINE'],['../classui__task_1_1_u_i_task.html#autotoc_md15',1,'FINITE STATE MACHINE']]],
-  ['functions_1',['FUNCTIONS',['../classmotor__task_1_1_motor_control_task.html#autotoc_md1',1,'HELPER FUNCTIONS'],['../classpath__planning__task_1_1_path_planning_task.html#autotoc_md4',1,'HELPER FUNCTIONS'],['../classspectator__task_1_1_spectator_task.html#autotoc_md8',1,'HELPER FUNCTIONS'],['../classsteering__task_1_1_steering_task.html#autotoc_md10',1,'HELPER FUNCTIONS']]]
+  ['challenges_20lessons_20learned_0',['Challenges &amp;amp; Lessons Learned',['../index.html#autotoc_md35',1,'']]],
+  ['configuration_1',['Hardware Configuration',['../getting_started.html#autotoc_md19',1,'']]],
+  ['control_20design_2',['Software &amp;amp; Control Design',['../index.html#autotoc_md33',1,'']]],
+  ['control_20structure_3',['Control Structure',['../getting_started.html#autotoc_md23',1,'']]]
 ];

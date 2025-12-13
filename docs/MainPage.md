@@ -1,0 +1,35 @@
+@mainpage Romi Line-Following Robot
+
+## Project Overview
+This project was completed as part of **ME 405: Mechatronics** at Cal Poly San Luis Obispo.  
+The objective was to design and implement a fully autonomous Romi robot capable of reliably completing a printed line-following time-trial course using onboard sensing, real-time control, and a task-based software architecture.
+
+The final system integrates custom motor control, encoder-based feedback, reflectance sensor processing, and cooperative multitasking to achieve repeatable and robust performance. Emphasis was placed on reliability, modularity, and clear separation between sensing, control, and actuation rather than purely maximizing speed.
+
+## System Architecture
+The software is organized using a **cooperative multitasking framework** implemented in MicroPython. Independent tasks are responsible for sensing, control, motor actuation, and data streaming, and they communicate using thread-safe shared variables and queues.
+
+This structure allows time-critical operations (such as motor updates and sensor sampling) to run deterministically while higher-level logic executes concurrently without blocking. The modular task design simplified debugging and enabled incremental development throughout the quarter.
+
+## Hardware & Electrical Design
+The robot is built on a Pololu Romi chassis with two DC motors driven by onboard motor drivers and instrumented with quadrature encoders for wheel position and velocity feedback. Line detection is performed using a reflectance sensor array mounted at the front of the chassis and positioned to maximize contrast and minimize sensitivity to lighting variation.
+
+Power is supplied by **six AA batteries**, and care was taken to ensure predictable startup behavior. Electrical design decisions included modifying default pull-up configurations and selecting motor control pins to prevent unintended motion on power-up. Encoder wiring, sensor placement, and cable management were refined to improve repeatability and robustness during operation.
+
+## Software & Control Design
+Motor actuation is abstracted through a dedicated motor driver interface that enforces safe enable/disable behavior and bounded effort commands. Wheel encoders provide continuous feedback, enabling closed-loop control based on measured motion rather than open-loop assumptions.
+
+Line following is implemented using a layered control strategy. Low-level motor effort commands are combined with higher-level logic that interprets reflectance sensor data to generate corrective steering behavior. The control scheme prioritizes stability and consistency, allowing the robot to recover gracefully from disturbances such as sharp curvature or brief sensor dropout.
+
+## Results & Demonstration
+The completed robot successfully performed multiple time-trial runs on the printed course with consistent behavior and reliable line tracking. The system demonstrated stable control, predictable startup behavior, and repeatable performance across runs.
+
+A video demonstration of the robot completing the course is included below to illustrate real-time operation and control behavior.
+
+## Challenges & Lessons Learned
+One of the primary challenges of the project was achieving reliable sensor interpretation under varying conditions while maintaining responsive control. Additional challenges included managing task timing, preventing unintended motor behavior at startup, and balancing responsiveness with stability in the control loop.
+
+These challenges highlighted the importance of modular design, incremental testing, and clear separation between hardware interfaces and control logic. In hindsight, additional time spent early on system architecture would have further streamlined later integration and tuning.
+
+## Repository
+All source code, documentation, and design files for this project are available in the associated GitHub repository. The repository is organized to allow the project to be reproduced or extended by future students.

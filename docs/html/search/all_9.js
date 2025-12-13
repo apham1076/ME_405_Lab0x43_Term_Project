@@ -11,10 +11,11 @@ var searchData=
   ['int_5fenable_8',['INT_ENABLE',['../class_i_m_u__sensor_1_1_i_m_u_1_1reg.html#a008ce9fcb8839da84aadd77f0164d9b2',1,'IMU_sensor::IMU::reg']]],
   ['int_5fmask_9',['INT_MASK',['../class_i_m_u__sensor_1_1_i_m_u_1_1reg.html#a218b17950926619217f764b785cf863e',1,'IMU_sensor::IMU::reg']]],
   ['integrator_10',['integrator',['../classclosed__loop_1_1_closed_loop.html#a759f8afa99857f2454617ed2a354aa99',1,'closed_loop::ClosedLoop']]],
-  ['ir_11',['ir',['../classsteering__task_1_1_steering_task.html#a9c74c181a3ed77e877cd628ba8398b4f',1,'steering_task.SteeringTask.ir'],['../classui__task_1_1_u_i_task.html#af6414abcf7d3664a7f8f6aa56d83d0a1',1,'ui_task.UITask.ir']]],
-  ['ir_5fsensor_12',['IR_sensor',['../namespace_i_r__sensor.html',1,'']]],
-  ['ir_5fsensor_2epy_13',['IR_sensor.py',['../_i_r__sensor_8py.html',1,'']]],
-  ['irarray_14',['IRArray',['../class_i_r__sensor_1_1_i_r_array.html',1,'IR_sensor']]],
-  ['is_5fempty_15',['is_empty',['../classqueue_1_1_queue.html#aa19a36c9f10490da3d12762ef9812e14',1,'queue::Queue']]],
-  ['items_16',['items',['../classqueue_1_1_queue.html#af268cb7f416e00fb86d273591385c55e',1,'queue::Queue']]]
+  ['interface_11',['Data Streaming and PC Interface',['../getting_started.html#autotoc_md25',1,'']]],
+  ['ir_12',['ir',['../classsteering__task_1_1_steering_task.html#a9c74c181a3ed77e877cd628ba8398b4f',1,'steering_task.SteeringTask.ir'],['../classui__task_1_1_u_i_task.html#af6414abcf7d3664a7f8f6aa56d83d0a1',1,'ui_task.UITask.ir']]],
+  ['ir_5fsensor_13',['IR_sensor',['../namespace_i_r__sensor.html',1,'']]],
+  ['ir_5fsensor_2epy_14',['IR_sensor.py',['../_i_r__sensor_8py.html',1,'']]],
+  ['irarray_15',['IRArray',['../class_i_r__sensor_1_1_i_r_array.html',1,'IR_sensor']]],
+  ['is_5fempty_16',['is_empty',['../classqueue_1_1_queue.html#aa19a36c9f10490da3d12762ef9812e14',1,'queue::Queue']]],
+  ['items_17',['items',['../classqueue_1_1_queue.html#af268cb7f416e00fb86d273591385c55e',1,'queue::Queue']]]
 ];
