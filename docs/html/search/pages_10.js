@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['–_20romi_20line_20following_20robot_0',['ME 405 Term Project – Romi Line-Following Robot',['../md_docs_2_main_page.html',1,'']]]
+  ['velocity_20control_0',['Closed-Loop Velocity Control',['../control_design.html#autotoc_md22',1,'']]],
+  ['velocity_20measurement_20improvements_1',['Velocity Measurement Improvements',['../control_design.html#autotoc_md20',1,'']]]
 ];

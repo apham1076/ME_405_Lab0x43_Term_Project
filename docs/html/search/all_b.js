@@ -17,8 +17,8 @@ var searchData=
   ['line_14',['line',['../namespacetest.html#a893987392dee1257b3438b3bd256b7b3',1,'test']]],
   ['line_20following_20course_15',['Line-Following Course',['../index.html#autotoc_md43',1,'']]],
   ['line_20following_20robot_16',['Romi Line-Following Robot',['../index.html',1,'']]],
-  ['line_20following_20test_17',['Circular Line-Following Test',['../control_design.html#autotoc_md24',1,'']]],
-  ['lines_5fsent_18',['lines_sent',['../classstream__task_1_1_stream_task.html#a173d356aa3de491ef3778fcfdea49463',1,'stream_task::StreamTask']]],
-  ['loop_20motor_20control_19',['Closed-Loop Motor Control',['../index.html#autotoc_md49',1,'']]],
+  ['lines_5fsent_17',['lines_sent',['../classstream__task_1_1_stream_task.html#a173d356aa3de491ef3778fcfdea49463',1,'stream_task::StreamTask']]],
+  ['loop_20motor_20control_18',['Closed-Loop Motor Control',['../index.html#autotoc_md49',1,'']]],
+  ['loop_20velocity_20control_19',['Closed-Loop Velocity Control',['../control_design.html#autotoc_md22',1,'']]],
   ['low_5fbatt_5fthreshold_20',['LOW_BATT_THRESHOLD',['../classbattery__droop_1_1_battery.html#ac1bd2c1b1b8bd8710e5c31da73600116',1,'battery_droop::Battery']]]
 ];

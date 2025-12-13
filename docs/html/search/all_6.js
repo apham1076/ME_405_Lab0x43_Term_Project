@@ -8,9 +8,8 @@ var searchData=
   ['first_5freading_5',['first_reading',['../classread___i_m_u__task_1_1_read_i_m_u_task.html#a6ca044434e55e28b9ca2c58003ad3ee8',1,'read_IMU_task::ReadIMUTask']]],
   ['following_20course_6',['Line-Following Course',['../index.html#autotoc_md43',1,'']]],
   ['following_20robot_7',['Romi Line-Following Robot',['../index.html',1,'']]],
-  ['following_20test_8',['Circular Line-Following Test',['../control_design.html#autotoc_md24',1,'']]],
-  ['frame_9',['frame',['../namespacetest.html#a6d11c86ecc8cc9986d3d18fd94f8883e',1,'test']]],
-  ['frame_5fbuffer_10',['frame_buffer',['../namespacetest.html#aa95239a304d0c43f4052f3b5263ae34c',1,'test']]],
-  ['full_11',['full',['../classtask__share_1_1_queue.html#a72be18f8267b2977117eedf15ad896c8',1,'task_share::Queue']]],
-  ['functions_12',['FUNCTIONS',['../classmotor__task_1_1_motor_control_task.html#autotoc_md1',1,'HELPER FUNCTIONS'],['../classpath__planning__task_1_1_path_planning_task.html#autotoc_md4',1,'HELPER FUNCTIONS'],['../classspectator__task_1_1_spectator_task.html#autotoc_md8',1,'HELPER FUNCTIONS'],['../classsteering__task_1_1_steering_task.html#autotoc_md10',1,'HELPER FUNCTIONS']]]
+  ['frame_8',['frame',['../namespacetest.html#a6d11c86ecc8cc9986d3d18fd94f8883e',1,'test']]],
+  ['frame_5fbuffer_9',['frame_buffer',['../namespacetest.html#aa95239a304d0c43f4052f3b5263ae34c',1,'test']]],
+  ['full_10',['full',['../classtask__share_1_1_queue.html#a72be18f8267b2977117eedf15ad896c8',1,'task_share::Queue']]],
+  ['functions_11',['FUNCTIONS',['../classmotor__task_1_1_motor_control_task.html#autotoc_md1',1,'HELPER FUNCTIONS'],['../classpath__planning__task_1_1_path_planning_task.html#autotoc_md4',1,'HELPER FUNCTIONS'],['../classspectator__task_1_1_spectator_task.html#autotoc_md8',1,'HELPER FUNCTIONS'],['../classsteering__task_1_1_steering_task.html#autotoc_md10',1,'HELPER FUNCTIONS']]]
 ];

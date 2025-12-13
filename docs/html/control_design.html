@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.15.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>ME 405 Term Project: Control Design and Iterative Development</title>
+<title>ME 405 Term Project: Control Design</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -88,45 +88,68 @@ $(function(){initNavTree('control_design.html','',''); });
 </div>
 
 <div><div class="header">
-  <div class="headertitle"><div class="title">Control Design and Iterative Development </div></div>
+  <div class="headertitle"><div class="title">Control Design </div></div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><h2 class="doxsection"><a class="anchor" id="autotoc_md16"></a>
 Overview</h2>
-<p>Achieving reliable line-following performance required both stable closed-loop control and accurate measurement of wheel motion. Throughout development, significant effort was spent refining encoder velocity estimation, task timing, and control parameters to improve smoothness and consistency.</p>
-<p>This section highlights the iterative process used to characterize and improve system behavior.</p>
+<p>The Romi robot uses a layered control architecture that builds progressively from open-loop motor actuation to closed-loop velocity control and finally to high-level line-following behavior. Control design focused on achieving stable, repeatable motion rather than maximizing raw speed, allowing the robot to behave predictably across different operating conditions and battery states.</p>
+<p>This page highlights the evolution of the motor control system and the final closed-loop structure used during line-following operation.</p>
 <hr  />
 <h2 class="doxsection"><a class="anchor" id="autotoc_md18"></a>
-Step Response Testing</h2>
-<p>Open-loop step response tests were used to evaluate how changes in motor effort translated to wheel velocity. These tests exposed limitations in early velocity estimation approaches and informed subsequent improvements.</p>
-<div class="image">
-<img src="images/romi_all_step_responses" alt=""/>
-<div class="caption">
-(1).png \</div></div>
-<p> "Initial open-loop step response tests showing significant noise in the measured wheel velocity. These results motivated changes to encoder velocity estimation and task timing." width=90%</p>
+Motor Modeling and System Identification</h2>
+<p>Initial motor characterization was performed using open-loop effort tests to establish approximate system gain and time constant. These tests provided insight into motor dynamics and informed early controller tuning.</p>
+<p>Open-loop data was used to estimate:</p><ul>
+<li>Steady-state velocity versus applied effort</li>
+<li>Approximate motor time constant</li>
+<li>Relative left/right motor behavior</li>
+</ul>
+<p>These results guided the selection of initial proportional gains before transitioning to closed-loop control.</p>
 <hr  />
 <h2 class="doxsection"><a class="anchor" id="autotoc_md20"></a>
-Measurement Refinement</h2>
-<p>Improvements to encoder velocity calculations and adjustments to the motor control task period significantly reduced measurement noise. Increasing the time interval between velocity calculations improved numerical stability while preserving responsiveness.</p>
+Velocity Measurement Improvements</h2>
+<p>Early velocity measurements derived from encoder counts exhibited significant noise due to short sampling intervals and quantization effects. Several improvements were made to address this:</p>
+<ul>
+<li>Increased the motor control task period to improve measurement resolution</li>
+<li>Revised encoder velocity calculations to reduce numerical noise</li>
+<li>Ensured consistent timing between successive encoder reads</li>
+</ul>
+<p>The progression below shows the improvement in velocity signal quality across successive step-response tests.</p>
 <div class="image">
-<img src="images/romi_all_step_responses" alt=""/>
+<img src="romi_all_step_responses" alt=""/>
 <div class="caption">
-(3).svg \</div></div>
-<p> "Refined step response results after improving encoder velocity calculations and increasing the motor control task period. The measured velocity is significantly smoother and more consistent across effort steps." width=90%</p>
+(1).png "Initial multi-step open-loop velocity response showing significant noise."</div></div>
+ <div class="image">
+<img src="romi_all_step_responses" alt=""/>
+<div class="caption">
+(2).png "Improved velocity response after revising encoder timing and sampling."</div></div>
+ <div class="image">
+<img src="romi_all_step_responses" alt=""/>
+<div class="caption">
+(3).svg "Final open-loop velocity response demonstrating smooth and repeatable behavior."</div></div>
 <hr  />
 <h2 class="doxsection"><a class="anchor" id="autotoc_md22"></a>
-Control Implications</h2>
-<p>These measurement improvements directly enabled more effective closed-loop control. With reduced noise in velocity feedback, proportional–integral gains could be tuned to achieve stable tracking without excessive oscillation or overshoot.</p>
-<p>The refined control behavior contributed to reliable line-following performance, particularly during transitions involving sharp curvature or rapid changes in commanded motion.</p>
+Closed-Loop Velocity Control</h2>
+<p>Closed-loop velocity control was implemented using a proportional–integral (PI) controller operating on each wheel independently. Encoder feedback provides continuous velocity measurements, allowing the controller to reject disturbances and track commanded setpoints more consistently than open-loop control.</p>
+<p>Controller tuning was performed empirically by evaluating step responses across a range of gains and setpoints. Gains were selected to balance responsiveness with stability while avoiding excessive overshoot or oscillation.</p>
+<div class="image">
+<img src="run3_V_sp15.0_Kp5.00_Ki0.05_left_vel.png" alt=""/>
+<div class="caption">
+Representative closed-loop velocity response for the left motor using tuned PI gains.</div></div>
 <hr  />
 <h2 class="doxsection"><a class="anchor" id="autotoc_md24"></a>
-Circular Line-Following Test</h2>
-<p>The video below shows the robot following a circular trajectory during early line-following development.</p>
-<p>@video html images/driving-in-a-circle.mp4 width=70%</p>
+Cascaded Control Structure</h2>
+<p>Line following is implemented using a cascaded control structure. An outer loop interprets reflectance sensor measurements to generate a steering correction, while inner velocity loops regulate individual wheel speeds.</p>
+<p>This separation allows the line-following logic to operate independently of motor dynamics and improves robustness to disturbances such as curvature changes or brief sensor dropout.</p>
+<div class="image">
+<img src="cascaded_control_block_diagram.png" alt=""/>
+<div class="caption">
+Cascaded control architecture combining line-following logic with inner velocity control loops.</div></div>
 <hr  />
 <h2 class="doxsection"><a class="anchor" id="autotoc_md26"></a>
-Summary</h2>
-<p>Rather than relying solely on controller tuning, performance gains were achieved through careful attention to measurement quality and task timing. This iterative approach proved essential for achieving smooth, repeatable behavior in the final system. </p>
+Discussion</h2>
+<p>Implementing closed-loop velocity control significantly improved the robot’s repeatability and predictability. Improvements to encoder velocity estimation were critical; controller performance was ultimately limited more by measurement quality than by controller structure.</p>
+<p>This layered approach simplified debugging and allowed individual components of the system to be validated independently before full integration with line-following behavior. </p>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->
 </div><!-- doc-content -->

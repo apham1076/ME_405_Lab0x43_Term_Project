@@ -1,41 +1,58 @@
-@page control_design Control Design and Iterative Development
+@page control_design Control Design
 
 ## Overview
-Achieving reliable line-following performance required both stable closed-loop control and accurate measurement of wheel motion. Throughout development, significant effort was spent refining encoder velocity estimation, task timing, and control parameters to improve smoothness and consistency.
+The Romi robot uses a layered control architecture that builds progressively from open-loop motor actuation to closed-loop velocity control and finally to high-level line-following behavior. Control design focused on achieving stable, repeatable motion rather than maximizing raw speed, allowing the robot to behave predictably across different operating conditions and battery states.
 
-This section highlights the iterative process used to characterize and improve system behavior.
-
----
-
-## Step Response Testing
-Open-loop step response tests were used to evaluate how changes in motor effort translated to wheel velocity. These tests exposed limitations in early velocity estimation approaches and informed subsequent improvements.
-
-@image html images/romi_all_step_responses(1).png \
-"Initial open-loop step response tests showing significant noise in the measured wheel velocity. These results motivated changes to encoder velocity estimation and task timing." width=90%
+This page highlights the evolution of the motor control system and the final closed-loop structure used during line-following operation.
 
 ---
 
-## Measurement Refinement
-Improvements to encoder velocity calculations and adjustments to the motor control task period significantly reduced measurement noise. Increasing the time interval between velocity calculations improved numerical stability while preserving responsiveness.
+## Motor Modeling and System Identification
+Initial motor characterization was performed using open-loop effort tests to establish approximate system gain and time constant. These tests provided insight into motor dynamics and informed early controller tuning.
 
-@image html images/romi_all_step_responses(3).svg \
-"Refined step response results after improving encoder velocity calculations and increasing the motor control task period. The measured velocity is significantly smoother and more consistent across effort steps." width=90%
+Open-loop data was used to estimate:
+- Steady-state velocity versus applied effort
+- Approximate motor time constant
+- Relative left/right motor behavior
 
----
-
-## Control Implications
-These measurement improvements directly enabled more effective closed-loop control. With reduced noise in velocity feedback, proportional–integral gains could be tuned to achieve stable tracking without excessive oscillation or overshoot.
-
-The refined control behavior contributed to reliable line-following performance, particularly during transitions involving sharp curvature or rapid changes in commanded motion.
+These results guided the selection of initial proportional gains before transitioning to closed-loop control.
 
 ---
 
-## Circular Line-Following Test
-The video below shows the robot following a circular trajectory during early line-following development.
+## Velocity Measurement Improvements
+Early velocity measurements derived from encoder counts exhibited significant noise due to short sampling intervals and quantization effects. Several improvements were made to address this:
 
-@video html images/driving-in-a-circle.mp4 width=70%
+- Increased the motor control task period to improve measurement resolution
+- Revised encoder velocity calculations to reduce numerical noise
+- Ensured consistent timing between successive encoder reads
+
+The progression below shows the improvement in velocity signal quality across successive step-response tests.
+
+@image html romi_all_step_responses(1).png "Initial multi-step open-loop velocity response showing significant noise."
+@image html romi_all_step_responses(2).png "Improved velocity response after revising encoder timing and sampling."
+@image html romi_all_step_responses(3).svg "Final open-loop velocity response demonstrating smooth and repeatable behavior."
 
 ---
 
-## Summary
-Rather than relying solely on controller tuning, performance gains were achieved through careful attention to measurement quality and task timing. This iterative approach proved essential for achieving smooth, repeatable behavior in the final system.
+## Closed-Loop Velocity Control
+Closed-loop velocity control was implemented using a proportional–integral (PI) controller operating on each wheel independently. Encoder feedback provides continuous velocity measurements, allowing the controller to reject disturbances and track commanded setpoints more consistently than open-loop control.
+
+Controller tuning was performed empirically by evaluating step responses across a range of gains and setpoints. Gains were selected to balance responsiveness with stability while avoiding excessive overshoot or oscillation.
+
+@image html run3_V_sp15.0_Kp5.00_Ki0.05_left_vel.png "Representative closed-loop velocity response for the left motor using tuned PI gains."
+
+---
+
+## Cascaded Control Structure
+Line following is implemented using a cascaded control structure. An outer loop interprets reflectance sensor measurements to generate a steering correction, while inner velocity loops regulate individual wheel speeds.
+
+This separation allows the line-following logic to operate independently of motor dynamics and improves robustness to disturbances such as curvature changes or brief sensor dropout.
+
+@image html cascaded_control_block_diagram.png "Cascaded control architecture combining line-following logic with inner velocity control loops."
+
+---
+
+## Discussion
+Implementing closed-loop velocity control significantly improved the robot’s repeatability and predictability. Improvements to encoder velocity estimation were critical; controller performance was ultimately limited more by measurement quality than by controller structure.
+
+This layered approach simplified debugging and allowed individual components of the system to be validated independently before full integration with line-following behavior.

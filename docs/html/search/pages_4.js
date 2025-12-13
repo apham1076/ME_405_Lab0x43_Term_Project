@@ -5,6 +5,5 @@ var searchData=
   ['firmware_2',['Running the Firmware',['../getting_started.html#autotoc_md38',1,'']]],
   ['following_20course_3',['Line-Following Course',['../index.html#autotoc_md43',1,'']]],
   ['following_20robot_4',['Romi Line-Following Robot',['../index.html',1,'']]],
-  ['following_20test_5',['Circular Line-Following Test',['../control_design.html#autotoc_md24',1,'']]],
-  ['functions_6',['FUNCTIONS',['../classmotor__task_1_1_motor_control_task.html#autotoc_md1',1,'HELPER FUNCTIONS'],['../classpath__planning__task_1_1_path_planning_task.html#autotoc_md4',1,'HELPER FUNCTIONS'],['../classspectator__task_1_1_spectator_task.html#autotoc_md8',1,'HELPER FUNCTIONS'],['../classsteering__task_1_1_steering_task.html#autotoc_md10',1,'HELPER FUNCTIONS']]]
+  ['functions_5',['FUNCTIONS',['../classmotor__task_1_1_motor_control_task.html#autotoc_md1',1,'HELPER FUNCTIONS'],['../classpath__planning__task_1_1_path_planning_task.html#autotoc_md4',1,'HELPER FUNCTIONS'],['../classspectator__task_1_1_spectator_task.html#autotoc_md8',1,'HELPER FUNCTIONS'],['../classsteering__task_1_1_steering_task.html#autotoc_md10',1,'HELPER FUNCTIONS']]]
 ];
