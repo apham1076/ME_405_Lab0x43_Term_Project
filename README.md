@@ -10,7 +10,7 @@ The project integrates closed-loop motor control, reflectance-based line sensing
 ## Online Documentation
 Full project documentation, including system architecture, hardware design, control development, and experimental results, is available here:
 
-**[Project Portfolio Website](https://mduperly.github.io/ME_405_Term_Project/)**
+**[Project Portfolio Website](https://mduperly.github.io/ME_405_Term_Project/html/)**
 
 ## Repository Structure
 - `src/` — MicroPython source code executed on the Romi microcontroller  
