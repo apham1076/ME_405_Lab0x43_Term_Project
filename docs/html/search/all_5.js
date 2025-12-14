@@ -12,11 +12,15 @@ var searchData=
   ['enabled_9',['enabled',['../classmotor_1_1_motor.html#a9520afc05dcc938344ad02d1cfae2f7f',1,'motor::Motor']]],
   ['encoder_10',['Encoder',['../classencoder_1_1_encoder.html',1,'encoder']]],
   ['encoder_11',['encoder',['../namespaceencoder.html',1,'']]],
-  ['encoder_2epy_12',['encoder.py',['../encoder_8py.html',1,'']]],
-  ['end_13',['end',['../namespacetest.html#a4c5dc5338be2a95cd317ab3493eb0763',1,'test']]],
-  ['end_5fstr_14',['end_str',['../namespacetest.html#a55cf60cd244c8042224dd2aedddd1ea7',1,'test']]],
-  ['enqueue_15',['enqueue',['../classqueue_1_1_queue.html#ac65c69ee361c4676a2540f428542e2ea',1,'queue::Queue']]],
-  ['euler_5fdata_5fall_16',['EULER_DATA_ALL',['../class_i_m_u__sensor_1_1_i_m_u_1_1reg.html#a6ba19b4b204bd99e866c99dacf6c3267',1,'IMU_sensor::IMU::reg']]],
-  ['exist_5fok_17',['exist_ok',['../namespacetest.html#af4f2260c045cf1db306abf26d306ff17',1,'test']]],
-  ['extension_18',['Notes on Extension',['../getting_started.html#autotoc_md40',1,'']]]
+  ['encoder_20measurements_12',['Comparison to Encoder Measurements',['../state_estimation_odometry.html#autotoc_md58',1,'']]],
+  ['encoder_2epy_13',['encoder.py',['../encoder_8py.html',1,'']]],
+  ['end_14',['end',['../namespacetest.html#a4c5dc5338be2a95cd317ab3493eb0763',1,'test']]],
+  ['end_5fstr_15',['end_str',['../namespacetest.html#a55cf60cd244c8042224dd2aedddd1ea7',1,'test']]],
+  ['enqueue_16',['enqueue',['../classqueue_1_1_queue.html#ac65c69ee361c4676a2540f428542e2ea',1,'queue::Queue']]],
+  ['estimation_17',['Odometry-Based Pose Estimation',['../state_estimation_odometry.html#autotoc_md62',1,'']]],
+  ['estimation_20and_20odometry_18',['State Estimation and Odometry',['../state_estimation_odometry.html',1,'']]],
+  ['estimator_20implementation_19',['State Estimator Implementation',['../state_estimation_odometry.html#autotoc_md56',1,'']]],
+  ['euler_5fdata_5fall_20',['EULER_DATA_ALL',['../class_i_m_u__sensor_1_1_i_m_u_1_1reg.html#a6ba19b4b204bd99e866c99dacf6c3267',1,'IMU_sensor::IMU::reg']]],
+  ['exist_5fok_21',['exist_ok',['../namespacetest.html#af4f2260c045cf1db306abf26d306ff17',1,'test']]],
+  ['extension_22',['Notes on Extension',['../getting_started.html#autotoc_md40',1,'']]]
 ];

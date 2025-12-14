@@ -1,9 +1,9 @@
 var searchData=
 [
-  ['final_20demonstration_0',['Final Demonstration',['../index.html#autotoc_md51',1,'']]],
-  ['finite_20state_20machine_1',['FINITE STATE MACHINE',['../classmotor__task_1_1_motor_control_task.html#autotoc_md2',1,'FINITE STATE MACHINE'],['../classpath__planning__task_1_1_path_planning_task.html#autotoc_md5',1,'FINITE STATE MACHINE'],['../classspectator__task_1_1_spectator_task.html#autotoc_md9',1,'FINITE STATE MACHINE'],['../classsteering__task_1_1_steering_task.html#autotoc_md11',1,'FINITE STATE MACHINE'],['../classstream__task_1_1_stream_task.html#autotoc_md13',1,'FINITE STATE MACHINE'],['../classui__task_1_1_u_i_task.html#autotoc_md15',1,'FINITE STATE MACHINE']]],
-  ['firmware_2',['Running the Firmware',['../getting_started.html#autotoc_md38',1,'']]],
-  ['following_20course_3',['Line-Following Course',['../index.html#autotoc_md43',1,'']]],
-  ['following_20robot_4',['Romi Line-Following Robot',['../index.html',1,'']]],
-  ['functions_5',['FUNCTIONS',['../classmotor__task_1_1_motor_control_task.html#autotoc_md1',1,'HELPER FUNCTIONS'],['../classpath__planning__task_1_1_path_planning_task.html#autotoc_md4',1,'HELPER FUNCTIONS'],['../classspectator__task_1_1_spectator_task.html#autotoc_md8',1,'HELPER FUNCTIONS'],['../classsteering__task_1_1_steering_task.html#autotoc_md10',1,'HELPER FUNCTIONS']]]
+  ['electrical_20design_0',['Hardware &amp;amp; Electrical Design',['../index.html#autotoc_md45',1,'']]],
+  ['encoder_20measurements_1',['Comparison to Encoder Measurements',['../state_estimation_odometry.html#autotoc_md58',1,'']]],
+  ['estimation_2',['Odometry-Based Pose Estimation',['../state_estimation_odometry.html#autotoc_md62',1,'']]],
+  ['estimation_20and_20odometry_3',['State Estimation and Odometry',['../state_estimation_odometry.html',1,'']]],
+  ['estimator_20implementation_4',['State Estimator Implementation',['../state_estimation_odometry.html#autotoc_md56',1,'']]],
+  ['extension_5',['Notes on Extension',['../getting_started.html#autotoc_md40',1,'']]]
 ];

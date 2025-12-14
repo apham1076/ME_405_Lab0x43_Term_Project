@@ -28,6 +28,7 @@ var NAVTREE =
     [ "Romi Line-Following Robot", "index.html", null ],
     [ "Control Design", "control_design.html", null ],
     [ "Getting Started", "getting_started.html", null ],
+    [ "State Estimation and Odometry", "state_estimation_odometry.html", null ],
     [ "Namespaces", "namespaces.html", [
       [ "Package List", "namespaces.html", "namespaces_dup" ],
       [ "Package Members", "namespacemembers.html", [

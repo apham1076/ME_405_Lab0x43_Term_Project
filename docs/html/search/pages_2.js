@@ -1,7 +1,13 @@
 var searchData=
 [
-  ['data_20streaming_20and_20pc_20interface_0',['Data Streaming and PC Interface',['../getting_started.html#autotoc_md36',1,'']]],
-  ['demonstration_1',['Final Demonstration',['../index.html#autotoc_md51',1,'']]],
-  ['design_2',['Design',['../control_design.html',1,'Control Design'],['../index.html#autotoc_md45',1,'Hardware &amp;amp; Electrical Design']]],
-  ['discussion_3',['Discussion',['../control_design.html#autotoc_md26',1,'']]]
+  ['cascaded_20control_20structure_0',['Cascaded Control Structure',['../control_design.html#autotoc_md24',1,'']]],
+  ['circular_20line_20following_1',['Odometry Validation on Circular Line Following',['../state_estimation_odometry.html#autotoc_md64',1,'']]],
+  ['closed_20loop_20motor_20control_2',['Closed-Loop Motor Control',['../index.html#autotoc_md49',1,'']]],
+  ['closed_20loop_20velocity_20control_3',['Closed-Loop Velocity Control',['../control_design.html#autotoc_md22',1,'']]],
+  ['comparison_20to_20encoder_20measurements_4',['Comparison to Encoder Measurements',['../state_estimation_odometry.html#autotoc_md58',1,'']]],
+  ['configuration_5',['Hardware Configuration',['../getting_started.html#autotoc_md30',1,'']]],
+  ['control_6',['Control',['../index.html#autotoc_md49',1,'Closed-Loop Motor Control'],['../control_design.html#autotoc_md22',1,'Closed-Loop Velocity Control']]],
+  ['control_20design_7',['Control Design',['../control_design.html',1,'']]],
+  ['control_20structure_8',['Control Structure',['../control_design.html#autotoc_md24',1,'Cascaded Control Structure'],['../getting_started.html#autotoc_md34',1,'Control Structure']]],
+  ['course_9',['Line-Following Course',['../index.html#autotoc_md43',1,'']]]
 ];

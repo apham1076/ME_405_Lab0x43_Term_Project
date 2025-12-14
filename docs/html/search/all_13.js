@@ -19,6 +19,7 @@ var searchData=
   ['tim_5fobj_16',['tim_obj',['../classencoder_1_1_encoder.html#afc992b00d5b085331bd1e894205d6eab',1,'encoder.Encoder.tim_obj'],['../class_i_r__sensor_1_1_i_r_array.html#a86e5d6c07e7fa4223c52a629881e0f81',1,'IR_sensor.IRArray.tim_obj'],['../classmotor_1_1_motor.html#a3873dd2db83ee42cefd8d833e6cef0e0',1,'motor.Motor.tim_obj']]],
   ['time_5fs_17',['time_s',['../namespacetest.html#aa0cfd420da6c9dbac002a7042a0ca36f',1,'test']]],
   ['time_5fsh_18',['time_sh',['../classmotor__task_1_1_motor_control_task.html#a86665e6e3c27c451811953a9285ef9b6',1,'motor_task.MotorControlTask.time_sh'],['../classstream__task_1_1_stream_task.html#a4e150151b5802a6b909379a82648fe98',1,'stream_task.StreamTask.time_sh']]],
-  ['total_5fs_5fsh_19',['total_s_sh',['../classpath__planning__task_1_1_path_planning_task.html#a73bfdf4d206a5ca00573b6fa0f0a6678',1,'path_planning_task.PathPlanningTask.total_s_sh'],['../classspectator__task_1_1_spectator_task.html#ac16cfa3be04db55ad516e9997ae548e9',1,'spectator_task.SpectatorTask.total_s_sh']]],
-  ['type_5fcode_5fstrings_20',['type_code_strings',['../namespacetask__share.html#af5ee68a35f9ce19aef4c4bd4ab7c2679',1,'task_share']]]
+  ['to_20encoder_20measurements_19',['Comparison to Encoder Measurements',['../state_estimation_odometry.html#autotoc_md58',1,'']]],
+  ['total_5fs_5fsh_20',['total_s_sh',['../classpath__planning__task_1_1_path_planning_task.html#a73bfdf4d206a5ca00573b6fa0f0a6678',1,'path_planning_task.PathPlanningTask.total_s_sh'],['../classspectator__task_1_1_spectator_task.html#ac16cfa3be04db55ad516e9997ae548e9',1,'spectator_task.SpectatorTask.total_s_sh']]],
+  ['type_5fcode_5fstrings_21',['type_code_strings',['../namespacetask__share.html#af5ee68a35f9ce19aef4c4bd4ab7c2679',1,'task_share']]]
 ];

@@ -1,8 +1,8 @@
 var searchData=
 [
-  ['layout_0',['Repository Layout',['../getting_started.html#autotoc_md28',1,'']]],
-  ['line_20following_20course_1',['Line-Following Course',['../index.html#autotoc_md43',1,'']]],
-  ['line_20following_20robot_2',['Romi Line-Following Robot',['../index.html',1,'']]],
-  ['loop_20motor_20control_3',['Closed-Loop Motor Control',['../index.html#autotoc_md49',1,'']]],
-  ['loop_20velocity_20control_4',['Closed-Loop Velocity Control',['../control_design.html#autotoc_md22',1,'']]]
+  ['identification_0',['Motor Modeling and System Identification',['../control_design.html#autotoc_md18',1,'']]],
+  ['implementation_1',['State Estimator Implementation',['../state_estimation_odometry.html#autotoc_md56',1,'']]],
+  ['improvements_2',['Velocity Measurement Improvements',['../control_design.html#autotoc_md20',1,'']]],
+  ['initialize_20the_20object_20s_20attributes_3',['Initialize the object s attributes',['../classmotor__task_1_1_motor_control_task.html#autotoc_md0',1,'Initialize the object&apos;s attributes'],['../classpath__planning__task_1_1_path_planning_task.html#autotoc_md3',1,'Initialize the object&apos;s attributes'],['../classspectator__task_1_1_spectator_task.html#autotoc_md7',1,'Initialize the object&apos;s attributes'],['../classstream__task_1_1_stream_task.html#autotoc_md12',1,'Initialize the object&apos;s attributes'],['../classui__task_1_1_u_i_task.html#autotoc_md14',1,'Initialize the object&apos;s attributes']]],
+  ['interface_4',['Data Streaming and PC Interface',['../getting_started.html#autotoc_md36',1,'']]]
 ];
