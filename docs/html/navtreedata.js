@@ -25,9 +25,10 @@
 var NAVTREE =
 [
   [ "ME 405 Term Project", "index.html", [
-    [ "Romi Line-Following Robot", "index.html", null ],
+    [ "Overview", "index.html", null ],
     [ "Control Design", "control_design.html", null ],
     [ "Getting Started", "getting_started.html", null ],
+    [ "Hardware &amp; Electrical Design", "hardware.html", null ],
     [ "State Estimation and Odometry", "state_estimation_odometry.html", null ],
     [ "Namespaces", "namespaces.html", [
       [ "Package List", "namespaces.html", "namespaces_dup" ],

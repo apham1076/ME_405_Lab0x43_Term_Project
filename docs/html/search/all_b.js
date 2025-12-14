@@ -2,7 +2,7 @@ var searchData=
 [
   ['last_5foutput_0',['last_output',['../classclosed__loop_1_1_closed_loop.html#abeb827a5fc1eaefcec829876200fc3cc',1,'closed_loop::ClosedLoop']]],
   ['last_5ftime_1',['last_time',['../classclosed__loop_1_1_closed_loop.html#aee8f72013b0e108960ecbbd672221bf4',1,'closed_loop.ClosedLoop.last_time'],['../classsteering__task_1_1_steering_task.html#adce7c2d041d2927a18c47fb7ef1b88a8',1,'steering_task.SteeringTask.last_time']]],
-  ['layout_2',['Repository Layout',['../getting_started.html#autotoc_md28',1,'']]],
+  ['layout_2',['Repository Layout',['../getting_started.html#autotoc_md32',1,'']]],
   ['left_5fcontroller_3',['left_controller',['../classmotor__task_1_1_motor_control_task.html#aa1ccfec28e06aaa8b19283555b101ef4',1,'motor_task::MotorControlTask']]],
   ['left_5feff_5fsh_4',['left_eff_sh',['../classmotor__task_1_1_motor_control_task.html#a3d4e2afebff9d7060b0ff3c0ba5979d4',1,'motor_task::MotorControlTask']]],
   ['left_5fencoder_5',['left_encoder',['../classmotor__task_1_1_motor_control_task.html#acdaa3ecadd1ad267ab9f80287da0c1f8',1,'motor_task::MotorControlTask']]],
@@ -14,13 +14,13 @@ var searchData=
   ['left_5fvel_5fsh_11',['left_vel_sh',['../classmotor__task_1_1_motor_control_task.html#a41b0e640a92ea151fcd6c3dcf730a880',1,'motor_task.MotorControlTask.left_vel_sh'],['../classstream__task_1_1_stream_task.html#ada0b234b3e37a1e286a89dbbb8543977',1,'stream_task.StreamTask.left_vel_sh']]],
   ['lf_5ftarget_12',['lf_target',['../classpath__planning__task_1_1_path_planning_task.html#a29bb046391cde7d3608a6ea4e327bde7',1,'path_planning_task.PathPlanningTask.lf_target'],['../classui__task_1_1_u_i_task.html#aea06882e8655b875d00298283021e3b9',1,'ui_task.UITask.lf_target']]],
   ['lf_5ftarget_5fsh_13',['lf_target_sh',['../classsteering__task_1_1_steering_task.html#a672a713c9e2127d2ab2d25ff576b403e',1,'steering_task::SteeringTask']]],
-  ['limitations_20and_20design_20decision_14',['Limitations and Design Decision',['../state_estimation_odometry.html#autotoc_md60',1,'']]],
+  ['limitations_20and_20design_20decision_14',['Limitations and Design Decision',['../state_estimation_odometry.html#autotoc_md85',1,'']]],
   ['line_15',['line',['../namespacetest.html#a893987392dee1257b3438b3bd256b7b3',1,'test']]],
-  ['line_20following_16',['Odometry Validation on Circular Line Following',['../state_estimation_odometry.html#autotoc_md64',1,'']]],
-  ['line_20following_20course_17',['Line-Following Course',['../index.html#autotoc_md43',1,'']]],
-  ['line_20following_20robot_18',['Romi Line-Following Robot',['../index.html',1,'']]],
+  ['line_20following_16',['Odometry Validation on Circular Line Following',['../state_estimation_odometry.html#autotoc_md89',1,'']]],
+  ['line_20following_20course_17',['Line-Following Course',['../index.html#autotoc_md68',1,'']]],
+  ['line_20sensor_20array_18',['Line Sensor Array',['../hardware.html#autotoc_md53',1,'']]],
   ['lines_5fsent_19',['lines_sent',['../classstream__task_1_1_stream_task.html#a173d356aa3de491ef3778fcfdea49463',1,'stream_task::StreamTask']]],
-  ['loop_20motor_20control_20',['Closed-Loop Motor Control',['../index.html#autotoc_md49',1,'']]],
+  ['loop_20motor_20control_20',['Closed-Loop Motor Control',['../index.html#autotoc_md74',1,'']]],
   ['loop_20velocity_20control_21',['Closed-Loop Velocity Control',['../control_design.html#autotoc_md22',1,'']]],
   ['low_5fbatt_5fthreshold_22',['LOW_BATT_THRESHOLD',['../classbattery__droop_1_1_battery.html#ac1bd2c1b1b8bd8710e5c31da73600116',1,'battery_droop::Battery']]]
 ];

@@ -91,17 +91,17 @@ $(function(){initNavTree('state_estimation_odometry.html','',''); });
   <div class="headertitle"><div class="title">State Estimation and Odometry </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h2 class="doxsection"><a class="anchor" id="autotoc_md54"></a>
+<div class="textblock"><h2 class="doxsection"><a class="anchor" id="autotoc_md79"></a>
 Motivation</h2>
 <p>As part of Lab 0x05, we explored state estimation techniques with the goal of reconstructing the Romi’s motion using a mathematical model combined with sensor measurements. The motivation was to move beyond raw encoder data and instead maintain a consistent estimate of key system states such as wheel velocities, arc length traveled, and heading.</p>
 <p>While this approach aligned well with the theoretical objectives of the lab, implementing and validating the estimator on real hardware revealed important limitations. The work ultimately informed our decision to rely on odometry for the term project, but the process of designing, implementing, and testing the estimator provided valuable insight into the behavior of the system.</p>
 <hr  />
-<h2 class="doxsection"><a class="anchor" id="autotoc_md56"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md81"></a>
 State Estimator Implementation</h2>
 <p>The state estimator developed in Lab 0x05 was based on a discrete-time observer formulation. A continuous-time state-space model was first constructed and then discretized for implementation on the microcontroller. The estimator state vector included wheel velocities, arc length, and heading, and incorporated encoder and IMU measurements through an observer gain matrix.</p>
 <p>The estimator was implemented as its own task within the cooperative multitasking framework. At each update, it propagated the system state forward in time using the discrete model and corrected the estimate using incoming measurements. In principle, this structure was intended to provide smoother and more reliable state information than raw encoder measurements alone.</p>
 <hr  />
-<h2 class="doxsection"><a class="anchor" id="autotoc_md58"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md83"></a>
 Comparison to Encoder Measurements</h2>
 <p>To evaluate estimator performance, we compared state-estimated values directly against quantities derived from encoder measurements under several controlled test cases. The following plots show results for straight-line motion, in-place pivoting, and arc motion, all conducted at a fixed effort of 50%.</p>
 <div class="image">
@@ -118,12 +118,12 @@ State-estimated and encoder-derived values during in-place pivot motion at 50% e
 State-estimated and encoder-derived values during arc motion at 50% effort.</div></div>
 <p>Across these tests, the estimated arc length and heading tracked the encoder-derived values reasonably well. However, the estimated wheel velocity consistently differed in magnitude from the measured velocity, often appearing significantly lower. This discrepancy persisted across multiple trials and parameter adjustments.</p>
 <hr  />
-<h2 class="doxsection"><a class="anchor" id="autotoc_md60"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md85"></a>
 Limitations and Design Decision</h2>
 <p>Although portions of the estimator behaved as expected, the inconsistency in the velocity estimates raised concerns about the reliability of the overall state vector. Because wheel velocity is a foundational quantity used throughout the control architecture, uncertainty in this estimate limited our confidence in using the estimator for real-time decision-making during the term project.</p>
 <p>As a result, we made the deliberate decision to rely on odometry-based calculations for estimating absolute position and heading. This approach was simpler, more transparent, and more consistent with the behavior observed on the physical robot. Importantly, this decision was informed directly by experimental results rather than theoretical considerations alone.</p>
 <hr  />
-<h2 class="doxsection"><a class="anchor" id="autotoc_md62"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md87"></a>
 Odometry-Based Pose Estimation</h2>
 <p>For the term project, absolute position and heading were computed using odometry derived from wheel encoder measurements. Incremental wheel motion was integrated over time to estimate:</p>
 <ul>
@@ -133,7 +133,7 @@ Odometry-Based Pose Estimation</h2>
 </ul>
 <p>These calculations were implemented in a dedicated task referred to as the <em>spectator task</em>. Conceptually, this task serves a similar role to a state estimator in that it provides higher-level information about the robot’s motion, but without relying on a full observer model.</p>
 <hr  />
-<h2 class="doxsection"><a class="anchor" id="autotoc_md64"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md89"></a>
 Odometry Validation on Circular Line Following</h2>
 <p>To evaluate the effectiveness of the odometry calculations, the robot was commanded to follow a circular line for approximately two full revolutions. During this test, both a real-world video of the robot and logged odometry data were recorded.</p>
 <p>The video below shows the physical robot following the circular path:</p>
@@ -161,7 +161,7 @@ Odometry Validation on Circular Line Following</h2>
 </div>
 </p>
 <hr  />
-<h2 class="doxsection"><a class="anchor" id="autotoc_md66"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md91"></a>
 Discussion</h2>
 <p>The combination of state estimation and odometry work highlights an important aspect of system design: choosing the right level of model complexity for a given application. While the state estimator provided valuable insight and reinforced theoretical concepts from the course, odometry proved to be a more reliable and interpretable solution for our final system.</p>
 <p>This experience emphasized the importance of validating algorithms against real hardware behavior and making design decisions based on experimental evidence rather than assumptions alone. </p>

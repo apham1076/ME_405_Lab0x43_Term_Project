@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.15.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>ME 405 Term Project: Romi Line-Following Robot</title>
+<title>ME 405 Term Project: Overview</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -88,15 +88,26 @@ $(function(){initNavTree('index.html','',''); });
 </div>
 
 <div><div class="header">
-  <div class="headertitle"><div class="title">Romi Line-Following Robot </div></div>
+  <div class="headertitle"><div class="title">Overview </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h2 class="doxsection"><a class="anchor" id="autotoc_md41"></a>
-Project Overview</h2>
+<div class="textblock"><h2 class="doxsection"><a class="anchor" id="autotoc_md64"></a>
+Term Project</h2>
 <p>This project was completed as part of <b>ME 405: Mechatronics</b> at Cal Poly San Luis Obispo. The objective was to design and implement a fully autonomous Romi robot capable of reliably completing a printed line-following time-trial course using onboard sensing, real-time control, and a cooperative multitasking software architecture.</p>
 <p>The final system integrates closed-loop motor control, encoder-based feedback, reflectance sensor processing, and task-level coordination to achieve repeatable and robust performance. Design decisions prioritized reliability, modularity, and predictable behavior over purely maximizing speed.</p>
 <hr  />
-<h2 class="doxsection"><a class="anchor" id="autotoc_md43"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md66"></a>
+System Capabilities</h2>
+<p>The final Romi system demonstrates the following capabilities:</p>
+<ul>
+<li>Fully autonomous line following using onboard sensing and control</li>
+<li>Closed-loop wheel velocity regulation using encoder feedback</li>
+<li>Cooperative multitasking firmware with deterministic task execution</li>
+<li>Odometry-based position and heading estimation</li>
+<li>Real-time data streaming to a PC for debugging and analysis</li>
+</ul>
+<hr  />
+<h2 class="doxsection"><a class="anchor" id="autotoc_md68"></a>
 Line-Following Course</h2>
 <p>The robot was evaluated on a printed line-following course used for time trials and final demonstrations.</p>
 <div class="image">
@@ -104,17 +115,17 @@ Line-Following Course</h2>
 <div class="caption">
 Printed line-following course used for time trials and final demonstration.</div></div>
 <hr  />
-<h2 class="doxsection"><a class="anchor" id="autotoc_md45"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md70"></a>
 Hardware &amp; Electrical Design</h2>
 <p>The robot is built on a Pololu Romi chassis with two DC motors driven by onboard motor drivers and instrumented with quadrature encoders for wheel position and velocity feedback. Line detection is performed using a reflectance sensor array mounted at the front of the chassis and positioned to provide consistent contrast while minimizing sensitivity to ambient lighting.</p>
 <p>Power is supplied by <b>six AA batteries</b>. Several electrical design decisions were made to ensure predictable startup behavior, including modifying default pull-up configurations and selecting motor control pins to prevent unintended motion on power-up. Encoder wiring, sensor placement, and cable management were refined to improve repeatability and robustness during operation.</p>
 <hr  />
-<h2 class="doxsection"><a class="anchor" id="autotoc_md47"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md72"></a>
 Software Architecture</h2>
 <p>The firmware is organized using a <b>cooperative multitasking framework</b> implemented in MicroPython. Independent tasks handle sensing, control, actuation, and communication, and they exchange information using thread-safe shared variables and queues.</p>
 <p>This structure allows time-critical operations, such as motor updates and sensor sampling, to execute deterministically while higher-level logic runs concurrently without blocking. The modular task design simplified debugging and enabled incremental development throughout the quarter.</p>
 <hr  />
-<h2 class="doxsection"><a class="anchor" id="autotoc_md49"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md74"></a>
 Closed-Loop Motor Control</h2>
 <p>Wheel encoders provide continuous feedback for closed-loop motor control. A proportional–integral controller regulates wheel velocity, allowing the robot to track commanded setpoints consistently across operating conditions.</p>
 <div class="image">
@@ -122,7 +133,7 @@ Closed-Loop Motor Control</h2>
 <div class="caption">
 Representative closed-loop velocity response for the left motor. The controller tracks a commanded velocity setpoint using tuned proportional–integral gains, demonstrating stable and repeatable behavior.</div></div>
 <hr  />
-<h2 class="doxsection"><a class="anchor" id="autotoc_md51"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md76"></a>
 Final Demonstration</h2>
 <p>The video below shows the robot navigating the printed course during a final demonstration run and successfully reaching the designated checkpoint.</p>
 <p> 
@@ -138,7 +149,7 @@ Final Demonstration</h2>
 </div>
 </p>
 <hr  />
-<h2 class="doxsection"><a class="anchor" id="autotoc_md53"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md78"></a>
 Repository</h2>
 <p>All source code, documentation, and design files for this project are available in the associated GitHub repository. The repository is organized to allow the system to be reproduced or extended in future work. </p>
 </div></div><!-- PageDoc -->

@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['the_20firmware_0',['Running the Firmware',['../getting_started.html#autotoc_md38',1,'']]],
-  ['the_20object_20s_20attributes_1',['the object s attributes',['../classmotor__task_1_1_motor_control_task.html#autotoc_md0',1,'Initialize the object&apos;s attributes'],['../classpath__planning__task_1_1_path_planning_task.html#autotoc_md3',1,'Initialize the object&apos;s attributes'],['../classspectator__task_1_1_spectator_task.html#autotoc_md7',1,'Initialize the object&apos;s attributes'],['../classstream__task_1_1_stream_task.html#autotoc_md12',1,'Initialize the object&apos;s attributes'],['../classui__task_1_1_u_i_task.html#autotoc_md14',1,'Initialize the object&apos;s attributes']]],
-  ['to_20encoder_20measurements_2',['Comparison to Encoder Measurements',['../state_estimation_odometry.html#autotoc_md58',1,'']]]
+  ['reference_20and_20wiring_20diagram_0',['Pinout Reference and Wiring Diagram',['../hardware.html#autotoc_md61',1,'']]],
+  ['repository_1',['Repository',['../index.html#autotoc_md78',1,'']]],
+  ['repository_20layout_2',['Repository Layout',['../getting_started.html#autotoc_md32',1,'']]],
+  ['running_20the_20firmware_3',['Running the Firmware',['../getting_started.html#autotoc_md42',1,'']]]
 ];

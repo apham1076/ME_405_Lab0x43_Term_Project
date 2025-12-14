@@ -1,9 +1,20 @@
-@mainpage Romi Line-Following Robot
+@mainpage Overview
 
-## Project Overview
+## Term Project
 This project was completed as part of **ME 405: Mechatronics** at Cal Poly San Luis Obispo. The objective was to design and implement a fully autonomous Romi robot capable of reliably completing a printed line-following time-trial course using onboard sensing, real-time control, and a cooperative multitasking software architecture.
 
 The final system integrates closed-loop motor control, encoder-based feedback, reflectance sensor processing, and task-level coordination to achieve repeatable and robust performance. Design decisions prioritized reliability, modularity, and predictable behavior over purely maximizing speed.
+
+---
+
+## System Capabilities
+The final Romi system demonstrates the following capabilities:
+
+- Fully autonomous line following using onboard sensing and control
+- Closed-loop wheel velocity regulation using encoder feedback
+- Cooperative multitasking firmware with deterministic task execution
+- Odometry-based position and heading estimation
+- Real-time data streaming to a PC for debugging and analysis
 
 ---
 

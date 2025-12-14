@@ -1,11 +1,10 @@
 var searchData=
 [
-  ['machine_0',['MACHINE',['../classmotor__task_1_1_motor_control_task.html#autotoc_md2',1,'FINITE STATE MACHINE'],['../classpath__planning__task_1_1_path_planning_task.html#autotoc_md5',1,'FINITE STATE MACHINE'],['../classspectator__task_1_1_spectator_task.html#autotoc_md9',1,'FINITE STATE MACHINE'],['../classsteering__task_1_1_steering_task.html#autotoc_md11',1,'FINITE STATE MACHINE'],['../classstream__task_1_1_stream_task.html#autotoc_md13',1,'FINITE STATE MACHINE'],['../classui__task_1_1_u_i_task.html#autotoc_md15',1,'FINITE STATE MACHINE']]],
-  ['me_5f405_1',['ME_405',['../dir_68267d1309a1af8e8297ef4c3efbcdba.html#autotoc_md6',1,'']]],
-  ['measurement_20improvements_2',['Velocity Measurement Improvements',['../control_design.html#autotoc_md20',1,'']]],
-  ['measurements_3',['Comparison to Encoder Measurements',['../state_estimation_odometry.html#autotoc_md58',1,'']]],
-  ['modeling_20and_20system_20identification_4',['Motor Modeling and System Identification',['../control_design.html#autotoc_md18',1,'']]],
-  ['motivation_5',['Motivation',['../state_estimation_odometry.html#autotoc_md54',1,'']]],
-  ['motor_20control_6',['Closed-Loop Motor Control',['../index.html#autotoc_md49',1,'']]],
-  ['motor_20modeling_20and_20system_20identification_7',['Motor Modeling and System Identification',['../control_design.html#autotoc_md18',1,'']]]
+  ['layout_0',['Repository Layout',['../getting_started.html#autotoc_md32',1,'']]],
+  ['limitations_20and_20design_20decision_1',['Limitations and Design Decision',['../state_estimation_odometry.html#autotoc_md85',1,'']]],
+  ['line_20following_2',['Odometry Validation on Circular Line Following',['../state_estimation_odometry.html#autotoc_md89',1,'']]],
+  ['line_20following_20course_3',['Line-Following Course',['../index.html#autotoc_md68',1,'']]],
+  ['line_20sensor_20array_4',['Line Sensor Array',['../hardware.html#autotoc_md53',1,'']]],
+  ['loop_20motor_20control_5',['Closed-Loop Motor Control',['../index.html#autotoc_md74',1,'']]],
+  ['loop_20velocity_20control_6',['Closed-Loop Velocity Control',['../control_design.html#autotoc_md22',1,'']]]
 ];

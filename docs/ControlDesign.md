@@ -39,7 +39,26 @@ Closed-loop velocity control was implemented using a proportional–integral (PI
 
 Controller tuning was performed empirically by evaluating step responses across a range of gains and setpoints. Gains were selected to balance responsiveness with stability while avoiding excessive overshoot or oscillation.
 
-@image html run3_V_sp15.0_Kp5.00_Ki0.05_left_vel.png "Representative closed-loop velocity response for the left motor using tuned PI gains." width=80%
+---
+
+## Effect of Proportional and Integral Gains
+To better understand controller behavior, individual proportional and integral gains were intentionally exaggerated during testing. These experiments revealed how each term influences responsiveness, stability, and steady-state behavior.
+
+### High Proportional Gain (Kp)
+Increasing the proportional gain significantly improved rise time and reduced steady-state error. However, excessively high Kp values caused oscillatory behavior as the controller over-corrected for small velocity errors.
+
+@image html run6_V_sp15.0_Kp50.00_Ki0.00_left_vel.png "Closed-loop velocity response with very high proportional gain (Kp = 50, Ki = 0). While the motor reaches the commanded setpoint quickly, large oscillations are present due to aggressive error correction." width=70%
+
+This oscillatory behavior reflects the controller reacting too strongly to measurement error and quantization effects in the encoder-derived velocity signal. Although tracking performance improved, stability was compromised.
+
+### Integral Gain Effects (Ki)
+Integral gain was introduced to reduce steady-state error and improve long-term setpoint tracking. When Ki was increased excessively, the controller exhibited a gradual upward drift in velocity as accumulated error continued to drive the output.
+
+@image html run4_V_sp15.0_Kp6.00_Ki2.00_left_vel.png "Closed-loop velocity response with elevated integral gain (Kp = 6, Ki = 2). The velocity trends upward over time due to accumulated integral action." width=70%
+
+This behavior highlights the tradeoff between eliminating steady-state error and maintaining bounded control action, particularly in the presence of sensor noise and timing variability.
+
+@image html run3_V_sp15.0_Kp5.00_Ki0.05_left_vel.png "Representative closed-loop velocity response for the left motor using tuned PI gains. The selected gains balance responsiveness and stability while minimizing oscillation and steady-state error." width=70%
 
 ---
 

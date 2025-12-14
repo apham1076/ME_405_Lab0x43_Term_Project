@@ -132,12 +132,32 @@ Final open-loop velocity response demonstrating smooth and repeatable behavior.<
 Closed-Loop Velocity Control</h2>
 <p>Closed-loop velocity control was implemented using a proportional–integral (PI) controller operating on each wheel independently. Encoder feedback provides continuous velocity measurements, allowing the controller to reject disturbances and track commanded setpoints more consistently than open-loop control.</p>
 <p>Controller tuning was performed empirically by evaluating step responses across a range of gains and setpoints. Gains were selected to balance responsiveness with stability while avoiding excessive overshoot or oscillation.</p>
-<div class="image">
-<img src="run3_V_sp15.0_Kp5.00_Ki0.05_left_vel.png" alt="" width="80%"/>
-<div class="caption">
-Representative closed-loop velocity response for the left motor using tuned PI gains.</div></div>
 <hr  />
 <h2 class="doxsection"><a class="anchor" id="autotoc_md24"></a>
+Effect of Proportional and Integral Gains</h2>
+<p>To better understand controller behavior, individual proportional and integral gains were intentionally exaggerated during testing. These experiments revealed how each term influences responsiveness, stability, and steady-state behavior.</p>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md25"></a>
+High Proportional Gain (Kp)</h3>
+<p>Increasing the proportional gain significantly improved rise time and reduced steady-state error. However, excessively high Kp values caused oscillatory behavior as the controller over-corrected for small velocity errors.</p>
+<div class="image">
+<img src="run6_V_sp15.0_Kp50.00_Ki0.00_left_vel.png" alt="" width="70%"/>
+<div class="caption">
+Closed-loop velocity response with very high proportional gain (Kp = 50, Ki = 0). While the motor reaches the commanded setpoint quickly, large oscillations are present due to aggressive error correction.</div></div>
+<p>This oscillatory behavior reflects the controller reacting too strongly to measurement error and quantization effects in the encoder-derived velocity signal. Although tracking performance improved, stability was compromised.</p>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md26"></a>
+Integral Gain Effects (Ki)</h3>
+<p>Integral gain was introduced to reduce steady-state error and improve long-term setpoint tracking. When Ki was increased excessively, the controller exhibited a gradual upward drift in velocity as accumulated error continued to drive the output.</p>
+<div class="image">
+<img src="run4_V_sp15.0_Kp6.00_Ki2.00_left_vel.png" alt="" width="70%"/>
+<div class="caption">
+Closed-loop velocity response with elevated integral gain (Kp = 6, Ki = 2). The velocity trends upward over time due to accumulated integral action.</div></div>
+<p>This behavior highlights the tradeoff between eliminating steady-state error and maintaining bounded control action, particularly in the presence of sensor noise and timing variability.</p>
+<div class="image">
+<img src="run3_V_sp15.0_Kp5.00_Ki0.05_left_vel.png" alt="" width="70%"/>
+<div class="caption">
+Representative closed-loop velocity response for the left motor using tuned PI gains. The selected gains balance responsiveness and stability while minimizing oscillation and steady-state error.</div></div>
+<hr  />
+<h2 class="doxsection"><a class="anchor" id="autotoc_md28"></a>
 Cascaded Control Structure</h2>
 <p>Line following is implemented using a cascaded control structure. An outer loop interprets reflectance sensor measurements to generate a steering correction, while inner velocity loops regulate individual wheel speeds.</p>
 <p>This separation allows the line-following logic to operate independently of motor dynamics and improves robustness to disturbances such as curvature changes or brief sensor dropout.</p>
@@ -146,7 +166,7 @@ Cascaded Control Structure</h2>
 <div class="caption">
 Cascaded control architecture combining line-following logic with inner velocity control loops.</div></div>
 <hr  />
-<h2 class="doxsection"><a class="anchor" id="autotoc_md26"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md30"></a>
 Discussion</h2>
 <p>Implementing closed-loop velocity control significantly improved the robot’s repeatability and predictability. Improvements to encoder velocity estimation were critical; controller performance was ultimately limited more by measurement quality than by controller structure.</p>
 <p>This layered approach simplified debugging and allowed individual components of the system to be validated independently before full integration with line-following behavior. </p>
