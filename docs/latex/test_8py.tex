@@ -1,0 +1,187 @@
+\doxysection{src/test.py File Reference}
+\hypertarget{test_8py}{}\label{test_8py}\index{src/test.py@{src/test.py}}
+\doxysubsubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \mbox{\hyperlink{namespacetest}{test}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{namespacetest_aec4182054305d5922ee1254290c6ce10}{test.\+eff\+\_\+to\+\_\+key}} (\mbox{\hyperlink{namespacetest_afc9cb69adfec025427b1f3d559652b21}{eff}})
+\item 
+\mbox{\hyperlink{namespacetest_ae0b30779642efe80d3eb04eba0459a43}{test.\+key\+\_\+to\+\_\+eff}} (\mbox{\hyperlink{namespacetest_a7573407cf991ca34f068886b86251b7c}{key}})
+\item 
+\mbox{\hyperlink{namespacetest_ad820b4fadb4f3b63f888d8e0d1b74197}{test.\+create\+\_\+run}} (\mbox{\hyperlink{namespacetest_a7452cb0046ccf7e9491f2d5e88cdb55c}{control\+\_\+mode}}, control\+\_\+val, \mbox{\hyperlink{namespacetest_a21fd18b189df67bbac0155c8e807c05d}{driving\+\_\+mode}}, run\+\_\+num, size)
+\item 
+\mbox{\hyperlink{namespacetest_a480270d5e59fa1cb2f632c120f2a2188}{test.\+clean\+\_\+data}} (\mbox{\hyperlink{namespacetest_a9a93e497a6e2c865120aa795d60224b0}{df}}, \mbox{\hyperlink{namespacetest_a9156288a4b565419adaccf850a0c4492}{cols}}=None, \mbox{\hyperlink{namespacetest_a617576aa2fefc612b834de2405e2e8b2}{mode}}=\textquotesingle{}all\textquotesingle{})
+\item 
+\mbox{\hyperlink{namespacetest_a8865e9be759677a67390e7e526e22173}{test.\+start\+\_\+stream\+\_\+handshake}} (\mbox{\hyperlink{namespacetest_acb217bd4ff73a22557532a823d4cda2a}{ser}}, timeout=2.\+0, retries=3)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+str \mbox{\hyperlink{namespacetest_a7573407cf991ca34f068886b86251b7c}{test.\+key}} = \textquotesingle{}\textquotesingle{}
+\item 
+bool \mbox{\hyperlink{namespacetest_ab71690e676fc23d5daf21bb889f79a27}{test.\+running}} = False
+\item 
+bool \mbox{\hyperlink{namespacetest_ada80cd4bef10ded8839db31c254c098c}{test.\+streaming}} = False
+\item 
+bool \mbox{\hyperlink{namespacetest_afabc6d03eb874841e4aa988bf5eb081b}{test.\+print\+\_\+stream\+\_\+frames}} = True
+\item 
+bool \mbox{\hyperlink{namespacetest_ad969d65e91c50624e6d0d12bef1f1bff}{test.\+stream\+\_\+expected}} = True
+\item 
+bool \mbox{\hyperlink{namespacetest_a9652f04408f7d08edb8720bf764f2aa6}{test.\+first\+\_\+frame}} = True
+\item 
+dict \mbox{\hyperlink{namespacetest_af441dfc71cbd97962323c63bbb72232b}{test.\+runs}} = \{\}
+\item 
+int \mbox{\hyperlink{namespacetest_a66a898ed37d52626357dad223b746963}{test.\+run\+\_\+count}} = 0
+\item 
+str \mbox{\hyperlink{namespacetest_aa95239a304d0c43f4052f3b5263ae34c}{test.\+frame\+\_\+buffer}} = "{}"{}
+\item 
+int \mbox{\hyperlink{namespacetest_a7452cb0046ccf7e9491f2d5e88cdb55c}{test.\+control\+\_\+mode}} = 0
+\item 
+int \mbox{\hyperlink{namespacetest_a21fd18b189df67bbac0155c8e807c05d}{test.\+driving\+\_\+mode}} = 0
+\item 
+int \mbox{\hyperlink{namespacetest_ae1548d9049df0b30c55f08cdb7668344}{test.\+effort}} = 0
+\item 
+int \mbox{\hyperlink{namespacetest_acedd8d81e021138aa6d24c6f1180d649}{test.\+setpoint}} = 0
+\item 
+float \mbox{\hyperlink{namespacetest_ae5bb46ab1796081b582c86b6f119608c}{test.\+kp}} = 0.\+0
+\item 
+float \mbox{\hyperlink{namespacetest_ae961e7156e6b3dbfee2d22ecc9543cd0}{test.\+ki}} = 0.\+0
+\item 
+float \mbox{\hyperlink{namespacetest_a206906abf4e783c06ae7fe0c62a59544}{test.\+k\+\_\+line}} = 0.\+0
+\item 
+bool \mbox{\hyperlink{namespacetest_ae04a63cc4eb39edd24b6404817cdfe37}{test.\+first}} = True
+\item 
+bool \mbox{\hyperlink{namespacetest_a6e9473023c9a11824c8a8075ffd05fab}{test.\+done}} = False
+\item 
+\mbox{\hyperlink{namespacetest_a72fdb12802e5e44dff47427ebf217bf5}{test.\+queue}} = local\+\_\+queue.\+Queue()
+\item 
+bool \mbox{\hyperlink{namespacetest_a1abcae538fe399011e4ffe16ab92dc52}{test.\+queuing}} = False
+\item 
+bool \mbox{\hyperlink{namespacetest_a7d060b587158d041bdb56000d70e7851}{test.\+creating\+\_\+run}} = False
+\item 
+str \mbox{\hyperlink{namespacetest_a6ced71697abc3b674ebbed5725af055d}{test.\+test\+\_\+origin}} = "{}manual"{}
+\item 
+dict \mbox{\hyperlink{namespacetest_a9bfc518ae26a756cf36545c32f351657}{test.\+control\+\_\+mode\+\_\+dict}} = \{0\+: "{}effort"{}, 1\+: "{}velocity"{}, 2\+: "{}line following"{}\}
+\item 
+dict \mbox{\hyperlink{namespacetest_ab7d8c34f8699cb3bce72d4ca7ff7b177}{test.\+driving\+\_\+mode\+\_\+dict}} = \{0\+: "{}straight"{}, 1\+: "{}pivot"{}, 2\+: "{}arc"{}\}
+\item 
+str \mbox{\hyperlink{namespacetest_ad0914828b1ed8502c9d901218d0058f8}{test.\+user\+\_\+prompt}}
+\item 
+int \mbox{\hyperlink{namespacetest_a5fc7da7fcd919c580e9faeb8741c9617}{test.\+GEAR\+\_\+\+RATIO}} = 3952/33
+\item 
+int \mbox{\hyperlink{namespacetest_ae3a7884ddebc3386853df82821d9e689}{test.\+CPR\+\_\+\+MOTOR}} = 12
+\item 
+int \mbox{\hyperlink{namespacetest_a7a19c3cb7685fed0456a441c3f9ceb30}{test.\+CPR\+\_\+\+WHEEL}} = \mbox{\hyperlink{namespacetest_a5fc7da7fcd919c580e9faeb8741c9617}{GEAR\+\_\+\+RATIO}}\texorpdfstring{$\ast$}{*}\mbox{\hyperlink{namespacetest_ae3a7884ddebc3386853df82821d9e689}{CPR\+\_\+\+MOTOR}}
+\item 
+int \mbox{\hyperlink{namespacetest_a6ca95c3f2848dd4406406db09d8ba60a}{test.\+RAD\+\_\+\+PER\+\_\+\+COUNT}} = 2 \texorpdfstring{$\ast$}{*} math.\+pi / \mbox{\hyperlink{namespacetest_a7a19c3cb7685fed0456a441c3f9ceb30}{CPR\+\_\+\+WHEEL}}
+\item 
+int \mbox{\hyperlink{namespacetest_a9a599cf5689fa3e7d98b9d519ef80e74}{test.\+WHEEL\+\_\+\+RADIUS\+\_\+\+MM}} = 35
+\item 
+\mbox{\hyperlink{namespacetest_af4f2260c045cf1db306abf26d306ff17}{test.\+exist\+\_\+ok}}
+\item 
+\mbox{\hyperlink{namespacetest_acb217bd4ff73a22557532a823d4cda2a}{test.\+ser}} = Serial(\textquotesingle{}COM3\textquotesingle{}, baudrate=115200, timeout=1)
+\item 
+\mbox{\hyperlink{namespacetest_ac41a8344ce7e0c136c4e9663ecbe991a}{test.\+selected}} = input("{}Enter choice (e, v, l, or q to quit)\+: "{})
+\item 
+\mbox{\hyperlink{namespacetest_a3a2a447a7b6c04b1ee97dcf7b2b56465}{test.\+key\+\_\+in}} = input("{}Enter \mbox{\hyperlink{namespacetest_ae1548d9049df0b30c55f08cdb7668344}{effort}} \mbox{\hyperlink{namespacetest_a7573407cf991ca34f068886b86251b7c}{key}} (0-\/9 or \textquotesingle{}a\textquotesingle{} for 100\%) or percent (0-\/100)\+: "{}).strip()
+\item 
+\mbox{\hyperlink{namespacetest_a07583fa20af1bc33a9555201743ea304}{test.\+eff\+\_\+val}} = \mbox{\hyperlink{namespacetest_ae0b30779642efe80d3eb04eba0459a43}{key\+\_\+to\+\_\+eff}}(\mbox{\hyperlink{namespacetest_a3a2a447a7b6c04b1ee97dcf7b2b56465}{key\+\_\+in}})
+\item 
+str \mbox{\hyperlink{namespacetest_a893987392dee1257b3438b3bd256b7b3}{test.\+line}} = \textquotesingle{}e\textquotesingle{} + \mbox{\hyperlink{namespacetest_aec4182054305d5922ee1254290c6ce10}{eff\+\_\+to\+\_\+key}}(\mbox{\hyperlink{namespacetest_ae1548d9049df0b30c55f08cdb7668344}{effort}})
+\item 
+\mbox{\hyperlink{namespacetest_af793b3ac7e7c14ed9a8a8da9aab606ff}{test.\+gains}} = input("{}Enter \mbox{\hyperlink{namespacetest_acedd8d81e021138aa6d24c6f1180d649}{setpoint}} (mm/s), Kp, and Ki separated by a comma (e.\+g., 40,1.\+5,0.\+1)\+: "{})
+\item 
+\mbox{\hyperlink{namespacetest_a20f7f397bc9d989ab53ce10ef91d5750}{test.\+sp\+\_\+str}}
+\item 
+\mbox{\hyperlink{namespacetest_a3a736263cbdfc82ab89c409f79feecb2}{test.\+kp\+\_\+str}}
+\item 
+\mbox{\hyperlink{namespacetest_a8e341e702a9addfe7330aa773ca23d91}{test.\+ki\+\_\+str}}
+\item 
+\mbox{\hyperlink{namespacetest_af5b997959ad6de91d7defdedcdf87301}{test.\+setpoint\+\_\+mm\+\_\+s}} = float(\mbox{\hyperlink{namespacetest_a20f7f397bc9d989ab53ce10ef91d5750}{sp\+\_\+str}})
+\item 
+int \mbox{\hyperlink{namespacetest_aeccdc1405417f6c83f286c686d5806f0}{test.\+setpoint\+\_\+rad\+\_\+s}} = \mbox{\hyperlink{namespacetest_af5b997959ad6de91d7defdedcdf87301}{setpoint\+\_\+mm\+\_\+s}} / \mbox{\hyperlink{namespacetest_a9a599cf5689fa3e7d98b9d519ef80e74}{WHEEL\+\_\+\+RADIUS\+\_\+\+MM}}
+\item 
+\mbox{\hyperlink{namespacetest_a04a0c102ee3a970e2df302070bd378eb}{test.\+setpoint\+\_\+scaled}} = int(\mbox{\hyperlink{namespacetest_aeccdc1405417f6c83f286c686d5806f0}{setpoint\+\_\+rad\+\_\+s}} \texorpdfstring{$\ast$}{*} 100)
+\item 
+\mbox{\hyperlink{namespacetest_a8c711ee932ba27944887893658500ca2}{test.\+kp\+\_\+scaled}} = int(\mbox{\hyperlink{namespacetest_ae5bb46ab1796081b582c86b6f119608c}{kp}} \texorpdfstring{$\ast$}{*} 100)
+\item 
+\mbox{\hyperlink{namespacetest_a860f7c6f38187a4a57653ab3aaf62873}{test.\+ki\+\_\+scaled}} = int(\mbox{\hyperlink{namespacetest_ae961e7156e6b3dbfee2d22ecc9543cd0}{ki}} \texorpdfstring{$\ast$}{*} 100)
+\item 
+\mbox{\hyperlink{namespacetest_a197471929d21a0f061a5ba2f69b7a1f0}{test.\+k\+\_\+line\+\_\+str}}
+\item 
+\mbox{\hyperlink{namespacetest_a663b216e6d9f34c035112629f7cb6f0c}{test.\+target\+\_\+str}}
+\item 
+\mbox{\hyperlink{namespacetest_a571f5adbd6cd8f738d43d4b5490a613d}{test.\+target\+\_\+scaled}} = int(\mbox{\hyperlink{namespacetest_aeccdc1405417f6c83f286c686d5806f0}{setpoint\+\_\+rad\+\_\+s}} \texorpdfstring{$\ast$}{*} 100)
+\item 
+\mbox{\hyperlink{namespacetest_a4241e1f28988d6b3418ff1d41f780ee5}{test.\+k\+\_\+line\+\_\+scaled}} = int(\mbox{\hyperlink{namespacetest_a206906abf4e783c06ae7fe0c62a59544}{k\+\_\+line}} \texorpdfstring{$\ast$}{*} 100)
+\item 
+\mbox{\hyperlink{namespacetest_afc9cb69adfec025427b1f3d559652b21}{test.\+eff}} = input("{}Enter \mbox{\hyperlink{namespacetest_ae1548d9049df0b30c55f08cdb7668344}{effort}} \mbox{\hyperlink{namespacetest}{test}} in the following format\+: \mbox{\hyperlink{namespacetest_ad61f371a8567376d7044e5812ca9a16a}{start}}, \mbox{\hyperlink{namespacetest_a4c5dc5338be2a95cd317ab3493eb0763}{end}}, \mbox{\hyperlink{namespacetest_a2c75257418c045889282e01c6806b03a}{step}} (e.\+g., 0,100,10)\+: "{})
+\item 
+\mbox{\hyperlink{namespacetest_aff552937608aaec6716a32fb227b6705}{test.\+start\+\_\+str}}
+\item 
+\mbox{\hyperlink{namespacetest_a55cf60cd244c8042224dd2aedddd1ea7}{test.\+end\+\_\+str}}
+\item 
+\mbox{\hyperlink{namespacetest_a8f8390da418694907fc1f6817177990a}{test.\+step\+\_\+str}}
+\item 
+\mbox{\hyperlink{namespacetest_ad61f371a8567376d7044e5812ca9a16a}{test.\+start}} = int(\mbox{\hyperlink{namespacetest_aff552937608aaec6716a32fb227b6705}{start\+\_\+str}})
+\item 
+\mbox{\hyperlink{namespacetest_a4c5dc5338be2a95cd317ab3493eb0763}{test.\+end}} = int(\mbox{\hyperlink{namespacetest_a55cf60cd244c8042224dd2aedddd1ea7}{end\+\_\+str}})
+\item 
+\mbox{\hyperlink{namespacetest_a2c75257418c045889282e01c6806b03a}{test.\+step}} = int(\mbox{\hyperlink{namespacetest_a8f8390da418694907fc1f6817177990a}{step\+\_\+str}})
+\item 
+\mbox{\hyperlink{namespacetest_ac48e80191ccbf23cd4ef3306a1355815}{test.\+csv\+\_\+dir}} = os.\+path.\+join(\textquotesingle{}\mbox{\hyperlink{namespacetest_af441dfc71cbd97962323c63bbb72232b}{runs}}\textquotesingle{}, \textquotesingle{}csvs\textquotesingle{})
+\item 
+\mbox{\hyperlink{namespacetest_abd894779bff553c93ca729ee9feb66f4}{test.\+plots\+\_\+dir}} = os.\+path.\+join(\textquotesingle{}\mbox{\hyperlink{namespacetest_af441dfc71cbd97962323c63bbb72232b}{runs}}\textquotesingle{}, \textquotesingle{}plots\textquotesingle{})
+\item 
+\mbox{\hyperlink{namespacetest_a72e39339f430c5ccd9e5d433c5dfbf6a}{test.\+df1}} = meta.\+get(\textquotesingle{}motor\+\_\+data\textquotesingle{})
+\item 
+\mbox{\hyperlink{namespacetest_a6b17ab9035e211e7926b1a7193b5c330}{test.\+df2}} = meta.\+get(\textquotesingle{}obsv\+\_\+data\textquotesingle{}, None)
+\item 
+\mbox{\hyperlink{namespacetest_a9a93e497a6e2c865120aa795d60224b0}{test.\+df}} = pd.\+concat(\mbox{[}\mbox{\hyperlink{namespacetest_a72e39339f430c5ccd9e5d433c5dfbf6a}{df1}}, \mbox{\hyperlink{namespacetest_a6b17ab9035e211e7926b1a7193b5c330}{df2}}\mbox{]}, axis=1)
+\item 
+str \mbox{\hyperlink{namespacetest_a66e102e23bb72af670d02aa534ed00e0}{test.\+run\+\_\+code}} = \textquotesingle{}E\textquotesingle{}
+\item 
+str \mbox{\hyperlink{namespacetest_af460c37a7ef9440bd7524d23430521bb}{test.\+driving\+\_\+code}} = "{}STR"{}
+\item 
+str \mbox{\hyperlink{namespacetest_a1633840d9e51cca6a65e8b9ab21b1cdf}{test.\+base\+\_\+name}} = f"{}\{\mbox{\hyperlink{namespacetest_abab5999e24c6869b1ceebb2bbbba9582}{run\+\_\+name}}\}\+\_\+\{\mbox{\hyperlink{namespacetest_a66e102e23bb72af670d02aa534ed00e0}{run\+\_\+code}}\}\+\_\+\{\mbox{\hyperlink{namespacetest_af460c37a7ef9440bd7524d23430521bb}{driving\+\_\+code}}\}"{}
+\item 
+\mbox{\hyperlink{namespacetest_ad2d0319d59bf3d262f8505ab92bb671c}{test.\+csv\+\_\+name}} = os.\+path.\+join(\mbox{\hyperlink{namespacetest_ac48e80191ccbf23cd4ef3306a1355815}{csv\+\_\+dir}}, \mbox{\hyperlink{namespacetest_a1633840d9e51cca6a65e8b9ab21b1cdf}{base\+\_\+name}} + "{}.csv"{})
+\item 
+list \mbox{\hyperlink{namespacetest_a9156288a4b565419adaccf850a0c4492}{test.\+cols}} = \mbox{[}"{}\+\_\+time"{}, "{}\+\_\+left\+\_\+pos"{}, "{}\+\_\+right\+\_\+pos"{}, "{}\+\_\+left\+\_\+vel"{}, "{}\+\_\+right\+\_\+vel"{}, "{}\+\_\+obsv\+\_\+time"{}, "{}\+\_\+obsv\+\_\+left\+\_\+vel"{}, "{}\+\_\+obsv\+\_\+right\+\_\+vel"{}, "{}\+\_\+obsv\+\_\+s"{}, "{}\+\_\+obsv\+\_\+yaw"{}\mbox{]}
+\item 
+\mbox{\hyperlink{namespacetest_aafd85ce1040ec0aa8dfcfe8ff3f2de41}{test.\+index}}
+\item 
+\mbox{\hyperlink{namespacetest_af504d7455d1a455833f074005219efeb}{test.\+next\+\_\+test}} = queue.\+dequeue()
+\item 
+\mbox{\hyperlink{namespacetest_a617576aa2fefc612b834de2405e2e8b2}{test.\+mode}} = \mbox{\hyperlink{namespacetest_af504d7455d1a455833f074005219efeb}{next\+\_\+test}}\mbox{[}0\mbox{]}
+\item 
+str \mbox{\hyperlink{namespacetest_a36a0953ea392b694dfff2f42737efeca}{test.\+mode\+\_\+name}} = "{}effort"{}
+\item 
+\mbox{\hyperlink{namespacetest_ac8c54ce5876c6331a8c7535270dc951b}{test.\+params}} = None
+\item 
+int \mbox{\hyperlink{namespacetest_ae30ae1e5c1722575fa4accae5871819f}{test.\+sample\+\_\+size}} = 200
+\item 
+str \mbox{\hyperlink{namespacetest_abab5999e24c6869b1ceebb2bbbba9582}{test.\+run\+\_\+name}} = f\textquotesingle{}run\{\mbox{\hyperlink{namespacetest_a66a898ed37d52626357dad223b746963}{run\+\_\+count}}\}\textquotesingle{}
+\item 
+\mbox{\hyperlink{namespacetest_a4b7c8740ab9a8f6bfcb75cf365e507f3}{test.\+chunk}} = ser.\+read(ser.\+in\+\_\+waiting or 1).decode()
+\item 
+str \mbox{\hyperlink{namespacetest_a6d11c86ecc8cc9986d3d18fd94f8883e}{test.\+frame}} = \mbox{\hyperlink{namespacetest_aa95239a304d0c43f4052f3b5263ae34c}{frame\+\_\+buffer}}\mbox{[}\mbox{\hyperlink{namespacetest_ad61f371a8567376d7044e5812ca9a16a}{start}}+3 \+: \mbox{\hyperlink{namespacetest_a4c5dc5338be2a95cd317ab3493eb0763}{end}}\mbox{]}
+\item 
+\mbox{\hyperlink{namespacetest_aa697e5338bce24fbe7b039e53861fa3b}{test.\+idx\+\_\+str}}
+\item 
+\mbox{\hyperlink{namespacetest_aa0cfd420da6c9dbac002a7042a0ca36f}{test.\+time\+\_\+s}}
+\item 
+\mbox{\hyperlink{namespacetest_ad7ea20fa07ba1158fe68509d290f3c83}{test.\+left\+\_\+pos}}
+\item 
+\mbox{\hyperlink{namespacetest_a9c4e122a1bbe158c68f57a4a9ef8d0ad}{test.\+right\+\_\+pos}}
+\item 
+\mbox{\hyperlink{namespacetest_a823111ebd8910aa9aee6be7b12bd085e}{test.\+left\+\_\+vel}}
+\item 
+\mbox{\hyperlink{namespacetest_a19f94b7c1fa10c178624c09fc88bae56}{test.\+right\+\_\+vel}}
+\item 
+\mbox{\hyperlink{namespacetest_a43520d1afc498147f979f22b12133a62}{test.\+idx}} = int(\mbox{\hyperlink{namespacetest_aa697e5338bce24fbe7b039e53861fa3b}{idx\+\_\+str}})
+\end{DoxyCompactItemize}

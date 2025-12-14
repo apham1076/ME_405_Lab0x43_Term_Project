@@ -1,0 +1,61 @@
+\chapter{Overview }
+\hypertarget{index}{}\label{index}\index{Overview@{Overview}}
+\hypertarget{index_autotoc_md63}{}\doxysubsection{\texorpdfstring{Term Project}{Term Project}}\label{index_autotoc_md63}
+This project was completed as part of {\bfseries{ME 405\+: Mechatronics}} at Cal Poly San Luis Obispo. The objective was to design and implement a fully autonomous Romi robot capable of reliably completing a printed line-\/following time-\/trial course using onboard sensing, real-\/time control, and a cooperative multitasking software architecture.
+
+The final system integrates closed-\/loop motor control, encoder-\/based feedback, reflectance sensor processing, and task-\/level coordination to achieve repeatable and robust performance. Design decisions prioritized reliability, modularity, and predictable behavior over purely maximizing speed.\hypertarget{index_autotoc_md64}{}\doxysubsection{\texorpdfstring{Documentation}{Documentation}}\label{index_autotoc_md64}
+
+\begin{DoxyItemize}
+\item \doxysectlink{hardware}{Hardware \& Electrical Design}{0}
+\item \doxysectlink{software_architecture}{Software Architecture}{0}
+\item \doxysectlink{control_design}{Control Design}{0}
+\item \doxysectlink{state_estimation_odometry}{State Estimation and Odometry}{0}
+\item \doxysectlink{getting_started}{Getting Started}{0}
+\end{DoxyItemize}
+
+\DoxyHorRuler{0}
+\hypertarget{index_autotoc_md66}{}\doxysubsection{\texorpdfstring{System Capabilities}{System Capabilities}}\label{index_autotoc_md66}
+The final Romi system demonstrates the following capabilities\+:
+
+
+\begin{DoxyItemize}
+\item Fully autonomous line following using onboard sensing and control
+\item Closed-\/loop wheel velocity regulation using encoder feedback
+\item Cooperative multitasking firmware with deterministic task execution
+\item Odometry-\/based position and heading estimation
+\item Real-\/time data streaming to a PC for debugging and analysis
+\end{DoxyItemize}
+
+\DoxyHorRuler{0}
+\hypertarget{index_autotoc_md68}{}\doxysubsection{\texorpdfstring{Line-\/\+Following Course}{Line-\/\+Following Course}}\label{index_autotoc_md68}
+The robot was evaluated on a printed line-\/following course used for time trials and final demonstrations.
+
+
+
+\DoxyHorRuler{0}
+\hypertarget{index_autotoc_md70}{}\doxysubsection{\texorpdfstring{Hardware \& Electrical Design}{Hardware \& Electrical Design}}\label{index_autotoc_md70}
+The robot is built on a Pololu Romi chassis with two DC motors driven by onboard motor drivers and instrumented with quadrature encoders for wheel position and velocity feedback. Line detection is performed using a reflectance sensor array mounted at the front of the chassis and positioned to provide consistent contrast while minimizing sensitivity to ambient lighting.
+
+Power is supplied by {\bfseries{six AA batteries}}. Several electrical design decisions were made to ensure predictable startup behavior, including modifying default pull-\/up configurations and selecting motor control pins to prevent unintended motion on power-\/up. Encoder wiring, sensor placement, and cable management were refined to improve repeatability and robustness during operation.
+
+\DoxyHorRuler{0}
+\hypertarget{index_autotoc_md72}{}\doxysubsection{\texorpdfstring{Software Architecture}{Software Architecture}}\label{index_autotoc_md72}
+The firmware is organized using a {\bfseries{cooperative multitasking framework}} implemented in Micro\+Python. Independent tasks handle sensing, control, actuation, and communication, and they exchange information using thread-\/safe shared variables and queues.
+
+This structure allows time-\/critical operations, such as motor updates and sensor sampling, to execute deterministically while higher-\/level logic runs concurrently without blocking. The modular task design simplified debugging and enabled incremental development throughout the quarter.
+
+\DoxyHorRuler{0}
+\hypertarget{index_autotoc_md74}{}\doxysubsection{\texorpdfstring{Closed-\/\+Loop Motor Control}{Closed-\/\+Loop Motor Control}}\label{index_autotoc_md74}
+Wheel encoders provide continuous feedback for closed-\/loop motor control. A proportional–integral controller regulates wheel velocity, allowing the robot to track commanded setpoints consistently across operating conditions.
+
+
+
+\DoxyHorRuler{0}
+\hypertarget{index_autotoc_md76}{}\doxysubsection{\texorpdfstring{Final Demonstration}{Final Demonstration}}\label{index_autotoc_md76}
+The video below shows the robot navigating the printed course during a final demonstration run and successfully reaching the designated checkpoint.
+
+
+
+\DoxyHorRuler{0}
+\hypertarget{index_autotoc_md78}{}\doxysubsection{\texorpdfstring{Repository}{Repository}}\label{index_autotoc_md78}
+All source code, documentation, and design files for this project are available in the associated Git\+Hub repository. The repository is organized to allow the system to be reproduced or extended in future work. 

@@ -1,0 +1,196 @@
+\doxysection{IMU\+\_\+sensor.\+IMU Class Reference}
+\hypertarget{class_i_m_u__sensor_1_1_i_m_u}{}\label{class_i_m_u__sensor_1_1_i_m_u}\index{IMU\_sensor.IMU@{IMU\_sensor.IMU}}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class_i_m_u__sensor_1_1_i_m_u_1_1reg}{reg}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_i_m_u__sensor_1_1_i_m_u_ac867ccb06ddece9e76229b7887f84bde}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self, i2c)
+\item 
+\mbox{\hyperlink{class_i_m_u__sensor_1_1_i_m_u_a18729339018b0d2b5d9c2208e7786bd7}{set\+\_\+operation\+\_\+mode}} (self, mode\+\_\+name)
+\item 
+\mbox{\hyperlink{class_i_m_u__sensor_1_1_i_m_u_af675c9bf1865c80054e7340a84dd52fe}{read\+\_\+calibration\+\_\+status}} (self)
+\item 
+\mbox{\hyperlink{class_i_m_u__sensor_1_1_i_m_u_ad2cc10e660a9e243eb1d64a0c4402675}{read\+\_\+calibration\+\_\+coeffs}} (self, save\+\_\+to\+\_\+file=True)
+\item 
+\mbox{\hyperlink{class_i_m_u__sensor_1_1_i_m_u_ab90301ea8f499eb76b13a0ef076a30a5}{write\+\_\+calibration\+\_\+coeffs}} (self)
+\item 
+\mbox{\hyperlink{class_i_m_u__sensor_1_1_i_m_u_a8777b17b019afff19438edd916409977}{read\+\_\+euler\+\_\+angles}} (self)
+\item 
+\mbox{\hyperlink{class_i_m_u__sensor_1_1_i_m_u_a602866452d5cff0f6f990d5ee7bb16c2}{read\+\_\+angular\+\_\+velocity}} (self)
+\item 
+\mbox{\hyperlink{class_i_m_u__sensor_1_1_i_m_u_aa66e181a64a010fb60a3ca1ff748b91c}{read\+\_\+acceleration}} (self)
+\item 
+\mbox{\hyperlink{class_i_m_u__sensor_1_1_i_m_u_aba73fc18f9c51314c1fd773f857e9cd7}{reset}} (self)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+dict \mbox{\hyperlink{class_i_m_u__sensor_1_1_i_m_u_a0d3f8af615f32728b12637517f16a916}{mode\+\_\+dict}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_i_m_u__sensor_1_1_i_m_u_a31bb96ccea8503762b1f181560954a04}{\+\_\+read\+\_\+reg}} (self, \mbox{\hyperlink{class_i_m_u__sensor_1_1_i_m_u_1_1reg}{reg}})
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_i_m_u__sensor_1_1_i_m_u_aa36bfd4a38bb1f6c83dd28d387855723}{\+\_\+i2c}} = i2c
+\item 
+\mbox{\hyperlink{class_i_m_u__sensor_1_1_i_m_u_a07a6aa13f5f1fef005ec9ee5c37389bb}{\+\_\+buf}} = bytearray((0 for n in range(22)))
+\item 
+str \mbox{\hyperlink{class_i_m_u__sensor_1_1_i_m_u_a641d9d0eedea6a47d890c0762e6a0d8f}{\+\_\+current\+\_\+mode}} = "{}config"{}
+\item 
+int \mbox{\hyperlink{class_i_m_u__sensor_1_1_i_m_u_ae321ac79ae7633aed0b9a17f561fabf4}{\+\_\+\+DEV\+\_\+\+ADDR}} = 0x28
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}A IMU driver interface that works with an IMU using a SCL, SDA, RST inputs such as the BNO055\end{DoxyVerb}
+ 
+
+\label{doc-constructors}
+\Hypertarget{class_i_m_u__sensor_1_1_i_m_u_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_i_m_u__sensor_1_1_i_m_u_ac867ccb06ddece9e76229b7887f84bde}\index{IMU\_sensor.IMU@{IMU\_sensor.IMU}!\_\_init\_\_@{\_\_init\_\_}}
+\index{\_\_init\_\_@{\_\_init\_\_}!IMU\_sensor.IMU@{IMU\_sensor.IMU}}
+\doxysubsubsection{\texorpdfstring{\_\_init\_\_()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily \label{class_i_m_u__sensor_1_1_i_m_u_ac867ccb06ddece9e76229b7887f84bde} 
+IMU\+\_\+sensor.\+IMU.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{i2c}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initialize an IMU object\end{DoxyVerb}
+ 
+
+\label{doc-func-members}
+\Hypertarget{class_i_m_u__sensor_1_1_i_m_u_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_i_m_u__sensor_1_1_i_m_u_a31bb96ccea8503762b1f181560954a04}\index{IMU\_sensor.IMU@{IMU\_sensor.IMU}!\_read\_reg@{\_read\_reg}}
+\index{\_read\_reg@{\_read\_reg}!IMU\_sensor.IMU@{IMU\_sensor.IMU}}
+\doxysubsubsection{\texorpdfstring{\_read\_reg()}{\_read\_reg()}}
+{\footnotesize\ttfamily \label{class_i_m_u__sensor_1_1_i_m_u_a31bb96ccea8503762b1f181560954a04} 
+IMU\+\_\+sensor.\+IMU.\+\_\+read\+\_\+reg (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{reg}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{DoxyVerb}Generic register read method using calcsize() and unpack_from()
+
+Added optional `debug` flag to measure and print the time spent in the
+underlying I2C `mem_read` call. This helps identify whether the
+communication is the bottleneck.
+\end{DoxyVerb}
+ \Hypertarget{class_i_m_u__sensor_1_1_i_m_u_aa66e181a64a010fb60a3ca1ff748b91c}\index{IMU\_sensor.IMU@{IMU\_sensor.IMU}!read\_acceleration@{read\_acceleration}}
+\index{read\_acceleration@{read\_acceleration}!IMU\_sensor.IMU@{IMU\_sensor.IMU}}
+\doxysubsubsection{\texorpdfstring{read\_acceleration()}{read\_acceleration()}}
+{\footnotesize\ttfamily \label{class_i_m_u__sensor_1_1_i_m_u_aa66e181a64a010fb60a3ca1ff748b91c} 
+IMU\+\_\+sensor.\+IMU.\+read\+\_\+acceleration (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return the linear acceleration (x, y, z) in m/s^2.\end{DoxyVerb}
+ \Hypertarget{class_i_m_u__sensor_1_1_i_m_u_a602866452d5cff0f6f990d5ee7bb16c2}\index{IMU\_sensor.IMU@{IMU\_sensor.IMU}!read\_angular\_velocity@{read\_angular\_velocity}}
+\index{read\_angular\_velocity@{read\_angular\_velocity}!IMU\_sensor.IMU@{IMU\_sensor.IMU}}
+\doxysubsubsection{\texorpdfstring{read\_angular\_velocity()}{read\_angular\_velocity()}}
+{\footnotesize\ttfamily \label{class_i_m_u__sensor_1_1_i_m_u_a602866452d5cff0f6f990d5ee7bb16c2} 
+IMU\+\_\+sensor.\+IMU.\+read\+\_\+angular\+\_\+velocity (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return the angular velocity (x, y, z) in degrees/s.\end{DoxyVerb}
+ \Hypertarget{class_i_m_u__sensor_1_1_i_m_u_ad2cc10e660a9e243eb1d64a0c4402675}\index{IMU\_sensor.IMU@{IMU\_sensor.IMU}!read\_calibration\_coeffs@{read\_calibration\_coeffs}}
+\index{read\_calibration\_coeffs@{read\_calibration\_coeffs}!IMU\_sensor.IMU@{IMU\_sensor.IMU}}
+\doxysubsubsection{\texorpdfstring{read\_calibration\_coeffs()}{read\_calibration\_coeffs()}}
+{\footnotesize\ttfamily \label{class_i_m_u__sensor_1_1_i_m_u_ad2cc10e660a9e243eb1d64a0c4402675} 
+IMU\+\_\+sensor.\+IMU.\+read\+\_\+calibration\+\_\+coeffs (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{save\+\_\+to\+\_\+file}{ = {\ttfamily True}}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Read the 22 bytes of calibration coefficients (offsets + radii) from the IMU\end{DoxyVerb}
+ \Hypertarget{class_i_m_u__sensor_1_1_i_m_u_af675c9bf1865c80054e7340a84dd52fe}\index{IMU\_sensor.IMU@{IMU\_sensor.IMU}!read\_calibration\_status@{read\_calibration\_status}}
+\index{read\_calibration\_status@{read\_calibration\_status}!IMU\_sensor.IMU@{IMU\_sensor.IMU}}
+\doxysubsubsection{\texorpdfstring{read\_calibration\_status()}{read\_calibration\_status()}}
+{\footnotesize\ttfamily \label{class_i_m_u__sensor_1_1_i_m_u_af675c9bf1865c80054e7340a84dd52fe} 
+IMU\+\_\+sensor.\+IMU.\+read\+\_\+calibration\+\_\+status (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Read the calibration status of the IMU and return (sys, gyr, acc, mag) each from 0-3.\end{DoxyVerb}
+ \Hypertarget{class_i_m_u__sensor_1_1_i_m_u_a8777b17b019afff19438edd916409977}\index{IMU\_sensor.IMU@{IMU\_sensor.IMU}!read\_euler\_angles@{read\_euler\_angles}}
+\index{read\_euler\_angles@{read\_euler\_angles}!IMU\_sensor.IMU@{IMU\_sensor.IMU}}
+\doxysubsubsection{\texorpdfstring{read\_euler\_angles()}{read\_euler\_angles()}}
+{\footnotesize\ttfamily \label{class_i_m_u__sensor_1_1_i_m_u_a8777b17b019afff19438edd916409977} 
+IMU\+\_\+sensor.\+IMU.\+read\+\_\+euler\+\_\+angles (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return the Euler angles (heading, roll, pitch) in degrees.\end{DoxyVerb}
+ \Hypertarget{class_i_m_u__sensor_1_1_i_m_u_aba73fc18f9c51314c1fd773f857e9cd7}\index{IMU\_sensor.IMU@{IMU\_sensor.IMU}!reset@{reset}}
+\index{reset@{reset}!IMU\_sensor.IMU@{IMU\_sensor.IMU}}
+\doxysubsubsection{\texorpdfstring{reset()}{reset()}}
+{\footnotesize\ttfamily \label{class_i_m_u__sensor_1_1_i_m_u_aba73fc18f9c51314c1fd773f857e9cd7} 
+IMU\+\_\+sensor.\+IMU.\+reset (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Reset the IMU\end{DoxyVerb}
+ \Hypertarget{class_i_m_u__sensor_1_1_i_m_u_a18729339018b0d2b5d9c2208e7786bd7}\index{IMU\_sensor.IMU@{IMU\_sensor.IMU}!set\_operation\_mode@{set\_operation\_mode}}
+\index{set\_operation\_mode@{set\_operation\_mode}!IMU\_sensor.IMU@{IMU\_sensor.IMU}}
+\doxysubsubsection{\texorpdfstring{set\_operation\_mode()}{set\_operation\_mode()}}
+{\footnotesize\ttfamily \label{class_i_m_u__sensor_1_1_i_m_u_a18729339018b0d2b5d9c2208e7786bd7} 
+IMU\+\_\+sensor.\+IMU.\+set\+\_\+operation\+\_\+mode (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{mode\+\_\+name}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Set the operation mode of the IMU.\end{DoxyVerb}
+ \Hypertarget{class_i_m_u__sensor_1_1_i_m_u_ab90301ea8f499eb76b13a0ef076a30a5}\index{IMU\_sensor.IMU@{IMU\_sensor.IMU}!write\_calibration\_coeffs@{write\_calibration\_coeffs}}
+\index{write\_calibration\_coeffs@{write\_calibration\_coeffs}!IMU\_sensor.IMU@{IMU\_sensor.IMU}}
+\doxysubsubsection{\texorpdfstring{write\_calibration\_coeffs()}{write\_calibration\_coeffs()}}
+{\footnotesize\ttfamily \label{class_i_m_u__sensor_1_1_i_m_u_ab90301ea8f499eb76b13a0ef076a30a5} 
+IMU\+\_\+sensor.\+IMU.\+write\+\_\+calibration\+\_\+coeffs (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+
+
+\label{doc-variable-members}
+\Hypertarget{class_i_m_u__sensor_1_1_i_m_u_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_i_m_u__sensor_1_1_i_m_u_a07a6aa13f5f1fef005ec9ee5c37389bb}\index{IMU\_sensor.IMU@{IMU\_sensor.IMU}!\_buf@{\_buf}}
+\index{\_buf@{\_buf}!IMU\_sensor.IMU@{IMU\_sensor.IMU}}
+\doxysubsubsection{\texorpdfstring{\_buf}{\_buf}}
+{\footnotesize\ttfamily \label{class_i_m_u__sensor_1_1_i_m_u_a07a6aa13f5f1fef005ec9ee5c37389bb} 
+IMU\+\_\+sensor.\+IMU.\+\_\+buf = bytearray((0 for n in range(22)))\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_i_m_u__sensor_1_1_i_m_u_a641d9d0eedea6a47d890c0762e6a0d8f}\index{IMU\_sensor.IMU@{IMU\_sensor.IMU}!\_current\_mode@{\_current\_mode}}
+\index{\_current\_mode@{\_current\_mode}!IMU\_sensor.IMU@{IMU\_sensor.IMU}}
+\doxysubsubsection{\texorpdfstring{\_current\_mode}{\_current\_mode}}
+{\footnotesize\ttfamily \label{class_i_m_u__sensor_1_1_i_m_u_a641d9d0eedea6a47d890c0762e6a0d8f} 
+str IMU\+\_\+sensor.\+IMU.\+\_\+current\+\_\+mode = "{}config"{}\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_i_m_u__sensor_1_1_i_m_u_ae321ac79ae7633aed0b9a17f561fabf4}\index{IMU\_sensor.IMU@{IMU\_sensor.IMU}!\_DEV\_ADDR@{\_DEV\_ADDR}}
+\index{\_DEV\_ADDR@{\_DEV\_ADDR}!IMU\_sensor.IMU@{IMU\_sensor.IMU}}
+\doxysubsubsection{\texorpdfstring{\_DEV\_ADDR}{\_DEV\_ADDR}}
+{\footnotesize\ttfamily \label{class_i_m_u__sensor_1_1_i_m_u_ae321ac79ae7633aed0b9a17f561fabf4} 
+IMU\+\_\+sensor.\+IMU.\+\_\+\+DEV\+\_\+\+ADDR = 0x28\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_i_m_u__sensor_1_1_i_m_u_aa36bfd4a38bb1f6c83dd28d387855723}\index{IMU\_sensor.IMU@{IMU\_sensor.IMU}!\_i2c@{\_i2c}}
+\index{\_i2c@{\_i2c}!IMU\_sensor.IMU@{IMU\_sensor.IMU}}
+\doxysubsubsection{\texorpdfstring{\_i2c}{\_i2c}}
+{\footnotesize\ttfamily \label{class_i_m_u__sensor_1_1_i_m_u_aa36bfd4a38bb1f6c83dd28d387855723} 
+IMU\+\_\+sensor.\+IMU.\+\_\+i2c = i2c\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_i_m_u__sensor_1_1_i_m_u_a0d3f8af615f32728b12637517f16a916}\index{IMU\_sensor.IMU@{IMU\_sensor.IMU}!mode\_dict@{mode\_dict}}
+\index{mode\_dict@{mode\_dict}!IMU\_sensor.IMU@{IMU\_sensor.IMU}}
+\doxysubsubsection{\texorpdfstring{mode\_dict}{mode\_dict}}
+{\footnotesize\ttfamily \label{class_i_m_u__sensor_1_1_i_m_u_a0d3f8af615f32728b12637517f16a916} 
+dict IMU\+\_\+sensor.\+IMU.\+mode\+\_\+dict}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}config"{}}:\ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}code"{}}:\ 0x00,\ \textcolor{stringliteral}{"{}name"{}}:\ \textcolor{stringliteral}{"{}Configuration\ mode"{}}\},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}acconly"{}}:\ \ \ \ \ \ \{\textcolor{stringliteral}{"{}code"{}}:\ 0x01,\ \textcolor{stringliteral}{"{}name"{}}:\ \textcolor{stringliteral}{"{}Accelerometer\ only"{}}\},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}magonly"{}}:\ \ \ \ \ \ \{\textcolor{stringliteral}{"{}code"{}}:\ 0x02,\ \textcolor{stringliteral}{"{}name"{}}:\ \textcolor{stringliteral}{"{}Magnetometer\ only"{}}\},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}gyronly"{}}:\ \ \ \ \ \ \{\textcolor{stringliteral}{"{}code"{}}:\ 0x03,\ \textcolor{stringliteral}{"{}name"{}}:\ \textcolor{stringliteral}{"{}Gyroscope\ only"{}}\},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}accmag"{}}:\ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}code"{}}:\ 0x04,\ \textcolor{stringliteral}{"{}name"{}}:\ \textcolor{stringliteral}{"{}Accelerometer\ +\ Magnetometer"{}}\},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}accgyro"{}}:\ \ \ \ \ \ \{\textcolor{stringliteral}{"{}code"{}}:\ 0x05,\ \textcolor{stringliteral}{"{}name"{}}:\ \textcolor{stringliteral}{"{}Accelerometer\ +\ Gyroscope"{}}\},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}maggyro"{}}:\ \ \ \ \ \ \{\textcolor{stringliteral}{"{}code"{}}:\ 0x06,\ \textcolor{stringliteral}{"{}name"{}}:\ \textcolor{stringliteral}{"{}Magnetometer\ +\ Gyroscope"{}}\},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}any\_motion"{}}:\ \ \ \{\textcolor{stringliteral}{"{}code"{}}:\ 0x07,\ \textcolor{stringliteral}{"{}name"{}}:\ \textcolor{stringliteral}{"{}Accelerometer\ +\ Magnetometer\ +\ Gyroscope"{}}\},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}imuplus"{}}:\ \ \ \ \ \ \{\textcolor{stringliteral}{"{}code"{}}:\ 0x08,\ \textcolor{stringliteral}{"{}name"{}}:\ \textcolor{stringliteral}{"{}IMU\ Plus\ (Accel\ +\ Gyro\ +\ Fusion)"{}}\},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}compass"{}}:\ \ \ \ \ \ \{\textcolor{stringliteral}{"{}code"{}}:\ 0x09,\ \textcolor{stringliteral}{"{}name"{}}:\ \textcolor{stringliteral}{"{}Compass\ (Accel\ +\ Mag\ +\ Fusion)"{}}\},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}m4g"{}}:\ \ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}code"{}}:\ 0x0A,\ \textcolor{stringliteral}{"{}name"{}}:\ \textcolor{stringliteral}{"{}M4G\ (Accel\ +\ Mag\ +\ Fusion)"{}}\},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}ndof\_fmc\_off"{}}:\ \{\textcolor{stringliteral}{"{}code"{}}:\ 0x0B,\ \textcolor{stringliteral}{"{}name"{}}:\ \textcolor{stringliteral}{"{}NDOF\ (Fast\ Mag\ Calibration\ Off)"{}}\},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}ndof"{}}:\ \ \ \ \ \ \ \ \ \{\textcolor{stringliteral}{"{}code"{}}:\ 0x0C,\ \textcolor{stringliteral}{"{}name"{}}:\ \textcolor{stringliteral}{"{}NDOF\ (Full\ 9-\/DOF\ Fusion)"{}}\}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\mbox{\hyperlink{_i_m_u__sensor_8py}{IMU\+\_\+sensor.\+py}}\end{DoxyCompactItemize}

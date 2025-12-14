@@ -1,0 +1,143 @@
+\doxysection{motor.\+Motor Class Reference}
+\hypertarget{classmotor_1_1_motor}{}\label{classmotor_1_1_motor}\index{motor.Motor@{motor.Motor}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classmotor_1_1_motor_af7dc7a5c7e436593ebce89f7b4e1763b}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self, Pin \mbox{\hyperlink{classmotor_1_1_motor_a130b7bd4e1fc62bac9d6b7b7faaec64d}{PWM\+\_\+pin}}, Pin \mbox{\hyperlink{classmotor_1_1_motor_aab7b2b168a8b560c21db05a960a51cba}{DIR\+\_\+pin}}, Pin \mbox{\hyperlink{classmotor_1_1_motor_a1869baa1d1be0f088f732cc71dc0a562}{n\+SLP\+\_\+pin}}, int tim\+\_\+num, int chan\+\_\+num)
+\item 
+\mbox{\hyperlink{classmotor_1_1_motor_a40b585c0ef57ce5aef08bebd996e9253}{set\+\_\+effort}} (self, float \mbox{\hyperlink{classmotor_1_1_motor_aae25c4229b4ba171555c56e424cd31ac}{effort}})
+\item 
+\mbox{\hyperlink{classmotor_1_1_motor_a9f58c627d1e1d0437921b0eac5b81222}{enable}} (self)
+\item 
+\mbox{\hyperlink{classmotor_1_1_motor_af791b20dd99b0a34d48b0178dc11fcb0}{disable}} (self)
+\item 
+\mbox{\hyperlink{classmotor_1_1_motor_a94496898acb6cc28455c606506f4b962}{get\+\_\+state}} (self)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classmotor_1_1_motor_a130b7bd4e1fc62bac9d6b7b7faaec64d}{PWM\+\_\+pin}} = Pin(PWM\+\_\+pin, mode=Pin.\+OUT\+\_\+\+PP, value=0)
+\item 
+\mbox{\hyperlink{classmotor_1_1_motor_aab7b2b168a8b560c21db05a960a51cba}{DIR\+\_\+pin}} = Pin(DIR\+\_\+pin, mode=Pin.\+OUT\+\_\+\+PP, value=0)
+\item 
+\mbox{\hyperlink{classmotor_1_1_motor_a1869baa1d1be0f088f732cc71dc0a562}{n\+SLP\+\_\+pin}} = Pin(n\+SLP\+\_\+pin, mode=Pin.\+OUT\+\_\+\+PP, value=0)
+\item 
+\mbox{\hyperlink{classmotor_1_1_motor_a3873dd2db83ee42cefd8d833e6cef0e0}{tim\+\_\+obj}} = Timer(tim\+\_\+num, freq=20000)
+\item 
+\mbox{\hyperlink{classmotor_1_1_motor_a4861e5edaf9bcf1442269a0d18f8af36}{chan\+\_\+obj}} = self.\+tim\+\_\+obj.\+channel(chan\+\_\+num, pin=self.\+PWM\+\_\+pin, mode=Timer.\+PWM, pulse\+\_\+width\+\_\+percent = 0)
+\item 
+int \mbox{\hyperlink{classmotor_1_1_motor_aae25c4229b4ba171555c56e424cd31ac}{effort}} = 0
+\begin{DoxyCompactList}\small\item\em if motor not enabled, don\textquotesingle{}t change the pulse\+\_\+width\+\_\+percent yet \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classmotor_1_1_motor_a9520afc05dcc938344ad02d1cfae2f7f}{enabled}} = False
+\begin{DoxyCompactList}\small\item\em if motor not enabled, don\textquotesingle{}t change the pulse\+\_\+width\+\_\+percent yet \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}A motor driver interface encapsulated in a Python class. Works with
+   motor drivers using separate PWM and direction inputs such as the DRV8838
+   drivers present on the Romi chassis from Pololu.\end{DoxyVerb}
+ 
+
+\label{doc-constructors}
+\Hypertarget{classmotor_1_1_motor_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classmotor_1_1_motor_af7dc7a5c7e436593ebce89f7b4e1763b}\index{motor.Motor@{motor.Motor}!\_\_init\_\_@{\_\_init\_\_}}
+\index{\_\_init\_\_@{\_\_init\_\_}!motor.Motor@{motor.Motor}}
+\doxysubsubsection{\texorpdfstring{\_\_init\_\_()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily \label{classmotor_1_1_motor_af7dc7a5c7e436593ebce89f7b4e1763b} 
+motor.\+Motor.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{Pin}]{PWM\+\_\+pin}{, }\item[{Pin}]{DIR\+\_\+pin}{, }\item[{Pin}]{n\+SLP\+\_\+pin}{, }\item[{int}]{tim\+\_\+num}{, }\item[{int}]{chan\+\_\+num}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initializes a Motor object\end{DoxyVerb}
+ 
+
+\label{doc-func-members}
+\Hypertarget{classmotor_1_1_motor_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classmotor_1_1_motor_af791b20dd99b0a34d48b0178dc11fcb0}\index{motor.Motor@{motor.Motor}!disable@{disable}}
+\index{disable@{disable}!motor.Motor@{motor.Motor}}
+\doxysubsubsection{\texorpdfstring{disable()}{disable()}}
+{\footnotesize\ttfamily \label{classmotor_1_1_motor_af791b20dd99b0a34d48b0178dc11fcb0} 
+motor.\+Motor.\+disable (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Disables the motor driver by taking it into sleep mode\end{DoxyVerb}
+ \Hypertarget{classmotor_1_1_motor_a9f58c627d1e1d0437921b0eac5b81222}\index{motor.Motor@{motor.Motor}!enable@{enable}}
+\index{enable@{enable}!motor.Motor@{motor.Motor}}
+\doxysubsubsection{\texorpdfstring{enable()}{enable()}}
+{\footnotesize\ttfamily \label{classmotor_1_1_motor_a9f58c627d1e1d0437921b0eac5b81222} 
+motor.\+Motor.\+enable (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Enables the motor driver by taking it out of sleep mode into brake mode\end{DoxyVerb}
+ \Hypertarget{classmotor_1_1_motor_a94496898acb6cc28455c606506f4b962}\index{motor.Motor@{motor.Motor}!get\_state@{get\_state}}
+\index{get\_state@{get\_state}!motor.Motor@{motor.Motor}}
+\doxysubsubsection{\texorpdfstring{get\_state()}{get\_state()}}
+{\footnotesize\ttfamily \label{classmotor_1_1_motor_a94496898acb6cc28455c606506f4b962} 
+motor.\+Motor.\+get\+\_\+state (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Report values for motor state\end{DoxyVerb}
+ \Hypertarget{classmotor_1_1_motor_a40b585c0ef57ce5aef08bebd996e9253}\index{motor.Motor@{motor.Motor}!set\_effort@{set\_effort}}
+\index{set\_effort@{set\_effort}!motor.Motor@{motor.Motor}}
+\doxysubsubsection{\texorpdfstring{set\_effort()}{set\_effort()}}
+{\footnotesize\ttfamily \label{classmotor_1_1_motor_a40b585c0ef57ce5aef08bebd996e9253} 
+motor.\+Motor.\+set\+\_\+effort (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{float}]{effort}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Sets the present effort requested from the motor based on an input value between -100 and 100\end{DoxyVerb}
+ 
+
+\label{doc-variable-members}
+\Hypertarget{classmotor_1_1_motor_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{classmotor_1_1_motor_a4861e5edaf9bcf1442269a0d18f8af36}\index{motor.Motor@{motor.Motor}!chan\_obj@{chan\_obj}}
+\index{chan\_obj@{chan\_obj}!motor.Motor@{motor.Motor}}
+\doxysubsubsection{\texorpdfstring{chan\_obj}{chan\_obj}}
+{\footnotesize\ttfamily \label{classmotor_1_1_motor_a4861e5edaf9bcf1442269a0d18f8af36} 
+motor.\+Motor.\+chan\+\_\+obj = self.\+tim\+\_\+obj.\+channel(chan\+\_\+num, pin=self.\+PWM\+\_\+pin, mode=Timer.\+PWM, pulse\+\_\+width\+\_\+percent = 0)}
+
+\Hypertarget{classmotor_1_1_motor_aab7b2b168a8b560c21db05a960a51cba}\index{motor.Motor@{motor.Motor}!DIR\_pin@{DIR\_pin}}
+\index{DIR\_pin@{DIR\_pin}!motor.Motor@{motor.Motor}}
+\doxysubsubsection{\texorpdfstring{DIR\_pin}{DIR\_pin}}
+{\footnotesize\ttfamily \label{classmotor_1_1_motor_aab7b2b168a8b560c21db05a960a51cba} 
+motor.\+Motor.\+DIR\+\_\+pin = Pin(DIR\+\_\+pin, mode=Pin.\+OUT\+\_\+\+PP, value=0)}
+
+\Hypertarget{classmotor_1_1_motor_aae25c4229b4ba171555c56e424cd31ac}\index{motor.Motor@{motor.Motor}!effort@{effort}}
+\index{effort@{effort}!motor.Motor@{motor.Motor}}
+\doxysubsubsection{\texorpdfstring{effort}{effort}}
+{\footnotesize\ttfamily \label{classmotor_1_1_motor_aae25c4229b4ba171555c56e424cd31ac} 
+motor.\+Motor.\+effort = 0}
+
+
+
+if motor not enabled, don\textquotesingle{}t change the pulse\+\_\+width\+\_\+percent yet 
+
+motor must already be enabled, so it\textquotesingle{}s okay to set effort \Hypertarget{classmotor_1_1_motor_a9520afc05dcc938344ad02d1cfae2f7f}\index{motor.Motor@{motor.Motor}!enabled@{enabled}}
+\index{enabled@{enabled}!motor.Motor@{motor.Motor}}
+\doxysubsubsection{\texorpdfstring{enabled}{enabled}}
+{\footnotesize\ttfamily \label{classmotor_1_1_motor_a9520afc05dcc938344ad02d1cfae2f7f} 
+bool motor.\+Motor.\+enabled = False}
+
+
+
+if motor not enabled, don\textquotesingle{}t change the pulse\+\_\+width\+\_\+percent yet 
+
+\Hypertarget{classmotor_1_1_motor_a1869baa1d1be0f088f732cc71dc0a562}\index{motor.Motor@{motor.Motor}!nSLP\_pin@{nSLP\_pin}}
+\index{nSLP\_pin@{nSLP\_pin}!motor.Motor@{motor.Motor}}
+\doxysubsubsection{\texorpdfstring{nSLP\_pin}{nSLP\_pin}}
+{\footnotesize\ttfamily \label{classmotor_1_1_motor_a1869baa1d1be0f088f732cc71dc0a562} 
+motor.\+Motor.\+n\+SLP\+\_\+pin = Pin(n\+SLP\+\_\+pin, mode=Pin.\+OUT\+\_\+\+PP, value=0)}
+
+\Hypertarget{classmotor_1_1_motor_a130b7bd4e1fc62bac9d6b7b7faaec64d}\index{motor.Motor@{motor.Motor}!PWM\_pin@{PWM\_pin}}
+\index{PWM\_pin@{PWM\_pin}!motor.Motor@{motor.Motor}}
+\doxysubsubsection{\texorpdfstring{PWM\_pin}{PWM\_pin}}
+{\footnotesize\ttfamily \label{classmotor_1_1_motor_a130b7bd4e1fc62bac9d6b7b7faaec64d} 
+motor.\+Motor.\+PWM\+\_\+pin = Pin(PWM\+\_\+pin, mode=Pin.\+OUT\+\_\+\+PP, value=0)}
+
+\Hypertarget{classmotor_1_1_motor_a3873dd2db83ee42cefd8d833e6cef0e0}\index{motor.Motor@{motor.Motor}!tim\_obj@{tim\_obj}}
+\index{tim\_obj@{tim\_obj}!motor.Motor@{motor.Motor}}
+\doxysubsubsection{\texorpdfstring{tim\_obj}{tim\_obj}}
+{\footnotesize\ttfamily \label{classmotor_1_1_motor_a3873dd2db83ee42cefd8d833e6cef0e0} 
+motor.\+Motor.\+tim\+\_\+obj = Timer(tim\+\_\+num, freq=20000)}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\mbox{\hyperlink{motor_8py}{motor.\+py}}\end{DoxyCompactItemize}
