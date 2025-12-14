@@ -1,6 +1,6 @@
 \chapter{Hardware \& Electrical Design }
 \hypertarget{hardware}{}\label{hardware}\index{Hardware \& Electrical Design@{Hardware \& Electrical Design}}
-\hypertarget{hardware_autotoc_md45}{}\doxysubsection{\texorpdfstring{System Overview}{System Overview}}\label{hardware_autotoc_md45}
+\hypertarget{hardware_autotoc_md44}{}\doxysubsection{\texorpdfstring{System Overview}{System Overview}}\label{hardware_autotoc_md44}
 The Romi robot is built on a Pololu Romi chassis and controlled using an ST Nucleo development board running Micro\+Python. The hardware and electrical design emphasizes predictable startup behavior, clean signal routing, and modular interfaces that support incremental development, debugging, and future extension.
 
 Major subsystems integrated into the robot include\+:
@@ -13,7 +13,7 @@ Major subsystems integrated into the robot include\+:
 \end{DoxyItemize}
 
 \DoxyHorRuler{0}
-\hypertarget{hardware_autotoc_md47}{}\doxysubsection{\texorpdfstring{Microcontroller and Power System}{Microcontroller and Power System}}\label{hardware_autotoc_md47}
+\hypertarget{hardware_autotoc_md46}{}\doxysubsection{\texorpdfstring{Microcontroller and Power System}{Microcontroller and Power System}}\label{hardware_autotoc_md46}
 The system is powered by {\bfseries{six AA batteries}}, routed through a power distribution board (PDB). Battery voltage is supplied to the Nucleo board via the VIN pin. A resistive voltage divider feeds an ADC input, allowing real-\/time measurement of battery voltage during operation.
 
 This measurement is used to compensate for battery voltage droop in the motor control pipeline, improving repeatability over the duration of a run.
@@ -21,7 +21,7 @@ This measurement is used to compensate for battery voltage droop in the motor co
 Startup behavior was treated as a primary design constraint. Motor driver enable (n\+SLP) pins are explicitly controlled in software, and pin selections were chosen to prevent unintended motor motion during power-\/up or reset. Pull-\/down configurations and initialization order were carefully managed to ensure safe and predictable behavior.
 
 \DoxyHorRuler{0}
-\hypertarget{hardware_autotoc_md49}{}\doxysubsection{\texorpdfstring{Motor Driver Interfaces}{Motor Driver Interfaces}}\label{hardware_autotoc_md49}
+\hypertarget{hardware_autotoc_md48}{}\doxysubsection{\texorpdfstring{Motor Driver Interfaces}{Motor Driver Interfaces}}\label{hardware_autotoc_md48}
 Each motor is driven using three signals\+:
 \begin{DoxyItemize}
 \item PWM signal for effort command
@@ -34,31 +34,31 @@ Hardware timers were selected to generate PWM outputs independently for each mot
 This structure ensures motors remain disabled until the system has fully initialized and the scheduler has started.
 
 \DoxyHorRuler{0}
-\hypertarget{hardware_autotoc_md51}{}\doxysubsection{\texorpdfstring{Quadrature Encoder Interfaces}{Quadrature Encoder Interfaces}}\label{hardware_autotoc_md51}
+\hypertarget{hardware_autotoc_md50}{}\doxysubsection{\texorpdfstring{Quadrature Encoder Interfaces}{Quadrature Encoder Interfaces}}\label{hardware_autotoc_md50}
 Wheel encoders are interfaced using hardware timer encoder modes. This approach offloads quadrature decoding to dedicated timer hardware, providing robust position and velocity measurements with minimal CPU overhead.
 
 Separate timers are used for the left and right encoders to allow fully independent velocity estimation and closed-\/loop control. Encoder wiring and pin selection were chosen to avoid overlap with PWM, ADC, and communication peripherals.
 
 \DoxyHorRuler{0}
-\hypertarget{hardware_autotoc_md53}{}\doxysubsection{\texorpdfstring{Line Sensor Array}{Line Sensor Array}}\label{hardware_autotoc_md53}
+\hypertarget{hardware_autotoc_md52}{}\doxysubsection{\texorpdfstring{Line Sensor Array}{Line Sensor Array}}\label{hardware_autotoc_md52}
 Line detection is performed using a multi-\/channel reflectance sensor array mounted at the front of the chassis. Individual sensors are read using ADC inputs distributed across multiple GPIO ports to balance pin availability and minimize conflicts with timers and communication interfaces.
 
 Although only a subset of sensors is used for control during line following, all channels are wired and supported in firmware. This provided flexibility during development and allowed sensor selection and weighting strategies to evolve without hardware changes.
 
 \DoxyHorRuler{0}
-\hypertarget{hardware_autotoc_md55}{}\doxysubsection{\texorpdfstring{IMU Interface}{IMU Interface}}\label{hardware_autotoc_md55}
+\hypertarget{hardware_autotoc_md54}{}\doxysubsection{\texorpdfstring{IMU Interface}{IMU Interface}}\label{hardware_autotoc_md54}
 An IMU is connected via the I2\+C2 peripheral. Dedicated SDA and SCL pins were selected to avoid interference with timers, ADC inputs, and UART communication.
 
 The IMU is supported in firmware and was used extensively during Lab 0x05 for state estimation experiments. Although it was not relied upon for the final line-\/following implementation, its integration provided valuable insight into system dynamics and informed later design decisions.
 
 \DoxyHorRuler{0}
-\hypertarget{hardware_autotoc_md57}{}\doxysubsection{\texorpdfstring{Bluetooth Communication Interface}{Bluetooth Communication Interface}}\label{hardware_autotoc_md57}
+\hypertarget{hardware_autotoc_md56}{}\doxysubsection{\texorpdfstring{Bluetooth Communication Interface}{Bluetooth Communication Interface}}\label{hardware_autotoc_md56}
 A Bluetooth module provides wireless communication between the Romi and a PC. The module is connected via a UART interface and is used for real-\/time data streaming, diagnostics, and parameter adjustment during testing.
 
 Streaming is enabled by default on startup and can be toggled through the PC-\/side interface. This approach reduced onboard memory usage and provided immediate visibility into system behavior during controller tuning and debugging.
 
 \DoxyHorRuler{0}
-\hypertarget{hardware_autotoc_md59}{}\doxysubsection{\texorpdfstring{Pin Assignment Summary}{Pin Assignment Summary}}\label{hardware_autotoc_md59}
+\hypertarget{hardware_autotoc_md58}{}\doxysubsection{\texorpdfstring{Pin Assignment Summary}{Pin Assignment Summary}}\label{hardware_autotoc_md58}
 The following table summarizes the primary electrical connections used in the final system configuration. Wire colors are shown explicitly to aid debugging and reproducibility.
 
 
@@ -114,13 +114,13 @@ The following table summarizes the primary electrical connections used in the fi
 
 
 \DoxyHorRuler{0}
-\hypertarget{hardware_autotoc_md61}{}\doxysubsection{\texorpdfstring{Pinout Reference and Wiring Diagram}{Pinout Reference and Wiring Diagram}}\label{hardware_autotoc_md61}
+\hypertarget{hardware_autotoc_md60}{}\doxysubsection{\texorpdfstring{Pinout Reference and Wiring Diagram}{Pinout Reference and Wiring Diagram}}\label{hardware_autotoc_md60}
 The diagram below summarizes the final pin assignments used on the Nucleo board. This diagram was used throughout development to track peripheral usage and avoid conflicts between timers, ADC inputs, and communication interfaces.
 
 
 
 \DoxyHorRuler{0}
-\hypertarget{hardware_autotoc_md63}{}\doxysubsection{\texorpdfstring{Discussion}{Discussion}}\label{hardware_autotoc_md63}
+\hypertarget{hardware_autotoc_md62}{}\doxysubsection{\texorpdfstring{Discussion}{Discussion}}\label{hardware_autotoc_md62}
 The hardware and electrical design evolved alongside the firmware throughout the quarter. Careful pin selection, explicit motor enable control, and deliberate startup behavior were critical to achieving reliable and repeatable operation.
 
 By prioritizing modularity and clarity in both wiring and software interfaces, the system remained flexible enough to support experimentation while maintaining a stable configuration for final demonstrations. 

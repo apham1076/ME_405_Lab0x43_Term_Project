@@ -398,7 +398,7 @@ The following table summarizes the primary electrical connections used in the fi
 ## Pinout Reference and Wiring Diagram
 The diagram below summarizes the final pin assignments used on the Nucleo board. This diagram was used throughout development to track peripheral usage and avoid conflicts between timers, ADC inputs, and communication interfaces.
 
-@image html nucleo_pin_assignment_diagram.png "Pin assignment diagram showing connections between the Nucleo board, motors, encoders, sensors, and peripherals." width=90%
+@image html nucleo_pin_assignment_diagram.png "Pin assignment diagram showing connections between the Nucleo board, motors, encoders, sensors, and peripherals." width=60%
 
 ---
 

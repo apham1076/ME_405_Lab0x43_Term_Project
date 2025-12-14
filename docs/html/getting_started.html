@@ -93,7 +93,7 @@ $(function(){initNavTree('getting_started.html','',''); });
 <div class="contents">
 <div class="textblock"><p>This section describes how the Romi line-following project is organized and how the firmware is intended to be run. The codebase reflects the cumulative work from Labs 0x01 through 0x05 and is structured around a cooperative multitasking architecture.</p>
 <hr  />
-<h2 class="doxsection"><a class="anchor" id="autotoc_md32"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md31"></a>
 Repository Layout</h2>
 <p>The repository is organized to separate low-level hardware interfaces, control logic, and supporting infrastructure.</p>
 <ul>
@@ -108,12 +108,12 @@ Repository Layout</h2>
 </ul>
 <p>The final system prioritizes modularity and clarity over minimizing file count. Tasks are kept logically independent and communicate through shared data structures rather than direct coupling.</p>
 <hr  />
-<h2 class="doxsection"><a class="anchor" id="autotoc_md34"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md33"></a>
 Hardware Configuration</h2>
 <p>The firmware targets a Pololu Romi chassis with two DC motors and quadrature encoders for wheel position and velocity feedback. Line sensing is performed using a reflectance sensor array mounted near the front of the robot. An IMU is available and supported in the codebase.</p>
 <p>Power is supplied by <b>six AA batteries</b>. Startup behavior was treated as a design constraint rather than an afterthought; motor enable logic, pin assignments, and pull-down configurations were chosen to prevent unintended motion when the system is powered on.</p>
 <hr  />
-<h2 class="doxsection"><a class="anchor" id="autotoc_md36"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md35"></a>
 Software Architecture</h2>
 <p>The system is built around a <b>cooperative task scheduler</b>, following the structure introduced in ME 405. Each major subsystem is implemented as an independent task, including:</p>
 <ul>
@@ -127,19 +127,19 @@ Software Architecture</h2>
 </ul>
 <p>Tasks communicate using shared variables and queues, which allows time-critical operations to execute deterministically while higher-level logic runs concurrently without blocking. This structure made it possible to debug and validate individual subsystems before integrating them into the full system.</p>
 <hr  />
-<h2 class="doxsection"><a class="anchor" id="autotoc_md38"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md37"></a>
 Control Structure</h2>
 <p>Motor actuation is handled through a dedicated motor interface that enforces bounded effort commands and explicit enable/disable behavior. Encoder feedback is used to support closed-loop control rather than relying on open-loop assumptions.</p>
 <p>Line following is implemented using a layered approach. Low-level motor commands are combined with steering logic that interprets reflectance sensor data to generate corrective behavior. The control strategy emphasizes stability and repeatability, allowing the robot to recover from disturbances such as sharp curvature or brief sensor dropout.</p>
 <p>Battery voltage droop is explicitly accounted for in the control pipeline to maintain consistent behavior over the duration of a run.</p>
 <hr  />
-<h2 class="doxsection"><a class="anchor" id="autotoc_md40"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md39"></a>
 Data Streaming and PC Interface</h2>
 <p>In the final configuration, data is streamed from the Romi to a PC in real time. Rather than collecting large datasets in onboard queues and transferring them after a run, tasks publish values continuously during operation.</p>
 <p>Streaming is <b>enabled by default</b> on startup and can be toggled through the PC-side interface. This approach reduced memory usage on the microcontroller and provided immediate visibility into system behavior during testing and tuning.</p>
 <p>The PC-side script (<span class="tt"><a class="el" href="test_8py.html">test.py</a></span>) serves as both a diagnostic interface and a lightweight command channel, allowing parameters and modes to be adjusted without reflashing firmware.</p>
 <hr  />
-<h2 class="doxsection"><a class="anchor" id="autotoc_md42"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md41"></a>
 Running the Firmware</h2>
 <p>To run the project on a Romi robot:</p>
 <ol type="1">
@@ -150,7 +150,7 @@ Running the Firmware</h2>
 </ol>
 <p>On startup, the system initializes all enabled tasks and begins executing the cooperative schedule. Diagnostic output and streamed data can be observed on the connected PC.</p>
 <hr  />
-<h2 class="doxsection"><a class="anchor" id="autotoc_md44"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md43"></a>
 Notes on Extension</h2>
 <p>The repository reflects a stable configuration used for final time-trial demonstrations. Additional capabilities, such as alternative control strategies, state estimation, and path planning, were explored during development and are partially implemented in the codebase.</p>
 <p>Because functionality is organized around independent tasks with well-defined interfaces, new features can be added or existing behavior modified without restructuring the entire system. </p>

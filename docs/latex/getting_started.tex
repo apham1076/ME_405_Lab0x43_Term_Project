@@ -3,7 +3,7 @@
 This section describes how the Romi line-\/following project is organized and how the firmware is intended to be run. The codebase reflects the cumulative work from Labs 0x01 through 0x05 and is structured around a cooperative multitasking architecture.
 
 \DoxyHorRuler{0}
-\hypertarget{getting_started_autotoc_md32}{}\doxysubsection{\texorpdfstring{Repository Layout}{Repository Layout}}\label{getting_started_autotoc_md32}
+\hypertarget{getting_started_autotoc_md31}{}\doxysubsection{\texorpdfstring{Repository Layout}{Repository Layout}}\label{getting_started_autotoc_md31}
 The repository is organized to separate low-\/level hardware interfaces, control logic, and supporting infrastructure.
 
 
@@ -21,13 +21,13 @@ The repository is organized to separate low-\/level hardware interfaces, control
 The final system prioritizes modularity and clarity over minimizing file count. Tasks are kept logically independent and communicate through shared data structures rather than direct coupling.
 
 \DoxyHorRuler{0}
-\hypertarget{getting_started_autotoc_md34}{}\doxysubsection{\texorpdfstring{Hardware Configuration}{Hardware Configuration}}\label{getting_started_autotoc_md34}
+\hypertarget{getting_started_autotoc_md33}{}\doxysubsection{\texorpdfstring{Hardware Configuration}{Hardware Configuration}}\label{getting_started_autotoc_md33}
 The firmware targets a Pololu Romi chassis with two DC motors and quadrature encoders for wheel position and velocity feedback. Line sensing is performed using a reflectance sensor array mounted near the front of the robot. An IMU is available and supported in the codebase.
 
 Power is supplied by {\bfseries{six AA batteries}}. Startup behavior was treated as a design constraint rather than an afterthought; motor enable logic, pin assignments, and pull-\/down configurations were chosen to prevent unintended motion when the system is powered on.
 
 \DoxyHorRuler{0}
-\hypertarget{getting_started_autotoc_md36}{}\doxysubsection{\texorpdfstring{Software Architecture}{Software Architecture}}\label{getting_started_autotoc_md36}
+\hypertarget{getting_started_autotoc_md35}{}\doxysubsection{\texorpdfstring{Software Architecture}{Software Architecture}}\label{getting_started_autotoc_md35}
 The system is built around a {\bfseries{cooperative task scheduler}}, following the structure introduced in ME 405. Each major subsystem is implemented as an independent task, including\+:
 
 
@@ -44,7 +44,7 @@ The system is built around a {\bfseries{cooperative task scheduler}}, following 
 Tasks communicate using shared variables and queues, which allows time-\/critical operations to execute deterministically while higher-\/level logic runs concurrently without blocking. This structure made it possible to debug and validate individual subsystems before integrating them into the full system.
 
 \DoxyHorRuler{0}
-\hypertarget{getting_started_autotoc_md38}{}\doxysubsection{\texorpdfstring{Control Structure}{Control Structure}}\label{getting_started_autotoc_md38}
+\hypertarget{getting_started_autotoc_md37}{}\doxysubsection{\texorpdfstring{Control Structure}{Control Structure}}\label{getting_started_autotoc_md37}
 Motor actuation is handled through a dedicated motor interface that enforces bounded effort commands and explicit enable/disable behavior. Encoder feedback is used to support closed-\/loop control rather than relying on open-\/loop assumptions.
 
 Line following is implemented using a layered approach. Low-\/level motor commands are combined with steering logic that interprets reflectance sensor data to generate corrective behavior. The control strategy emphasizes stability and repeatability, allowing the robot to recover from disturbances such as sharp curvature or brief sensor dropout.
@@ -52,7 +52,7 @@ Line following is implemented using a layered approach. Low-\/level motor comman
 Battery voltage droop is explicitly accounted for in the control pipeline to maintain consistent behavior over the duration of a run.
 
 \DoxyHorRuler{0}
-\hypertarget{getting_started_autotoc_md40}{}\doxysubsection{\texorpdfstring{Data Streaming and PC Interface}{Data Streaming and PC Interface}}\label{getting_started_autotoc_md40}
+\hypertarget{getting_started_autotoc_md39}{}\doxysubsection{\texorpdfstring{Data Streaming and PC Interface}{Data Streaming and PC Interface}}\label{getting_started_autotoc_md39}
 In the final configuration, data is streamed from the Romi to a PC in real time. Rather than collecting large datasets in onboard queues and transferring them after a run, tasks publish values continuously during operation.
 
 Streaming is {\bfseries{enabled by default}} on startup and can be toggled through the PC-\/side interface. This approach reduced memory usage on the microcontroller and provided immediate visibility into system behavior during testing and tuning.
@@ -60,7 +60,7 @@ Streaming is {\bfseries{enabled by default}} on startup and can be toggled throu
 The PC-\/side script ({\ttfamily \doxylink{test_8py}{test.\+py}}) serves as both a diagnostic interface and a lightweight command channel, allowing parameters and modes to be adjusted without reflashing firmware.
 
 \DoxyHorRuler{0}
-\hypertarget{getting_started_autotoc_md42}{}\doxysubsection{\texorpdfstring{Running the Firmware}{Running the Firmware}}\label{getting_started_autotoc_md42}
+\hypertarget{getting_started_autotoc_md41}{}\doxysubsection{\texorpdfstring{Running the Firmware}{Running the Firmware}}\label{getting_started_autotoc_md41}
 To run the project on a Romi robot\+:
 
 
@@ -74,7 +74,7 @@ To run the project on a Romi robot\+:
 On startup, the system initializes all enabled tasks and begins executing the cooperative schedule. Diagnostic output and streamed data can be observed on the connected PC.
 
 \DoxyHorRuler{0}
-\hypertarget{getting_started_autotoc_md44}{}\doxysubsection{\texorpdfstring{Notes on Extension}{Notes on Extension}}\label{getting_started_autotoc_md44}
+\hypertarget{getting_started_autotoc_md43}{}\doxysubsection{\texorpdfstring{Notes on Extension}{Notes on Extension}}\label{getting_started_autotoc_md43}
 The repository reflects a stable configuration used for final time-\/trial demonstrations. Additional capabilities, such as alternative control strategies, state estimation, and path planning, were explored during development and are partially implemented in the codebase.
 
 Because functionality is organized around independent tasks with well-\/defined interfaces, new features can be added or existing behavior modified without restructuring the entire system. 

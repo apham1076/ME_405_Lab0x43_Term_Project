@@ -1,12 +1,12 @@
 \chapter{Control Design }
 \hypertarget{control_design}{}\label{control_design}\index{Control Design@{Control Design}}
-\hypertarget{control_design_autotoc_md16}{}\doxysubsection{\texorpdfstring{Overview}{Overview}}\label{control_design_autotoc_md16}
+\hypertarget{control_design_autotoc_md15}{}\doxysubsection{\texorpdfstring{Overview}{Overview}}\label{control_design_autotoc_md15}
 The Romi robot uses a layered control architecture that builds progressively from open-\/loop motor actuation to closed-\/loop velocity control and finally to high-\/level line-\/following behavior. Control design focused on achieving stable, repeatable motion rather than maximizing raw speed, allowing the robot to behave predictably across different operating conditions and battery states.
 
 This page highlights the evolution of the motor control system and the final closed-\/loop structure used during line-\/following operation.
 
 \DoxyHorRuler{0}
-\hypertarget{control_design_autotoc_md18}{}\doxysubsection{\texorpdfstring{Motor Modeling and System Identification}{Motor Modeling and System Identification}}\label{control_design_autotoc_md18}
+\hypertarget{control_design_autotoc_md17}{}\doxysubsection{\texorpdfstring{Motor Modeling and System Identification}{Motor Modeling and System Identification}}\label{control_design_autotoc_md17}
 Initial motor characterization was performed using open-\/loop effort tests to establish approximate system gain and time constant. These tests provided insight into motor dynamics and informed early controller tuning.
 
 Open-\/loop data was used to estimate\+:
@@ -19,7 +19,7 @@ Open-\/loop data was used to estimate\+:
 These results guided the selection of initial proportional gains before transitioning to closed-\/loop control.
 
 \DoxyHorRuler{0}
-\hypertarget{control_design_autotoc_md20}{}\doxysubsection{\texorpdfstring{Velocity Measurement Improvements}{Velocity Measurement Improvements}}\label{control_design_autotoc_md20}
+\hypertarget{control_design_autotoc_md19}{}\doxysubsection{\texorpdfstring{Velocity Measurement Improvements}{Velocity Measurement Improvements}}\label{control_design_autotoc_md19}
 Early velocity measurements derived from encoder counts exhibited significant noise due to short sampling intervals and quantization effects. Several improvements were made to address this\+:
 
 
@@ -34,19 +34,19 @@ The progression below shows the improvement in velocity signal quality across su
   
 
 \DoxyHorRuler{0}
-\hypertarget{control_design_autotoc_md22}{}\doxysubsection{\texorpdfstring{Closed-\/\+Loop Velocity Control}{Closed-\/\+Loop Velocity Control}}\label{control_design_autotoc_md22}
+\hypertarget{control_design_autotoc_md21}{}\doxysubsection{\texorpdfstring{Closed-\/\+Loop Velocity Control}{Closed-\/\+Loop Velocity Control}}\label{control_design_autotoc_md21}
 Closed-\/loop velocity control was implemented using a proportional–integral (PI) controller operating on each wheel independently. Encoder feedback provides continuous velocity measurements, allowing the controller to reject disturbances and track commanded setpoints more consistently than open-\/loop control.
 
 Controller tuning was performed empirically by evaluating step responses across a range of gains and setpoints. Gains were selected to balance responsiveness with stability while avoiding excessive overshoot or oscillation.
 
 \DoxyHorRuler{0}
-\hypertarget{control_design_autotoc_md24}{}\doxysubsection{\texorpdfstring{Effect of Proportional and Integral Gains}{Effect of Proportional and Integral Gains}}\label{control_design_autotoc_md24}
-To better understand controller behavior, individual proportional and integral gains were intentionally exaggerated during testing. These experiments revealed how each term influences responsiveness, stability, and steady-\/state behavior.\hypertarget{control_design_autotoc_md25}{}\doxysubsubsection{\texorpdfstring{High Proportional Gain (Kp)}{High Proportional Gain (Kp)}}\label{control_design_autotoc_md25}
+\hypertarget{control_design_autotoc_md23}{}\doxysubsection{\texorpdfstring{Effect of Proportional and Integral Gains}{Effect of Proportional and Integral Gains}}\label{control_design_autotoc_md23}
+To better understand controller behavior, individual proportional and integral gains were intentionally exaggerated during testing. These experiments revealed how each term influences responsiveness, stability, and steady-\/state behavior.\hypertarget{control_design_autotoc_md24}{}\doxysubsubsection{\texorpdfstring{High Proportional Gain (Kp)}{High Proportional Gain (Kp)}}\label{control_design_autotoc_md24}
 Increasing the proportional gain significantly improved rise time and reduced steady-\/state error. However, excessively high Kp values caused oscillatory behavior as the controller over-\/corrected for small velocity errors.
 
 
 
-This oscillatory behavior reflects the controller reacting too strongly to measurement error and quantization effects in the encoder-\/derived velocity signal. Although tracking performance improved, stability was compromised.\hypertarget{control_design_autotoc_md26}{}\doxysubsubsection{\texorpdfstring{Integral Gain Effects (Ki)}{Integral Gain Effects (Ki)}}\label{control_design_autotoc_md26}
+This oscillatory behavior reflects the controller reacting too strongly to measurement error and quantization effects in the encoder-\/derived velocity signal. Although tracking performance improved, stability was compromised.\hypertarget{control_design_autotoc_md25}{}\doxysubsubsection{\texorpdfstring{Integral Gain Effects (Ki)}{Integral Gain Effects (Ki)}}\label{control_design_autotoc_md25}
 Integral gain was introduced to reduce steady-\/state error and improve long-\/term setpoint tracking. When Ki was increased excessively, the controller exhibited a gradual upward drift in velocity as accumulated error continued to drive the output.
 
 
@@ -56,7 +56,7 @@ This behavior highlights the tradeoff between eliminating steady-\/state error a
 
 
 \DoxyHorRuler{0}
-\hypertarget{control_design_autotoc_md28}{}\doxysubsection{\texorpdfstring{Cascaded Control Structure}{Cascaded Control Structure}}\label{control_design_autotoc_md28}
+\hypertarget{control_design_autotoc_md27}{}\doxysubsection{\texorpdfstring{Cascaded Control Structure}{Cascaded Control Structure}}\label{control_design_autotoc_md27}
 Line following is implemented using a cascaded control structure. An outer loop interprets reflectance sensor measurements to generate a steering correction, while inner velocity loops regulate individual wheel speeds.
 
 This separation allows the line-\/following logic to operate independently of motor dynamics and improves robustness to disturbances such as curvature changes or brief sensor dropout.
@@ -64,7 +64,7 @@ This separation allows the line-\/following logic to operate independently of mo
 
 
 \DoxyHorRuler{0}
-\hypertarget{control_design_autotoc_md30}{}\doxysubsection{\texorpdfstring{Discussion}{Discussion}}\label{control_design_autotoc_md30}
+\hypertarget{control_design_autotoc_md29}{}\doxysubsection{\texorpdfstring{Discussion}{Discussion}}\label{control_design_autotoc_md29}
 Implementing closed-\/loop velocity control significantly improved the robot’s repeatability and predictability. Improvements to encoder velocity estimation were critical; controller performance was ultimately limited more by measurement quality than by controller structure.
 
 This layered approach simplified debugging and allowed individual components of the system to be validated independently before full integration with line-\/following behavior. 

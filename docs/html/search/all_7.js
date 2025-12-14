@@ -1,8 +1,8 @@
 var searchData=
 [
-  ['gain_20effects_20ki_0',['Integral Gain Effects (Ki)',['../control_design.html#autotoc_md26',1,'']]],
-  ['gain_20kp_1',['High Proportional Gain (Kp)',['../control_design.html#autotoc_md25',1,'']]],
-  ['gains_2',['Effect of Proportional and Integral Gains',['../control_design.html#autotoc_md24',1,'']]],
+  ['gain_20effects_20ki_0',['Integral Gain Effects (Ki)',['../control_design.html#autotoc_md25',1,'']]],
+  ['gain_20kp_1',['High Proportional Gain (Kp)',['../control_design.html#autotoc_md24',1,'']]],
+  ['gains_2',['Effect of Proportional and Integral Gains',['../control_design.html#autotoc_md23',1,'']]],
   ['gains_3',['gains',['../namespacetest.html#af793b3ac7e7c14ed9a8a8da9aab606ff',1,'test']]],
   ['game_5forigin_5fmode_4',['game_origin_mode',['../classspectator__task_1_1_spectator_task.html#ac983f203204abc1c1f6184fdd723ea81',1,'spectator_task.SpectatorTask.game_origin_mode'],['../classui__task_1_1_u_i_task.html#aec15a450ec5a9532c0bac351c71b7c9e',1,'ui_task.UITask.game_origin_mode']]],
   ['gc_5ftask_5',['gc_task',['../namespacegc__task.html',1,'']]],

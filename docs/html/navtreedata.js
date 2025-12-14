@@ -26,9 +26,11 @@ var NAVTREE =
 [
   [ "ME 405 Term Project", "index.html", [
     [ "Overview", "index.html", null ],
+    [ "Repository", "^https://github.com/mduperly/ME_405_Term_Project", null ],
     [ "Control Design", "control_design.html", null ],
     [ "Getting Started", "getting_started.html", null ],
     [ "Hardware &amp; Electrical Design", "hardware.html", null ],
+    [ "Software Architecture", "software_architecture.html", null ],
     [ "State Estimation and Odometry", "state_estimation_odometry.html", null ],
     [ "Namespaces", "namespaces.html", [
       [ "Package List", "namespaces.html", "namespaces_dup" ],
@@ -50,8 +52,7 @@ var NAVTREE =
     ] ],
     [ "Files", "files.html", [
       [ "File List", "files.html", "files_dup" ]
-    ] ],
-    [ "Guides", "user", null ]
+    ] ]
   ] ]
 ];
 

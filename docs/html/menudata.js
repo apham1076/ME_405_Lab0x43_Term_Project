@@ -24,6 +24,7 @@
 */
 var menudata={children:[
 {text:"Main Page",url:"index.html"},
+{text:"Repository",url:"^https://github.com/mduperly/ME_405_Term_Project"},
 {text:"Related Pages",url:"pages.html"},
 {text:"Namespaces",url:"namespaces.html",children:[
 {text:"Package List",url:"namespaces.html"},
@@ -139,5 +140,4 @@ var menudata={children:[
 {text:"x",url:"functions_vars_x.html#index_x"},
 {text:"y",url:"functions_vars_y.html#index_y"}]}]}]},
 {text:"Files",url:"files.html",children:[
-{text:"File List",url:"files.html"}]},
-{text:"Guides",url:"user"}]}
+{text:"File List",url:"files.html"}]}]}

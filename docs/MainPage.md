@@ -5,6 +5,14 @@ This project was completed as part of **ME 405: Mechatronics** at Cal Poly San L
 
 The final system integrates closed-loop motor control, encoder-based feedback, reflectance sensor processing, and task-level coordination to achieve repeatable and robust performance. Design decisions prioritized reliability, modularity, and predictable behavior over purely maximizing speed.
 
+## Documentation
+
+- @ref hardware
+- @ref software_architecture
+- @ref control_design
+- @ref state_estimation_odometry
+- @ref getting_started
+
 ---
 
 ## System Capabilities
