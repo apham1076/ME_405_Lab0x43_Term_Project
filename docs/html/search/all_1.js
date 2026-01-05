@@ -1,0 +1,26 @@
+var searchData=
+[
+  ['abort_0',['abort',['../classmotor__task_1_1_motor_control_task.html#a37b4cf9c177fe83391a78e959120cc21',1,'motor_task.MotorControlTask.abort'],['../classpath__planning__task_1_1_path_planning_task.html#a6cbd3272b0fb236d39624057b65b2b5d',1,'path_planning_task.PathPlanningTask.abort'],['../classstream__task_1_1_stream_task.html#a4dbbb74648856ed8615d51a42972d8d5',1,'stream_task.StreamTask.abort'],['../classui__task_1_1_u_i_task.html#aae13c1e049b1ba0dfba29038ab2ac3a6',1,'ui_task.UITask.abort']]],
+  ['abs_5ftheta_5fsh_1',['abs_theta_sh',['../classpath__planning__task_1_1_path_planning_task.html#aa0d397cee862ad183094273c034f5d16',1,'path_planning_task.PathPlanningTask.abs_theta_sh'],['../classspectator__task_1_1_spectator_task.html#ae3049d48ddd849c165fa4e244e29acca',1,'spectator_task.SpectatorTask.abs_theta_sh'],['../classsteering__task_1_1_steering_task.html#a6a0c055622132a1e21169cf019638190',1,'steering_task.SteeringTask.abs_theta_sh']]],
+  ['abs_5fx_5fsh_2',['abs_x_sh',['../classpath__planning__task_1_1_path_planning_task.html#a29ee9e9da88c0eb50d5dfbddfc390ea8',1,'path_planning_task.PathPlanningTask.abs_x_sh'],['../classspectator__task_1_1_spectator_task.html#a5716515bce348b6aa4607b6e072d8e67',1,'spectator_task.SpectatorTask.abs_x_sh'],['../classsteering__task_1_1_steering_task.html#a98befbcb54d19768f8f1de0a409a7a77',1,'steering_task.SteeringTask.abs_x_sh']]],
+  ['abs_5fy_5fsh_3',['abs_y_sh',['../classpath__planning__task_1_1_path_planning_task.html#a56e9306c006c16206c821d578eb77ba7',1,'path_planning_task.PathPlanningTask.abs_y_sh'],['../classspectator__task_1_1_spectator_task.html#a017b745dbb5910cd23ba706ad052bd76',1,'spectator_task.SpectatorTask.abs_y_sh'],['../classsteering__task_1_1_steering_task.html#a74924ed47bbd46d4d99752f89e13ce86',1,'steering_task.SteeringTask.abs_y_sh']]],
+  ['acc_5fdata_5fall_4',['ACC_DATA_ALL',['../class_i_m_u__sensor_1_1_i_m_u_1_1reg.html#a8eebe9fa405d278da1cbcded9b3eacc4',1,'IMU_sensor::IMU::reg']]],
+  ['adc_5',['adc',['../classbattery__droop_1_1_battery.html#ac839b7de9eec3239935e6af1a6da31a4',1,'battery_droop::Battery']]],
+  ['adcs_6',['adcs',['../class_i_r__sensor_1_1_i_r_array.html#a174d346220cdb74d6f20bffb6eb1214d',1,'IR_sensor::IRArray']]],
+  ['and_20design_20decision_7',['Limitations and Design Decision',['../state_estimation_odometry.html#autotoc_md96',1,'']]],
+  ['and_20integral_20gains_8',['Effect of Proportional and Integral Gains',['../control_design.html#autotoc_md23',1,'']]],
+  ['and_20odometry_9',['State Estimation and Odometry',['../state_estimation_odometry.html',1,'']]],
+  ['and_20pc_20interface_10',['Data Streaming and PC Interface',['../getting_started.html#autotoc_md39',1,'']]],
+  ['and_20power_20system_11',['Microcontroller and Power System',['../hardware.html#autotoc_md46',1,'']]],
+  ['and_20system_20identification_12',['Motor Modeling and System Identification',['../control_design.html#autotoc_md17',1,'']]],
+  ['and_20wiring_20diagram_13',['Pinout Reference and Wiring Diagram',['../hardware.html#autotoc_md60',1,'']]],
+  ['any_14',['any',['../classtask__share_1_1_queue.html#ac9552672266377c23011552e9df15a63',1,'task_share::Queue']]],
+  ['append_15',['append',['../classcotask_1_1_task_list.html#ab6aaf44123a285f4355919a5a8229c39',1,'cotask::TaskList']]],
+  ['ar_16',['AR',['../classencoder_1_1_encoder.html#af29627555db6bf8c1849ec314ee8b3b7',1,'encoder::Encoder']]],
+  ['architecture_17',['Architecture',['../software_architecture.html#autotoc_md81',1,'High-Level Task Architecture'],['../software_architecture.html',1,'Software Architecture'],['../getting_started.html#autotoc_md35',1,'Software Architecture'],['../index.html#autotoc_md72',1,'Software Architecture']]],
+  ['array_18',['Line Sensor Array',['../hardware.html#autotoc_md52',1,'']]],
+  ['assignment_20summary_19',['Pin Assignment Summary',['../hardware.html#autotoc_md58',1,'']]],
+  ['attributes_20',['attributes',['../classmotor__task_1_1_motor_control_task.html#autotoc_md0',1,'Initialize the object&apos;s attributes'],['../classpath__planning__task_1_1_path_planning_task.html#autotoc_md3',1,'Initialize the object&apos;s attributes'],['../classspectator__task_1_1_spectator_task.html#autotoc_md6',1,'Initialize the object&apos;s attributes'],['../classstream__task_1_1_stream_task.html#autotoc_md11',1,'Initialize the object&apos;s attributes'],['../classui__task_1_1_u_i_task.html#autotoc_md13',1,'Initialize the object&apos;s attributes']]],
+  ['axis_5fmap_5fconfig_21',['AXIS_MAP_CONFIG',['../class_i_m_u__sensor_1_1_i_m_u_1_1reg.html#ae9c0408a622e5596e9545d088ff5ac83',1,'IMU_sensor::IMU::reg']]],
+  ['axis_5fmap_5fsign_22',['AXIS_MAP_SIGN',['../class_i_m_u__sensor_1_1_i_m_u_1_1reg.html#a96286995d97f9b05367cc7162f3bcc69',1,'IMU_sensor::IMU::reg']]]
+];

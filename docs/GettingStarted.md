@@ -1,0 +1,88 @@
+@page getting_started Getting Started
+
+This section describes how the Romi line-following project is organized and how the firmware is intended to be run. The codebase reflects the cumulative work from Labs 0x01 through 0x05 and is structured around a cooperative multitasking architecture.
+
+---
+
+## Repository Layout
+
+The repository is organized to separate low-level hardware interfaces, control logic, and supporting infrastructure.
+
+- `src/`  
+  Contains the MicroPython source files that execute on the Romi microcontroller. This directory includes motor drivers, encoder interfaces, sensor drivers, control logic, task definitions, and the main scheduler.
+
+- `utilities/`  
+  Shared infrastructure used across multiple tasks, including queues, shared variables, and task utilities.
+
+- `docs/`  
+  Project documentation generated using Doxygen.
+
+- `inactive tasks/`  
+  Tasks and experimental features developed during the quarter that are not enabled in the final configuration. These files are retained for reference.
+
+The final system prioritizes modularity and clarity over minimizing file count. Tasks are kept logically independent and communicate through shared data structures rather than direct coupling.
+
+---
+
+## Hardware Configuration
+
+The firmware targets a Pololu Romi chassis with two DC motors and quadrature encoders for wheel position and velocity feedback. Line sensing is performed using a reflectance sensor array mounted near the front of the robot. An IMU is available and supported in the codebase.
+
+Power is supplied by **six AA batteries**. Startup behavior was treated as a design constraint rather than an afterthought; motor enable logic, pin assignments, and pull-down configurations were chosen to prevent unintended motion when the system is powered on.
+
+---
+
+## Software Architecture
+
+The system is built around a **cooperative task scheduler**, following the structure introduced in ME 405. Each major subsystem is implemented as an independent task, including:
+
+- motor actuation
+- encoder measurement
+- line sensing
+- steering and control logic
+- user interface and mode selection
+- data streaming
+- optional state estimation and path planning
+
+Tasks communicate using shared variables and queues, which allows time-critical operations to execute deterministically while higher-level logic runs concurrently without blocking. This structure made it possible to debug and validate individual subsystems before integrating them into the full system.
+
+---
+
+## Control Structure
+
+Motor actuation is handled through a dedicated motor interface that enforces bounded effort commands and explicit enable/disable behavior. Encoder feedback is used to support closed-loop control rather than relying on open-loop assumptions.
+
+Line following is implemented using a layered approach. Low-level motor commands are combined with steering logic that interprets reflectance sensor data to generate corrective behavior. The control strategy emphasizes stability and repeatability, allowing the robot to recover from disturbances such as sharp curvature or brief sensor dropout.
+
+Battery voltage droop is explicitly accounted for in the control pipeline to maintain consistent behavior over the duration of a run.
+
+---
+
+## Data Streaming and PC Interface
+
+In the final configuration, data is streamed from the Romi to a PC in real time. Rather than collecting large datasets in onboard queues and transferring them after a run, tasks publish values continuously during operation.
+
+Streaming is **enabled by default** on startup and can be toggled through the PC-side interface. This approach reduced memory usage on the microcontroller and provided immediate visibility into system behavior during testing and tuning.
+
+The PC-side script (`test.py`) serves as both a diagnostic interface and a lightweight command channel, allowing parameters and modes to be adjusted without reflashing firmware.
+
+---
+
+## Running the Firmware
+
+To run the project on a Romi robot:
+
+1. Flash a compatible version of MicroPython onto the microcontroller.
+2. Copy the contents of the `src/` directory onto the board.
+3. Verify that motors, encoders, and sensors are connected correctly.
+4. Execute `main.py` to initialize the system and start the scheduler.
+
+On startup, the system initializes all enabled tasks and begins executing the cooperative schedule. Diagnostic output and streamed data can be observed on the connected PC.
+
+---
+
+## Notes on Extension
+
+The repository reflects a stable configuration used for final time-trial demonstrations. Additional capabilities, such as alternative control strategies, state estimation, and path planning, were explored during development and are partially implemented in the codebase.
+
+Because functionality is organized around independent tasks with well-defined interfaces, new features can be added or existing behavior modified without restructuring the entire system.

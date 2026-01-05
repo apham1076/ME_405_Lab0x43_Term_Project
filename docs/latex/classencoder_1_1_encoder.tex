@@ -1,0 +1,200 @@
+\doxysection{encoder.\+Encoder Class Reference}
+\hypertarget{classencoder_1_1_encoder}{}\label{classencoder_1_1_encoder}\index{encoder.Encoder@{encoder.Encoder}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classencoder_1_1_encoder_a8e8cd6bec6c369bca8888171e2047373}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self, Pin \mbox{\hyperlink{classencoder_1_1_encoder_a0c4294982bfbbc8fffa234870b89d5cc}{ch\+A\+\_\+pin}}, Pin \mbox{\hyperlink{classencoder_1_1_encoder_a779a0b0a6a94b7e5653a37f9346b193d}{ch\+B\+\_\+pin}}, int tim\+\_\+num)
+\item 
+\mbox{\hyperlink{classencoder_1_1_encoder_aa49b0c5f3a84989bbd9500f1d25f81aa}{update}} (self)
+\item 
+\mbox{\hyperlink{classencoder_1_1_encoder_ab79017405d71f96cb2363307a1f04c88}{zero}} (self)
+\item 
+\mbox{\hyperlink{classencoder_1_1_encoder_ac7dd1b99ba006ee0d2729bbdd417981f}{get\+\_\+position}} (self, str unit="{}counts"{})
+\item 
+\mbox{\hyperlink{classencoder_1_1_encoder_a2f878942acf68630cf43cb20c67bc7a6}{get\+\_\+velocity}} (self, str unit="{}counts/s"{})
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classencoder_1_1_encoder_a0c4294982bfbbc8fffa234870b89d5cc}{ch\+A\+\_\+pin}} = Pin(ch\+A\+\_\+pin)
+\item 
+\mbox{\hyperlink{classencoder_1_1_encoder_a779a0b0a6a94b7e5653a37f9346b193d}{ch\+B\+\_\+pin}} = Pin(ch\+B\+\_\+pin)
+\item 
+int \mbox{\hyperlink{classencoder_1_1_encoder_af29627555db6bf8c1849ec314ee8b3b7}{AR}} = 65535
+\item 
+\mbox{\hyperlink{classencoder_1_1_encoder_afc992b00d5b085331bd1e894205d6eab}{tim\+\_\+obj}} = Timer(tim\+\_\+num, prescaler=0, period=self.\+AR)
+\item 
+int \mbox{\hyperlink{classencoder_1_1_encoder_aa519091fe8c896a7e67868478134fe08}{position\+\_\+counts}} = 0
+\item 
+\mbox{\hyperlink{classencoder_1_1_encoder_ae53a3f480c7e6f8eee2649b58c052ae6}{prev\+\_\+count}} = self.\+tim\+\_\+obj.\+counter()
+\item 
+int \mbox{\hyperlink{classencoder_1_1_encoder_ad3c110d78ce1b5e97ce08efd20b41040}{delta}} = 0
+\item 
+\mbox{\hyperlink{classencoder_1_1_encoder_af9ca104df590d6508b1131c0853aec5a}{prev\+\_\+time}} = ticks\+\_\+us()
+\item 
+int \mbox{\hyperlink{classencoder_1_1_encoder_aa6c60def8af928ad3d55a959755a657d}{dt}} = 0
+\item 
+int \mbox{\hyperlink{classencoder_1_1_encoder_ae0660f7fa748f93a5706645ed2021522}{velocity\+\_\+counts\+\_\+per\+\_\+s}} = 0
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{classencoder_1_1_encoder_a1d31c7ceb7a2d60828a83fe9edaa43c0}{GEAR\+\_\+\+RATIO}} = 3952/33
+\item 
+int \mbox{\hyperlink{classencoder_1_1_encoder_ad47d8dcd2f69916b3a2013a837e607bd}{CPR\+\_\+\+MOTOR}} = 12
+\item 
+int \mbox{\hyperlink{classencoder_1_1_encoder_a6e72e579dd0e83b6d5f59e235627f2d7}{CPR\+\_\+\+WHEEL}} = \mbox{\hyperlink{classencoder_1_1_encoder_a1d31c7ceb7a2d60828a83fe9edaa43c0}{GEAR\+\_\+\+RATIO}}\texorpdfstring{$\ast$}{*}\mbox{\hyperlink{classencoder_1_1_encoder_ad47d8dcd2f69916b3a2013a837e607bd}{CPR\+\_\+\+MOTOR}}
+\item 
+int \mbox{\hyperlink{classencoder_1_1_encoder_a2e12aa6d6d9979eabe2c3478dfc449b6}{RAD\+\_\+\+PER\+\_\+\+COUNT}} = 2 \texorpdfstring{$\ast$}{*} math.\+pi / \mbox{\hyperlink{classencoder_1_1_encoder_a6e72e579dd0e83b6d5f59e235627f2d7}{CPR\+\_\+\+WHEEL}}
+\item 
+int \mbox{\hyperlink{classencoder_1_1_encoder_ab545d8bb119445e25158e9f4cbcff5b3}{WHEEL\+\_\+\+RADIUS\+\_\+\+MM}} = 35
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}A quadrature encoder decoding interface encapsulated in a Python class. Provides position and velocity.\end{DoxyVerb}
+ 
+
+\label{doc-constructors}
+\Hypertarget{classencoder_1_1_encoder_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classencoder_1_1_encoder_a8e8cd6bec6c369bca8888171e2047373}\index{encoder.Encoder@{encoder.Encoder}!\_\_init\_\_@{\_\_init\_\_}}
+\index{\_\_init\_\_@{\_\_init\_\_}!encoder.Encoder@{encoder.Encoder}}
+\doxysubsubsection{\texorpdfstring{\_\_init\_\_()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily \label{classencoder_1_1_encoder_a8e8cd6bec6c369bca8888171e2047373} 
+encoder.\+Encoder.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{Pin}]{ch\+A\+\_\+pin}{, }\item[{Pin}]{ch\+B\+\_\+pin}{, }\item[{int}]{tim\+\_\+num}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initializes an Encoder object\end{DoxyVerb}
+ 
+
+\label{doc-func-members}
+\Hypertarget{classencoder_1_1_encoder_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classencoder_1_1_encoder_ac7dd1b99ba006ee0d2729bbdd417981f}\index{encoder.Encoder@{encoder.Encoder}!get\_position@{get\_position}}
+\index{get\_position@{get\_position}!encoder.Encoder@{encoder.Encoder}}
+\doxysubsubsection{\texorpdfstring{get\_position()}{get\_position()}}
+{\footnotesize\ttfamily \label{classencoder_1_1_encoder_ac7dd1b99ba006ee0d2729bbdd417981f} 
+encoder.\+Encoder.\+get\+\_\+position (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{str }]{unit}{ = {\ttfamily "{}counts"{}}}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return position in specified units: "counts", "rad", or "mm".\end{DoxyVerb}
+ \Hypertarget{classencoder_1_1_encoder_a2f878942acf68630cf43cb20c67bc7a6}\index{encoder.Encoder@{encoder.Encoder}!get\_velocity@{get\_velocity}}
+\index{get\_velocity@{get\_velocity}!encoder.Encoder@{encoder.Encoder}}
+\doxysubsubsection{\texorpdfstring{get\_velocity()}{get\_velocity()}}
+{\footnotesize\ttfamily \label{classencoder_1_1_encoder_a2f878942acf68630cf43cb20c67bc7a6} 
+encoder.\+Encoder.\+get\+\_\+velocity (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{str }]{unit}{ = {\ttfamily "{}counts/s"{}}}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return velocity in specified units: "counts/s", "rad/s", or "mm/s".\end{DoxyVerb}
+ \Hypertarget{classencoder_1_1_encoder_aa49b0c5f3a84989bbd9500f1d25f81aa}\index{encoder.Encoder@{encoder.Encoder}!update@{update}}
+\index{update@{update}!encoder.Encoder@{encoder.Encoder}}
+\doxysubsubsection{\texorpdfstring{update()}{update()}}
+{\footnotesize\ttfamily \label{classencoder_1_1_encoder_aa49b0c5f3a84989bbd9500f1d25f81aa} 
+encoder.\+Encoder.\+update (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Update encoder count and compute velocity.\end{DoxyVerb}
+ \Hypertarget{classencoder_1_1_encoder_ab79017405d71f96cb2363307a1f04c88}\index{encoder.Encoder@{encoder.Encoder}!zero@{zero}}
+\index{zero@{zero}!encoder.Encoder@{encoder.Encoder}}
+\doxysubsubsection{\texorpdfstring{zero()}{zero()}}
+{\footnotesize\ttfamily \label{classencoder_1_1_encoder_ab79017405d71f96cb2363307a1f04c88} 
+encoder.\+Encoder.\+zero (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Zero the encoder position.\end{DoxyVerb}
+ 
+
+\label{doc-variable-members}
+\Hypertarget{classencoder_1_1_encoder_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{classencoder_1_1_encoder_af29627555db6bf8c1849ec314ee8b3b7}\index{encoder.Encoder@{encoder.Encoder}!AR@{AR}}
+\index{AR@{AR}!encoder.Encoder@{encoder.Encoder}}
+\doxysubsubsection{\texorpdfstring{AR}{AR}}
+{\footnotesize\ttfamily \label{classencoder_1_1_encoder_af29627555db6bf8c1849ec314ee8b3b7} 
+int encoder.\+Encoder.\+AR = 65535}
+
+\Hypertarget{classencoder_1_1_encoder_a0c4294982bfbbc8fffa234870b89d5cc}\index{encoder.Encoder@{encoder.Encoder}!chA\_pin@{chA\_pin}}
+\index{chA\_pin@{chA\_pin}!encoder.Encoder@{encoder.Encoder}}
+\doxysubsubsection{\texorpdfstring{chA\_pin}{chA\_pin}}
+{\footnotesize\ttfamily \label{classencoder_1_1_encoder_a0c4294982bfbbc8fffa234870b89d5cc} 
+encoder.\+Encoder.\+ch\+A\+\_\+pin = Pin(ch\+A\+\_\+pin)}
+
+\Hypertarget{classencoder_1_1_encoder_a779a0b0a6a94b7e5653a37f9346b193d}\index{encoder.Encoder@{encoder.Encoder}!chB\_pin@{chB\_pin}}
+\index{chB\_pin@{chB\_pin}!encoder.Encoder@{encoder.Encoder}}
+\doxysubsubsection{\texorpdfstring{chB\_pin}{chB\_pin}}
+{\footnotesize\ttfamily \label{classencoder_1_1_encoder_a779a0b0a6a94b7e5653a37f9346b193d} 
+encoder.\+Encoder.\+ch\+B\+\_\+pin = Pin(ch\+B\+\_\+pin)}
+
+\Hypertarget{classencoder_1_1_encoder_ad47d8dcd2f69916b3a2013a837e607bd}\index{encoder.Encoder@{encoder.Encoder}!CPR\_MOTOR@{CPR\_MOTOR}}
+\index{CPR\_MOTOR@{CPR\_MOTOR}!encoder.Encoder@{encoder.Encoder}}
+\doxysubsubsection{\texorpdfstring{CPR\_MOTOR}{CPR\_MOTOR}}
+{\footnotesize\ttfamily \label{classencoder_1_1_encoder_ad47d8dcd2f69916b3a2013a837e607bd} 
+int encoder.\+Encoder.\+CPR\+\_\+\+MOTOR = 12\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{classencoder_1_1_encoder_a6e72e579dd0e83b6d5f59e235627f2d7}\index{encoder.Encoder@{encoder.Encoder}!CPR\_WHEEL@{CPR\_WHEEL}}
+\index{CPR\_WHEEL@{CPR\_WHEEL}!encoder.Encoder@{encoder.Encoder}}
+\doxysubsubsection{\texorpdfstring{CPR\_WHEEL}{CPR\_WHEEL}}
+{\footnotesize\ttfamily \label{classencoder_1_1_encoder_a6e72e579dd0e83b6d5f59e235627f2d7} 
+int encoder.\+Encoder.\+CPR\+\_\+\+WHEEL = \mbox{\hyperlink{classencoder_1_1_encoder_a1d31c7ceb7a2d60828a83fe9edaa43c0}{GEAR\+\_\+\+RATIO}}\texorpdfstring{$\ast$}{*}\mbox{\hyperlink{classencoder_1_1_encoder_ad47d8dcd2f69916b3a2013a837e607bd}{CPR\+\_\+\+MOTOR}}\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{classencoder_1_1_encoder_ad3c110d78ce1b5e97ce08efd20b41040}\index{encoder.Encoder@{encoder.Encoder}!delta@{delta}}
+\index{delta@{delta}!encoder.Encoder@{encoder.Encoder}}
+\doxysubsubsection{\texorpdfstring{delta}{delta}}
+{\footnotesize\ttfamily \label{classencoder_1_1_encoder_ad3c110d78ce1b5e97ce08efd20b41040} 
+int encoder.\+Encoder.\+delta = 0}
+
+\Hypertarget{classencoder_1_1_encoder_aa6c60def8af928ad3d55a959755a657d}\index{encoder.Encoder@{encoder.Encoder}!dt@{dt}}
+\index{dt@{dt}!encoder.Encoder@{encoder.Encoder}}
+\doxysubsubsection{\texorpdfstring{dt}{dt}}
+{\footnotesize\ttfamily \label{classencoder_1_1_encoder_aa6c60def8af928ad3d55a959755a657d} 
+int encoder.\+Encoder.\+dt = 0}
+
+\Hypertarget{classencoder_1_1_encoder_a1d31c7ceb7a2d60828a83fe9edaa43c0}\index{encoder.Encoder@{encoder.Encoder}!GEAR\_RATIO@{GEAR\_RATIO}}
+\index{GEAR\_RATIO@{GEAR\_RATIO}!encoder.Encoder@{encoder.Encoder}}
+\doxysubsubsection{\texorpdfstring{GEAR\_RATIO}{GEAR\_RATIO}}
+{\footnotesize\ttfamily \label{classencoder_1_1_encoder_a1d31c7ceb7a2d60828a83fe9edaa43c0} 
+int encoder.\+Encoder.\+GEAR\+\_\+\+RATIO = 3952/33\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{classencoder_1_1_encoder_aa519091fe8c896a7e67868478134fe08}\index{encoder.Encoder@{encoder.Encoder}!position\_counts@{position\_counts}}
+\index{position\_counts@{position\_counts}!encoder.Encoder@{encoder.Encoder}}
+\doxysubsubsection{\texorpdfstring{position\_counts}{position\_counts}}
+{\footnotesize\ttfamily \label{classencoder_1_1_encoder_aa519091fe8c896a7e67868478134fe08} 
+int encoder.\+Encoder.\+position\+\_\+counts = 0}
+
+\Hypertarget{classencoder_1_1_encoder_ae53a3f480c7e6f8eee2649b58c052ae6}\index{encoder.Encoder@{encoder.Encoder}!prev\_count@{prev\_count}}
+\index{prev\_count@{prev\_count}!encoder.Encoder@{encoder.Encoder}}
+\doxysubsubsection{\texorpdfstring{prev\_count}{prev\_count}}
+{\footnotesize\ttfamily \label{classencoder_1_1_encoder_ae53a3f480c7e6f8eee2649b58c052ae6} 
+encoder.\+Encoder.\+prev\+\_\+count = self.\+tim\+\_\+obj.\+counter()}
+
+\Hypertarget{classencoder_1_1_encoder_af9ca104df590d6508b1131c0853aec5a}\index{encoder.Encoder@{encoder.Encoder}!prev\_time@{prev\_time}}
+\index{prev\_time@{prev\_time}!encoder.Encoder@{encoder.Encoder}}
+\doxysubsubsection{\texorpdfstring{prev\_time}{prev\_time}}
+{\footnotesize\ttfamily \label{classencoder_1_1_encoder_af9ca104df590d6508b1131c0853aec5a} 
+encoder.\+Encoder.\+prev\+\_\+time = ticks\+\_\+us()}
+
+\Hypertarget{classencoder_1_1_encoder_a2e12aa6d6d9979eabe2c3478dfc449b6}\index{encoder.Encoder@{encoder.Encoder}!RAD\_PER\_COUNT@{RAD\_PER\_COUNT}}
+\index{RAD\_PER\_COUNT@{RAD\_PER\_COUNT}!encoder.Encoder@{encoder.Encoder}}
+\doxysubsubsection{\texorpdfstring{RAD\_PER\_COUNT}{RAD\_PER\_COUNT}}
+{\footnotesize\ttfamily \label{classencoder_1_1_encoder_a2e12aa6d6d9979eabe2c3478dfc449b6} 
+int encoder.\+Encoder.\+RAD\+\_\+\+PER\+\_\+\+COUNT = 2 \texorpdfstring{$\ast$}{*} math.\+pi / \mbox{\hyperlink{classencoder_1_1_encoder_a6e72e579dd0e83b6d5f59e235627f2d7}{CPR\+\_\+\+WHEEL}}\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{classencoder_1_1_encoder_afc992b00d5b085331bd1e894205d6eab}\index{encoder.Encoder@{encoder.Encoder}!tim\_obj@{tim\_obj}}
+\index{tim\_obj@{tim\_obj}!encoder.Encoder@{encoder.Encoder}}
+\doxysubsubsection{\texorpdfstring{tim\_obj}{tim\_obj}}
+{\footnotesize\ttfamily \label{classencoder_1_1_encoder_afc992b00d5b085331bd1e894205d6eab} 
+encoder.\+Encoder.\+tim\+\_\+obj = Timer(tim\+\_\+num, prescaler=0, period=self.\+AR)}
+
+\Hypertarget{classencoder_1_1_encoder_ae0660f7fa748f93a5706645ed2021522}\index{encoder.Encoder@{encoder.Encoder}!velocity\_counts\_per\_s@{velocity\_counts\_per\_s}}
+\index{velocity\_counts\_per\_s@{velocity\_counts\_per\_s}!encoder.Encoder@{encoder.Encoder}}
+\doxysubsubsection{\texorpdfstring{velocity\_counts\_per\_s}{velocity\_counts\_per\_s}}
+{\footnotesize\ttfamily \label{classencoder_1_1_encoder_ae0660f7fa748f93a5706645ed2021522} 
+int encoder.\+Encoder.\+velocity\+\_\+counts\+\_\+per\+\_\+s = 0}
+
+\Hypertarget{classencoder_1_1_encoder_ab545d8bb119445e25158e9f4cbcff5b3}\index{encoder.Encoder@{encoder.Encoder}!WHEEL\_RADIUS\_MM@{WHEEL\_RADIUS\_MM}}
+\index{WHEEL\_RADIUS\_MM@{WHEEL\_RADIUS\_MM}!encoder.Encoder@{encoder.Encoder}}
+\doxysubsubsection{\texorpdfstring{WHEEL\_RADIUS\_MM}{WHEEL\_RADIUS\_MM}}
+{\footnotesize\ttfamily \label{classencoder_1_1_encoder_ab545d8bb119445e25158e9f4cbcff5b3} 
+int encoder.\+Encoder.\+WHEEL\+\_\+\+RADIUS\+\_\+\+MM = 35\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\mbox{\hyperlink{encoder_8py}{encoder.\+py}}\end{DoxyCompactItemize}

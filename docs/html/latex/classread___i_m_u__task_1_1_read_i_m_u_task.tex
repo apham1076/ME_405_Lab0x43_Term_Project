@@ -1,0 +1,147 @@
+\doxysection{read\+\_\+\+IMU\+\_\+task.\+Read\+IMUTask Class Reference}
+\hypertarget{classread___i_m_u__task_1_1_read_i_m_u_task}{}\label{classread___i_m_u__task_1_1_read_i_m_u_task}\index{read\_IMU\_task.ReadIMUTask@{read\_IMU\_task.ReadIMUTask}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classread___i_m_u__task_1_1_read_i_m_u_task_a86d339076e94876d240d107b93af6403}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self, \mbox{\hyperlink{classread___i_m_u__task_1_1_read_i_m_u_task_af4492096ab9caf9d11f7e569d5646742}{imu}}, \mbox{\hyperlink{classread___i_m_u__task_1_1_read_i_m_u_task_a6f1c432956eb8418da2ce08c0cc9e241}{heading}}, \mbox{\hyperlink{classread___i_m_u__task_1_1_read_i_m_u_task_ab6789fae04d9609be5032da377521ed4}{heading\+\_\+offset}}, \mbox{\hyperlink{classread___i_m_u__task_1_1_read_i_m_u_task_a914f00592303415fce509eae7c2ab030}{read\+\_\+\+IMU\+\_\+flg}}, \mbox{\hyperlink{classread___i_m_u__task_1_1_read_i_m_u_task_a2111ecb4afef37c8648e2b2d47389df0}{mtr\+\_\+enable}})
+\item 
+\mbox{\hyperlink{classread___i_m_u__task_1_1_read_i_m_u_task_a32c13ae52c1f45e37c3f8921bddbed85}{run}} (self)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classread___i_m_u__task_1_1_read_i_m_u_task_af4492096ab9caf9d11f7e569d5646742}{imu}} = imu
+\item 
+\mbox{\hyperlink{classread___i_m_u__task_1_1_read_i_m_u_task_a6f1c432956eb8418da2ce08c0cc9e241}{heading}} = heading
+\item 
+\mbox{\hyperlink{classread___i_m_u__task_1_1_read_i_m_u_task_ab6789fae04d9609be5032da377521ed4}{heading\+\_\+offset}} = heading\+\_\+offset
+\item 
+\mbox{\hyperlink{classread___i_m_u__task_1_1_read_i_m_u_task_a2111ecb4afef37c8648e2b2d47389df0}{mtr\+\_\+enable}} = mtr\+\_\+enable
+\item 
+\mbox{\hyperlink{classread___i_m_u__task_1_1_read_i_m_u_task_a914f00592303415fce509eae7c2ab030}{read\+\_\+\+IMU\+\_\+flg}} = read\+\_\+\+IMU\+\_\+flg
+\item 
+float \mbox{\hyperlink{classread___i_m_u__task_1_1_read_i_m_u_task_a3ea0b686f50b4a91dc21a929c6880436}{r}} = 0.\+035
+\item 
+float \mbox{\hyperlink{classread___i_m_u__task_1_1_read_i_m_u_task_a555f6f927fd2d874c6411a8206fb607d}{w}} = 0.\+141
+\item 
+bool \mbox{\hyperlink{classread___i_m_u__task_1_1_read_i_m_u_task_a6ca044434e55e28b9ca2c58003ad3ee8}{first\+\_\+reading}} = True
+\item 
+int \mbox{\hyperlink{classread___i_m_u__task_1_1_read_i_m_u_task_acf0e3aaec5c294370649821033c3f10b}{state}} = self.\+S0\+\_\+\+INIT
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{classread___i_m_u__task_1_1_read_i_m_u_task_acedba857b77fc2f8f7adeee40bc4c33f}{S0\+\_\+\+INIT}} = 0
+\item 
+int \mbox{\hyperlink{classread___i_m_u__task_1_1_read_i_m_u_task_a19ad9f37f23536fb0eefcef4b295adfd}{S1\+\_\+\+IDLE}} = 1
+\item 
+int \mbox{\hyperlink{classread___i_m_u__task_1_1_read_i_m_u_task_ab4918ef2ca764cba6594e1ed34741dbb}{S2\+\_\+\+READING}} = 2
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}Handles reading from IMU sensor and updating shares so state_estimation_task can run faster\end{DoxyVerb}
+ 
+
+\label{doc-constructors}
+\Hypertarget{classread___i_m_u__task_1_1_read_i_m_u_task_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classread___i_m_u__task_1_1_read_i_m_u_task_a86d339076e94876d240d107b93af6403}\index{read\_IMU\_task.ReadIMUTask@{read\_IMU\_task.ReadIMUTask}!\_\_init\_\_@{\_\_init\_\_}}
+\index{\_\_init\_\_@{\_\_init\_\_}!read\_IMU\_task.ReadIMUTask@{read\_IMU\_task.ReadIMUTask}}
+\doxysubsubsection{\texorpdfstring{\_\_init\_\_()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily \label{classread___i_m_u__task_1_1_read_i_m_u_task_a86d339076e94876d240d107b93af6403} 
+read\+\_\+\+IMU\+\_\+task.\+Read\+IMUTask.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{imu}{, }\item[{}]{heading}{, }\item[{}]{heading\+\_\+offset}{, }\item[{}]{read\+\_\+\+IMU\+\_\+flg}{, }\item[{}]{mtr\+\_\+enable}{}\end{DoxyParamCaption})}
+
+
+
+\label{doc-func-members}
+\Hypertarget{classread___i_m_u__task_1_1_read_i_m_u_task_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classread___i_m_u__task_1_1_read_i_m_u_task_a32c13ae52c1f45e37c3f8921bddbed85}\index{read\_IMU\_task.ReadIMUTask@{read\_IMU\_task.ReadIMUTask}!run@{run}}
+\index{run@{run}!read\_IMU\_task.ReadIMUTask@{read\_IMU\_task.ReadIMUTask}}
+\doxysubsubsection{\texorpdfstring{run()}{run()}}
+{\footnotesize\ttfamily \label{classread___i_m_u__task_1_1_read_i_m_u_task_a32c13ae52c1f45e37c3f8921bddbed85} 
+read\+\_\+\+IMU\+\_\+task.\+Read\+IMUTask.\+run (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+
+
+\label{doc-variable-members}
+\Hypertarget{classread___i_m_u__task_1_1_read_i_m_u_task_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{classread___i_m_u__task_1_1_read_i_m_u_task_a6ca044434e55e28b9ca2c58003ad3ee8}\index{read\_IMU\_task.ReadIMUTask@{read\_IMU\_task.ReadIMUTask}!first\_reading@{first\_reading}}
+\index{first\_reading@{first\_reading}!read\_IMU\_task.ReadIMUTask@{read\_IMU\_task.ReadIMUTask}}
+\doxysubsubsection{\texorpdfstring{first\_reading}{first\_reading}}
+{\footnotesize\ttfamily \label{classread___i_m_u__task_1_1_read_i_m_u_task_a6ca044434e55e28b9ca2c58003ad3ee8} 
+bool read\+\_\+\+IMU\+\_\+task.\+Read\+IMUTask.\+first\+\_\+reading = True}
+
+\Hypertarget{classread___i_m_u__task_1_1_read_i_m_u_task_a6f1c432956eb8418da2ce08c0cc9e241}\index{read\_IMU\_task.ReadIMUTask@{read\_IMU\_task.ReadIMUTask}!heading@{heading}}
+\index{heading@{heading}!read\_IMU\_task.ReadIMUTask@{read\_IMU\_task.ReadIMUTask}}
+\doxysubsubsection{\texorpdfstring{heading}{heading}}
+{\footnotesize\ttfamily \label{classread___i_m_u__task_1_1_read_i_m_u_task_a6f1c432956eb8418da2ce08c0cc9e241} 
+read\+\_\+\+IMU\+\_\+task.\+Read\+IMUTask.\+heading = heading}
+
+\Hypertarget{classread___i_m_u__task_1_1_read_i_m_u_task_ab6789fae04d9609be5032da377521ed4}\index{read\_IMU\_task.ReadIMUTask@{read\_IMU\_task.ReadIMUTask}!heading\_offset@{heading\_offset}}
+\index{heading\_offset@{heading\_offset}!read\_IMU\_task.ReadIMUTask@{read\_IMU\_task.ReadIMUTask}}
+\doxysubsubsection{\texorpdfstring{heading\_offset}{heading\_offset}}
+{\footnotesize\ttfamily \label{classread___i_m_u__task_1_1_read_i_m_u_task_ab6789fae04d9609be5032da377521ed4} 
+read\+\_\+\+IMU\+\_\+task.\+Read\+IMUTask.\+heading\+\_\+offset = heading\+\_\+offset}
+
+\Hypertarget{classread___i_m_u__task_1_1_read_i_m_u_task_af4492096ab9caf9d11f7e569d5646742}\index{read\_IMU\_task.ReadIMUTask@{read\_IMU\_task.ReadIMUTask}!imu@{imu}}
+\index{imu@{imu}!read\_IMU\_task.ReadIMUTask@{read\_IMU\_task.ReadIMUTask}}
+\doxysubsubsection{\texorpdfstring{imu}{imu}}
+{\footnotesize\ttfamily \label{classread___i_m_u__task_1_1_read_i_m_u_task_af4492096ab9caf9d11f7e569d5646742} 
+read\+\_\+\+IMU\+\_\+task.\+Read\+IMUTask.\+imu = imu}
+
+\Hypertarget{classread___i_m_u__task_1_1_read_i_m_u_task_a2111ecb4afef37c8648e2b2d47389df0}\index{read\_IMU\_task.ReadIMUTask@{read\_IMU\_task.ReadIMUTask}!mtr\_enable@{mtr\_enable}}
+\index{mtr\_enable@{mtr\_enable}!read\_IMU\_task.ReadIMUTask@{read\_IMU\_task.ReadIMUTask}}
+\doxysubsubsection{\texorpdfstring{mtr\_enable}{mtr\_enable}}
+{\footnotesize\ttfamily \label{classread___i_m_u__task_1_1_read_i_m_u_task_a2111ecb4afef37c8648e2b2d47389df0} 
+read\+\_\+\+IMU\+\_\+task.\+Read\+IMUTask.\+mtr\+\_\+enable = mtr\+\_\+enable}
+
+\Hypertarget{classread___i_m_u__task_1_1_read_i_m_u_task_a3ea0b686f50b4a91dc21a929c6880436}\index{read\_IMU\_task.ReadIMUTask@{read\_IMU\_task.ReadIMUTask}!r@{r}}
+\index{r@{r}!read\_IMU\_task.ReadIMUTask@{read\_IMU\_task.ReadIMUTask}}
+\doxysubsubsection{\texorpdfstring{r}{r}}
+{\footnotesize\ttfamily \label{classread___i_m_u__task_1_1_read_i_m_u_task_a3ea0b686f50b4a91dc21a929c6880436} 
+float read\+\_\+\+IMU\+\_\+task.\+Read\+IMUTask.\+r = 0.\+035}
+
+\Hypertarget{classread___i_m_u__task_1_1_read_i_m_u_task_a914f00592303415fce509eae7c2ab030}\index{read\_IMU\_task.ReadIMUTask@{read\_IMU\_task.ReadIMUTask}!read\_IMU\_flg@{read\_IMU\_flg}}
+\index{read\_IMU\_flg@{read\_IMU\_flg}!read\_IMU\_task.ReadIMUTask@{read\_IMU\_task.ReadIMUTask}}
+\doxysubsubsection{\texorpdfstring{read\_IMU\_flg}{read\_IMU\_flg}}
+{\footnotesize\ttfamily \label{classread___i_m_u__task_1_1_read_i_m_u_task_a914f00592303415fce509eae7c2ab030} 
+read\+\_\+\+IMU\+\_\+task.\+Read\+IMUTask.\+read\+\_\+\+IMU\+\_\+flg = read\+\_\+\+IMU\+\_\+flg}
+
+\Hypertarget{classread___i_m_u__task_1_1_read_i_m_u_task_acedba857b77fc2f8f7adeee40bc4c33f}\index{read\_IMU\_task.ReadIMUTask@{read\_IMU\_task.ReadIMUTask}!S0\_INIT@{S0\_INIT}}
+\index{S0\_INIT@{S0\_INIT}!read\_IMU\_task.ReadIMUTask@{read\_IMU\_task.ReadIMUTask}}
+\doxysubsubsection{\texorpdfstring{S0\_INIT}{S0\_INIT}}
+{\footnotesize\ttfamily \label{classread___i_m_u__task_1_1_read_i_m_u_task_acedba857b77fc2f8f7adeee40bc4c33f} 
+int read\+\_\+\+IMU\+\_\+task.\+Read\+IMUTask.\+S0\+\_\+\+INIT = 0\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{classread___i_m_u__task_1_1_read_i_m_u_task_a19ad9f37f23536fb0eefcef4b295adfd}\index{read\_IMU\_task.ReadIMUTask@{read\_IMU\_task.ReadIMUTask}!S1\_IDLE@{S1\_IDLE}}
+\index{S1\_IDLE@{S1\_IDLE}!read\_IMU\_task.ReadIMUTask@{read\_IMU\_task.ReadIMUTask}}
+\doxysubsubsection{\texorpdfstring{S1\_IDLE}{S1\_IDLE}}
+{\footnotesize\ttfamily \label{classread___i_m_u__task_1_1_read_i_m_u_task_a19ad9f37f23536fb0eefcef4b295adfd} 
+int read\+\_\+\+IMU\+\_\+task.\+Read\+IMUTask.\+S1\+\_\+\+IDLE = 1\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{classread___i_m_u__task_1_1_read_i_m_u_task_ab4918ef2ca764cba6594e1ed34741dbb}\index{read\_IMU\_task.ReadIMUTask@{read\_IMU\_task.ReadIMUTask}!S2\_READING@{S2\_READING}}
+\index{S2\_READING@{S2\_READING}!read\_IMU\_task.ReadIMUTask@{read\_IMU\_task.ReadIMUTask}}
+\doxysubsubsection{\texorpdfstring{S2\_READING}{S2\_READING}}
+{\footnotesize\ttfamily \label{classread___i_m_u__task_1_1_read_i_m_u_task_ab4918ef2ca764cba6594e1ed34741dbb} 
+int read\+\_\+\+IMU\+\_\+task.\+Read\+IMUTask.\+S2\+\_\+\+READING = 2\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{classread___i_m_u__task_1_1_read_i_m_u_task_acf0e3aaec5c294370649821033c3f10b}\index{read\_IMU\_task.ReadIMUTask@{read\_IMU\_task.ReadIMUTask}!state@{state}}
+\index{state@{state}!read\_IMU\_task.ReadIMUTask@{read\_IMU\_task.ReadIMUTask}}
+\doxysubsubsection{\texorpdfstring{state}{state}}
+{\footnotesize\ttfamily \label{classread___i_m_u__task_1_1_read_i_m_u_task_acf0e3aaec5c294370649821033c3f10b} 
+int read\+\_\+\+IMU\+\_\+task.\+Read\+IMUTask.\+state = self.\+S0\+\_\+\+INIT}
+
+\Hypertarget{classread___i_m_u__task_1_1_read_i_m_u_task_a555f6f927fd2d874c6411a8206fb607d}\index{read\_IMU\_task.ReadIMUTask@{read\_IMU\_task.ReadIMUTask}!w@{w}}
+\index{w@{w}!read\_IMU\_task.ReadIMUTask@{read\_IMU\_task.ReadIMUTask}}
+\doxysubsubsection{\texorpdfstring{w}{w}}
+{\footnotesize\ttfamily \label{classread___i_m_u__task_1_1_read_i_m_u_task_a555f6f927fd2d874c6411a8206fb607d} 
+float read\+\_\+\+IMU\+\_\+task.\+Read\+IMUTask.\+w = 0.\+141}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\mbox{\hyperlink{read___i_m_u__task_8py}{read\+\_\+\+IMU\+\_\+task.\+py}}\end{DoxyCompactItemize}

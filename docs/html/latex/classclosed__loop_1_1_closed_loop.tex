@@ -1,0 +1,188 @@
+\doxysection{closed\+\_\+loop.\+Closed\+Loop Class Reference}
+\hypertarget{classclosed__loop_1_1_closed_loop}{}\label{classclosed__loop_1_1_closed_loop}\index{closed\_loop.ClosedLoop@{closed\_loop.ClosedLoop}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classclosed__loop_1_1_closed_loop_ae7c5080d12c39df73c38795d24466b3c}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self, \mbox{\hyperlink{classclosed__loop_1_1_closed_loop_ab33fe51e8b2e20e7b86020a5c4a59a3b}{kp}}, \mbox{\hyperlink{classclosed__loop_1_1_closed_loop_aaf63a3bc483d8f6e8076f12574387076}{ki}}, \mbox{\hyperlink{classclosed__loop_1_1_closed_loop_a8ab7cbbbde75494dffc478474f2dd636}{sp\+\_\+sh}}, \mbox{\hyperlink{classclosed__loop_1_1_closed_loop_aa905df4982d0504d7e1a61e3a84487f5}{battery}}, effort\+\_\+limits=(-\/100, 100))
+\item 
+\mbox{\hyperlink{classclosed__loop_1_1_closed_loop_aa9791178eca2151f98d53f2730f2106d}{reset}} (self)
+\item 
+\mbox{\hyperlink{classclosed__loop_1_1_closed_loop_aa247fbe9a42fa034fa30bfeb1343d4f3}{run}} (self, fb)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classclosed__loop_1_1_closed_loop_ab33fe51e8b2e20e7b86020a5c4a59a3b}{kp}} = kp
+\item 
+\mbox{\hyperlink{classclosed__loop_1_1_closed_loop_aaf63a3bc483d8f6e8076f12574387076}{ki}} = ki
+\item 
+\mbox{\hyperlink{classclosed__loop_1_1_closed_loop_a8ab7cbbbde75494dffc478474f2dd636}{sp\+\_\+sh}} = sp\+\_\+sh
+\item 
+\mbox{\hyperlink{classclosed__loop_1_1_closed_loop_a46b557e100e1add974d391cd2996dad3}{effort\+\_\+min}}
+\item 
+\mbox{\hyperlink{classclosed__loop_1_1_closed_loop_a66c8894ca3b3e1b1e344d34af747da7b}{effort\+\_\+max}} = effort\+\_\+limits
+\item 
+float \mbox{\hyperlink{classclosed__loop_1_1_closed_loop_a759f8afa99857f2454617ed2a354aa99}{integrator}} = 0.\+0
+\item 
+\mbox{\hyperlink{classclosed__loop_1_1_closed_loop_aee8f72013b0e108960ecbbd672221bf4}{last\+\_\+time}} = ticks\+\_\+ms()
+\item 
+float \mbox{\hyperlink{classclosed__loop_1_1_closed_loop_a4fedbcea7c46f505bb112475f1b16ce8}{output}} = 0.\+0
+\item 
+float \mbox{\hyperlink{classclosed__loop_1_1_closed_loop_abeb827a5fc1eaefcec829876200fc3cc}{last\+\_\+output}} = 0.\+0
+\item 
+\mbox{\hyperlink{classclosed__loop_1_1_closed_loop_aa905df4982d0504d7e1a61e3a84487f5}{battery}} = battery
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{classclosed__loop_1_1_closed_loop_a78777b8a154d8c65554e734e2c10c265}{GEAR\+\_\+\+RATIO}} = 3952/33
+\item 
+int \mbox{\hyperlink{classclosed__loop_1_1_closed_loop_af8a8c25de50b9b9abb8b0edd1db09e7b}{CPR\+\_\+\+MOTOR}} = 12
+\item 
+int \mbox{\hyperlink{classclosed__loop_1_1_closed_loop_aa93550d4dd9e78cd0fe4523eb2607d42}{CPR\+\_\+\+WHEEL}} = \mbox{\hyperlink{classclosed__loop_1_1_closed_loop_a78777b8a154d8c65554e734e2c10c265}{GEAR\+\_\+\+RATIO}}\texorpdfstring{$\ast$}{*}\mbox{\hyperlink{classclosed__loop_1_1_closed_loop_af8a8c25de50b9b9abb8b0edd1db09e7b}{CPR\+\_\+\+MOTOR}}
+\item 
+int \mbox{\hyperlink{classclosed__loop_1_1_closed_loop_a1d0580be84fa321e3e5a923c8aaa78ee}{RAD\+\_\+\+PER\+\_\+\+COUNT}} = 2 \texorpdfstring{$\ast$}{*} math.\+pi / \mbox{\hyperlink{classclosed__loop_1_1_closed_loop_aa93550d4dd9e78cd0fe4523eb2607d42}{CPR\+\_\+\+WHEEL}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}Proportional-Integral (PI) controller for velocity control in rad/s.
+
+Attributes:
+    kp: Proportional gain (share object with get() method)
+    ki: Integral gain (share object with get() method)
+    sp_sh: Setpoint share object with get() method (desired velocity in rad/s)
+    battery: Battery object for droop compensation (optional) 
+    effort_limits: Tuple defining min and max effort (%)
+\end{DoxyVerb}
+ 
+
+\label{doc-constructors}
+\Hypertarget{classclosed__loop_1_1_closed_loop_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classclosed__loop_1_1_closed_loop_ae7c5080d12c39df73c38795d24466b3c}\index{closed\_loop.ClosedLoop@{closed\_loop.ClosedLoop}!\_\_init\_\_@{\_\_init\_\_}}
+\index{\_\_init\_\_@{\_\_init\_\_}!closed\_loop.ClosedLoop@{closed\_loop.ClosedLoop}}
+\doxysubsubsection{\texorpdfstring{\_\_init\_\_()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily \label{classclosed__loop_1_1_closed_loop_ae7c5080d12c39df73c38795d24466b3c} 
+closed\+\_\+loop.\+Closed\+Loop.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{kp}{, }\item[{}]{ki}{, }\item[{}]{sp\+\_\+sh}{, }\item[{}]{battery}{, }\item[{}]{effort\+\_\+limits}{ = {\ttfamily (-\/100,~100)}}\end{DoxyParamCaption})}
+
+
+
+\label{doc-func-members}
+\Hypertarget{classclosed__loop_1_1_closed_loop_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classclosed__loop_1_1_closed_loop_aa9791178eca2151f98d53f2730f2106d}\index{closed\_loop.ClosedLoop@{closed\_loop.ClosedLoop}!reset@{reset}}
+\index{reset@{reset}!closed\_loop.ClosedLoop@{closed\_loop.ClosedLoop}}
+\doxysubsubsection{\texorpdfstring{reset()}{reset()}}
+{\footnotesize\ttfamily \label{classclosed__loop_1_1_closed_loop_aa9791178eca2151f98d53f2730f2106d} 
+closed\+\_\+loop.\+Closed\+Loop.\+reset (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Reset controller integrator and state.\end{DoxyVerb}
+ \Hypertarget{classclosed__loop_1_1_closed_loop_aa247fbe9a42fa034fa30bfeb1343d4f3}\index{closed\_loop.ClosedLoop@{closed\_loop.ClosedLoop}!run@{run}}
+\index{run@{run}!closed\_loop.ClosedLoop@{closed\_loop.ClosedLoop}}
+\doxysubsubsection{\texorpdfstring{run()}{run()}}
+{\footnotesize\ttfamily \label{classclosed__loop_1_1_closed_loop_aa247fbe9a42fa034fa30bfeb1343d4f3} 
+closed\+\_\+loop.\+Closed\+Loop.\+run (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{fb}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Compute control output (effort %) from velocity feedback and measured battery voltage.
+
+Args:
+    fb: Feedback velocity in rad/s.
+    
+Returns:
+    u: Control effort output (%).
+\end{DoxyVerb}
+ 
+
+\label{doc-variable-members}
+\Hypertarget{classclosed__loop_1_1_closed_loop_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{classclosed__loop_1_1_closed_loop_aa905df4982d0504d7e1a61e3a84487f5}\index{closed\_loop.ClosedLoop@{closed\_loop.ClosedLoop}!battery@{battery}}
+\index{battery@{battery}!closed\_loop.ClosedLoop@{closed\_loop.ClosedLoop}}
+\doxysubsubsection{\texorpdfstring{battery}{battery}}
+{\footnotesize\ttfamily \label{classclosed__loop_1_1_closed_loop_aa905df4982d0504d7e1a61e3a84487f5} 
+closed\+\_\+loop.\+Closed\+Loop.\+battery = battery}
+
+\Hypertarget{classclosed__loop_1_1_closed_loop_af8a8c25de50b9b9abb8b0edd1db09e7b}\index{closed\_loop.ClosedLoop@{closed\_loop.ClosedLoop}!CPR\_MOTOR@{CPR\_MOTOR}}
+\index{CPR\_MOTOR@{CPR\_MOTOR}!closed\_loop.ClosedLoop@{closed\_loop.ClosedLoop}}
+\doxysubsubsection{\texorpdfstring{CPR\_MOTOR}{CPR\_MOTOR}}
+{\footnotesize\ttfamily \label{classclosed__loop_1_1_closed_loop_af8a8c25de50b9b9abb8b0edd1db09e7b} 
+int closed\+\_\+loop.\+Closed\+Loop.\+CPR\+\_\+\+MOTOR = 12\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{classclosed__loop_1_1_closed_loop_aa93550d4dd9e78cd0fe4523eb2607d42}\index{closed\_loop.ClosedLoop@{closed\_loop.ClosedLoop}!CPR\_WHEEL@{CPR\_WHEEL}}
+\index{CPR\_WHEEL@{CPR\_WHEEL}!closed\_loop.ClosedLoop@{closed\_loop.ClosedLoop}}
+\doxysubsubsection{\texorpdfstring{CPR\_WHEEL}{CPR\_WHEEL}}
+{\footnotesize\ttfamily \label{classclosed__loop_1_1_closed_loop_aa93550d4dd9e78cd0fe4523eb2607d42} 
+int closed\+\_\+loop.\+Closed\+Loop.\+CPR\+\_\+\+WHEEL = \mbox{\hyperlink{classclosed__loop_1_1_closed_loop_a78777b8a154d8c65554e734e2c10c265}{GEAR\+\_\+\+RATIO}}\texorpdfstring{$\ast$}{*}\mbox{\hyperlink{classclosed__loop_1_1_closed_loop_af8a8c25de50b9b9abb8b0edd1db09e7b}{CPR\+\_\+\+MOTOR}}\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{classclosed__loop_1_1_closed_loop_a66c8894ca3b3e1b1e344d34af747da7b}\index{closed\_loop.ClosedLoop@{closed\_loop.ClosedLoop}!effort\_max@{effort\_max}}
+\index{effort\_max@{effort\_max}!closed\_loop.ClosedLoop@{closed\_loop.ClosedLoop}}
+\doxysubsubsection{\texorpdfstring{effort\_max}{effort\_max}}
+{\footnotesize\ttfamily \label{classclosed__loop_1_1_closed_loop_a66c8894ca3b3e1b1e344d34af747da7b} 
+closed\+\_\+loop.\+Closed\+Loop.\+effort\+\_\+max = effort\+\_\+limits}
+
+\Hypertarget{classclosed__loop_1_1_closed_loop_a46b557e100e1add974d391cd2996dad3}\index{closed\_loop.ClosedLoop@{closed\_loop.ClosedLoop}!effort\_min@{effort\_min}}
+\index{effort\_min@{effort\_min}!closed\_loop.ClosedLoop@{closed\_loop.ClosedLoop}}
+\doxysubsubsection{\texorpdfstring{effort\_min}{effort\_min}}
+{\footnotesize\ttfamily \label{classclosed__loop_1_1_closed_loop_a46b557e100e1add974d391cd2996dad3} 
+closed\+\_\+loop.\+Closed\+Loop.\+effort\+\_\+min}
+
+\Hypertarget{classclosed__loop_1_1_closed_loop_a78777b8a154d8c65554e734e2c10c265}\index{closed\_loop.ClosedLoop@{closed\_loop.ClosedLoop}!GEAR\_RATIO@{GEAR\_RATIO}}
+\index{GEAR\_RATIO@{GEAR\_RATIO}!closed\_loop.ClosedLoop@{closed\_loop.ClosedLoop}}
+\doxysubsubsection{\texorpdfstring{GEAR\_RATIO}{GEAR\_RATIO}}
+{\footnotesize\ttfamily \label{classclosed__loop_1_1_closed_loop_a78777b8a154d8c65554e734e2c10c265} 
+int closed\+\_\+loop.\+Closed\+Loop.\+GEAR\+\_\+\+RATIO = 3952/33\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{classclosed__loop_1_1_closed_loop_a759f8afa99857f2454617ed2a354aa99}\index{closed\_loop.ClosedLoop@{closed\_loop.ClosedLoop}!integrator@{integrator}}
+\index{integrator@{integrator}!closed\_loop.ClosedLoop@{closed\_loop.ClosedLoop}}
+\doxysubsubsection{\texorpdfstring{integrator}{integrator}}
+{\footnotesize\ttfamily \label{classclosed__loop_1_1_closed_loop_a759f8afa99857f2454617ed2a354aa99} 
+float closed\+\_\+loop.\+Closed\+Loop.\+integrator = 0.\+0}
+
+\Hypertarget{classclosed__loop_1_1_closed_loop_aaf63a3bc483d8f6e8076f12574387076}\index{closed\_loop.ClosedLoop@{closed\_loop.ClosedLoop}!ki@{ki}}
+\index{ki@{ki}!closed\_loop.ClosedLoop@{closed\_loop.ClosedLoop}}
+\doxysubsubsection{\texorpdfstring{ki}{ki}}
+{\footnotesize\ttfamily \label{classclosed__loop_1_1_closed_loop_aaf63a3bc483d8f6e8076f12574387076} 
+closed\+\_\+loop.\+Closed\+Loop.\+ki = ki}
+
+\Hypertarget{classclosed__loop_1_1_closed_loop_ab33fe51e8b2e20e7b86020a5c4a59a3b}\index{closed\_loop.ClosedLoop@{closed\_loop.ClosedLoop}!kp@{kp}}
+\index{kp@{kp}!closed\_loop.ClosedLoop@{closed\_loop.ClosedLoop}}
+\doxysubsubsection{\texorpdfstring{kp}{kp}}
+{\footnotesize\ttfamily \label{classclosed__loop_1_1_closed_loop_ab33fe51e8b2e20e7b86020a5c4a59a3b} 
+closed\+\_\+loop.\+Closed\+Loop.\+kp = kp}
+
+\Hypertarget{classclosed__loop_1_1_closed_loop_abeb827a5fc1eaefcec829876200fc3cc}\index{closed\_loop.ClosedLoop@{closed\_loop.ClosedLoop}!last\_output@{last\_output}}
+\index{last\_output@{last\_output}!closed\_loop.ClosedLoop@{closed\_loop.ClosedLoop}}
+\doxysubsubsection{\texorpdfstring{last\_output}{last\_output}}
+{\footnotesize\ttfamily \label{classclosed__loop_1_1_closed_loop_abeb827a5fc1eaefcec829876200fc3cc} 
+float closed\+\_\+loop.\+Closed\+Loop.\+last\+\_\+output = 0.\+0}
+
+\Hypertarget{classclosed__loop_1_1_closed_loop_aee8f72013b0e108960ecbbd672221bf4}\index{closed\_loop.ClosedLoop@{closed\_loop.ClosedLoop}!last\_time@{last\_time}}
+\index{last\_time@{last\_time}!closed\_loop.ClosedLoop@{closed\_loop.ClosedLoop}}
+\doxysubsubsection{\texorpdfstring{last\_time}{last\_time}}
+{\footnotesize\ttfamily \label{classclosed__loop_1_1_closed_loop_aee8f72013b0e108960ecbbd672221bf4} 
+closed\+\_\+loop.\+Closed\+Loop.\+last\+\_\+time = ticks\+\_\+ms()}
+
+\Hypertarget{classclosed__loop_1_1_closed_loop_a4fedbcea7c46f505bb112475f1b16ce8}\index{closed\_loop.ClosedLoop@{closed\_loop.ClosedLoop}!output@{output}}
+\index{output@{output}!closed\_loop.ClosedLoop@{closed\_loop.ClosedLoop}}
+\doxysubsubsection{\texorpdfstring{output}{output}}
+{\footnotesize\ttfamily \label{classclosed__loop_1_1_closed_loop_a4fedbcea7c46f505bb112475f1b16ce8} 
+float closed\+\_\+loop.\+Closed\+Loop.\+output = 0.\+0}
+
+\Hypertarget{classclosed__loop_1_1_closed_loop_a1d0580be84fa321e3e5a923c8aaa78ee}\index{closed\_loop.ClosedLoop@{closed\_loop.ClosedLoop}!RAD\_PER\_COUNT@{RAD\_PER\_COUNT}}
+\index{RAD\_PER\_COUNT@{RAD\_PER\_COUNT}!closed\_loop.ClosedLoop@{closed\_loop.ClosedLoop}}
+\doxysubsubsection{\texorpdfstring{RAD\_PER\_COUNT}{RAD\_PER\_COUNT}}
+{\footnotesize\ttfamily \label{classclosed__loop_1_1_closed_loop_a1d0580be84fa321e3e5a923c8aaa78ee} 
+int closed\+\_\+loop.\+Closed\+Loop.\+RAD\+\_\+\+PER\+\_\+\+COUNT = 2 \texorpdfstring{$\ast$}{*} math.\+pi / \mbox{\hyperlink{classclosed__loop_1_1_closed_loop_aa93550d4dd9e78cd0fe4523eb2607d42}{CPR\+\_\+\+WHEEL}}\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{classclosed__loop_1_1_closed_loop_a8ab7cbbbde75494dffc478474f2dd636}\index{closed\_loop.ClosedLoop@{closed\_loop.ClosedLoop}!sp\_sh@{sp\_sh}}
+\index{sp\_sh@{sp\_sh}!closed\_loop.ClosedLoop@{closed\_loop.ClosedLoop}}
+\doxysubsubsection{\texorpdfstring{sp\_sh}{sp\_sh}}
+{\footnotesize\ttfamily \label{classclosed__loop_1_1_closed_loop_a8ab7cbbbde75494dffc478474f2dd636} 
+closed\+\_\+loop.\+Closed\+Loop.\+sp\+\_\+sh = sp\+\_\+sh}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\mbox{\hyperlink{closed__loop_8py}{closed\+\_\+loop.\+py}}\end{DoxyCompactItemize}

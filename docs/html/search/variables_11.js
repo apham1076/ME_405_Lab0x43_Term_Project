@@ -1,0 +1,24 @@
+var searchData=
+[
+  ['r_0',['r',['../classread___i_m_u__task_1_1_read_i_m_u_task.html#a3ea0b686f50b4a91dc21a929c6880436',1,'read_IMU_task::ReadIMUTask']]],
+  ['r_5f1_5fohm_1',['R_1_OHM',['../classbattery__droop_1_1_battery.html#a08d1d7de9bdcefbf0552f100039c346c',1,'battery_droop::Battery']]],
+  ['r_5f2_5fohm_2',['R_2_OHM',['../classbattery__droop_1_1_battery.html#a05cfaa71915ee96051bcd1b4ba31ea92',1,'battery_droop::Battery']]],
+  ['rad_5fper_5fcount_3',['RAD_PER_COUNT',['../classclosed__loop_1_1_closed_loop.html#a1d0580be84fa321e3e5a923c8aaa78ee',1,'closed_loop.ClosedLoop.RAD_PER_COUNT'],['../classencoder_1_1_encoder.html#a2e12aa6d6d9979eabe2c3478dfc449b6',1,'encoder.Encoder.RAD_PER_COUNT'],['../classspectator__task_1_1_spectator_task.html#a32747591e70440232a308561f83911af',1,'spectator_task.SpectatorTask.RAD_PER_COUNT'],['../namespacetest.html#a6ca95c3f2848dd4406406db09d8ba60a',1,'test.RAD_PER_COUNT']]],
+  ['reacquire_5fthresh_4',['reacquire_thresh',['../classsteering__task_1_1_steering_task.html#a64693445f7772fd77c5f7dd376bff182',1,'steering_task::SteeringTask']]],
+  ['read_5fimu_5fflg_5',['read_IMU_flg',['../classread___i_m_u__task_1_1_read_i_m_u_task.html#a914f00592303415fce509eae7c2ab030',1,'read_IMU_task::ReadIMUTask']]],
+  ['right_5fcontroller_6',['right_controller',['../classmotor__task_1_1_motor_control_task.html#a90025a3df1c70c0dd5e58e1238af7225',1,'motor_task::MotorControlTask']]],
+  ['right_5feff_5fsh_7',['right_eff_sh',['../classmotor__task_1_1_motor_control_task.html#a93ca5e489a0e78e776f712b05c7ceac4',1,'motor_task::MotorControlTask']]],
+  ['right_5fencoder_8',['right_encoder',['../classmotor__task_1_1_motor_control_task.html#a7a41793a3effcbb722c16968c036136f',1,'motor_task::MotorControlTask']]],
+  ['right_5fmotor_9',['right_motor',['../classmotor__task_1_1_motor_control_task.html#a6056ceb4c6170575074ae2bb3e85aad0',1,'motor_task::MotorControlTask']]],
+  ['right_5fpos_10',['right_pos',['../namespacetest.html#a9c4e122a1bbe158c68f57a4a9ef8d0ad',1,'test']]],
+  ['right_5fpos_5fsh_11',['right_pos_sh',['../classmotor__task_1_1_motor_control_task.html#a2b9c5bb89c5b2372563d9243219545c5',1,'motor_task.MotorControlTask.right_pos_sh'],['../classspectator__task_1_1_spectator_task.html#a7b13b369e2e1995747d02232e8a17960',1,'spectator_task.SpectatorTask.right_pos_sh'],['../classstream__task_1_1_stream_task.html#a518446ecf40122d9ef361c21e6f9eb2e',1,'stream_task.StreamTask.right_pos_sh']]],
+  ['right_5fsp_5fsh_12',['right_sp_sh',['../classmotor__task_1_1_motor_control_task.html#a7c9da947b5105615bae4ae16c9fcacf9',1,'motor_task.MotorControlTask.right_sp_sh'],['../classsteering__task_1_1_steering_task.html#a950f0b6d23efa90e22646b266037ac77',1,'steering_task.SteeringTask.right_sp_sh']]],
+  ['right_5fvel_13',['right_vel',['../namespacetest.html#a19f94b7c1fa10c178624c09fc88bae56',1,'test']]],
+  ['right_5fvel_5fsh_14',['right_vel_sh',['../classmotor__task_1_1_motor_control_task.html#ac6e8f19c369175c019aeeb502cde657b',1,'motor_task.MotorControlTask.right_vel_sh'],['../classstream__task_1_1_stream_task.html#a2454f9cb3bdc90abf246bdff4164e290',1,'stream_task.StreamTask.right_vel_sh']]],
+  ['run_5fcode_15',['run_code',['../namespacetest.html#a66e102e23bb72af670d02aa534ed00e0',1,'test']]],
+  ['run_5fcount_16',['run_count',['../namespacetest.html#a66a898ed37d52626357dad223b746963',1,'test']]],
+  ['run_5fname_17',['run_name',['../namespacetest.html#abab5999e24c6869b1ceebb2bbbba9582',1,'test']]],
+  ['run_5fobserver_18',['run_observer',['../classmotor__task_1_1_motor_control_task.html#a149b79c7d00aac08391d5fbe72513e49',1,'motor_task.MotorControlTask.run_observer'],['../classspectator__task_1_1_spectator_task.html#af3a767dddc94fc0ac8330fce9476f22f',1,'spectator_task.SpectatorTask.run_observer']]],
+  ['running_19',['running',['../namespacetest.html#ab71690e676fc23d5daf21bb889f79a27',1,'test']]],
+  ['runs_20',['runs',['../namespacetest.html#af441dfc71cbd97962323c63bbb72232b',1,'test']]]
+];

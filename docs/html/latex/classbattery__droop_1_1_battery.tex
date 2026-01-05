@@ -1,0 +1,163 @@
+\doxysection{battery\+\_\+droop.\+Battery Class Reference}
+\hypertarget{classbattery__droop_1_1_battery}{}\label{classbattery__droop_1_1_battery}\index{battery\_droop.Battery@{battery\_droop.Battery}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classbattery__droop_1_1_battery_a001ce818dc922db0b39e23e02d4be4ad}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self, adc\+\_\+pin)
+\item 
+\mbox{\hyperlink{classbattery__droop_1_1_battery_a4791387d7a6c45e8921b389ec7510e15}{read\+\_\+voltage}} (self)
+\item 
+\mbox{\hyperlink{classbattery__droop_1_1_battery_af6959e6e53db8790eba21da0b60d865e}{droop\+\_\+gain}} (self, \mbox{\hyperlink{classbattery__droop_1_1_battery_a8bea6b482e879248fdc42465481db225}{refresh}}=False)
+\item 
+\mbox{\hyperlink{classbattery__droop_1_1_battery_a8bea6b482e879248fdc42465481db225}{refresh}} (self)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classbattery__droop_1_1_battery_ac839b7de9eec3239935e6af1a6da31a4}{adc}} = ADC(Pin(adc\+\_\+pin))
+\item 
+tuple \mbox{\hyperlink{classbattery__droop_1_1_battery_a88bac1c8265326738d9d18a111465424}{scale}} = (self.\+R\+\_\+1\+\_\+\+OHM + self.\+R\+\_\+2\+\_\+\+OHM) / self.\+R\+\_\+2\+\_\+\+OHM
+\item 
+bool \mbox{\hyperlink{classbattery__droop_1_1_battery_a770e046bea540d32d79faa560ecfa51c}{warned}} = False
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+float \mbox{\hyperlink{classbattery__droop_1_1_battery_a08d1d7de9bdcefbf0552f100039c346c}{R\+\_\+1\+\_\+\+OHM}} = 9.\+98e3
+\item 
+float \mbox{\hyperlink{classbattery__droop_1_1_battery_a05cfaa71915ee96051bcd1b4ba31ea92}{R\+\_\+2\+\_\+\+OHM}} = 4.\+712e3
+\item 
+float \mbox{\hyperlink{classbattery__droop_1_1_battery_a5d238f7a7b8ad32d5936ec6cf40f9a3e}{V\+\_\+\+REF}} = 3.\+3
+\item 
+float \mbox{\hyperlink{classbattery__droop_1_1_battery_a2e0b97ca4f6ee22f4909e8d2090beb0b}{V\+\_\+\+NOM\+\_\+\+SINGLE}} = 1.\+3
+\item 
+int \mbox{\hyperlink{classbattery__droop_1_1_battery_a82d9bfe00507436c6afad8231ebbe1ea}{V\+\_\+\+NOM\+\_\+\+TOTAL}} = 6\texorpdfstring{$\ast$}{*}\mbox{\hyperlink{classbattery__droop_1_1_battery_a2e0b97ca4f6ee22f4909e8d2090beb0b}{V\+\_\+\+NOM\+\_\+\+SINGLE}}
+\item 
+float \mbox{\hyperlink{classbattery__droop_1_1_battery_ac1bd2c1b1b8bd8710e5c31da73600116}{LOW\+\_\+\+BATT\+\_\+\+THRESHOLD}} = 6.\+0
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classbattery__droop_1_1_battery_a426e5ca4ccac20975fd94d6fae71f3c2}{\+\_\+cached\+\_\+voltage}} = None
+\item 
+float \mbox{\hyperlink{classbattery__droop_1_1_battery_a4955d2df2c6f37a2dc325e562686349e}{\+\_\+cached\+\_\+gain}} = None
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}Reads raw battery voltage through a voltage divider and computes a
+   gain (based on the measured voltage) to be used in the closed loop control to compensate the effort for battery droop.\end{DoxyVerb}
+ 
+
+\label{doc-constructors}
+\Hypertarget{classbattery__droop_1_1_battery_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classbattery__droop_1_1_battery_a001ce818dc922db0b39e23e02d4be4ad}\index{battery\_droop.Battery@{battery\_droop.Battery}!\_\_init\_\_@{\_\_init\_\_}}
+\index{\_\_init\_\_@{\_\_init\_\_}!battery\_droop.Battery@{battery\_droop.Battery}}
+\doxysubsubsection{\texorpdfstring{\_\_init\_\_()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily \label{classbattery__droop_1_1_battery_a001ce818dc922db0b39e23e02d4be4ad} 
+battery\+\_\+droop.\+Battery.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{adc\+\_\+pin}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initializes the Battery object with ADC pin and voltage divider values.\end{DoxyVerb}
+ 
+
+\label{doc-func-members}
+\Hypertarget{classbattery__droop_1_1_battery_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classbattery__droop_1_1_battery_af6959e6e53db8790eba21da0b60d865e}\index{battery\_droop.Battery@{battery\_droop.Battery}!droop\_gain@{droop\_gain}}
+\index{droop\_gain@{droop\_gain}!battery\_droop.Battery@{battery\_droop.Battery}}
+\doxysubsubsection{\texorpdfstring{droop\_gain()}{droop\_gain()}}
+{\footnotesize\ttfamily \label{classbattery__droop_1_1_battery_af6959e6e53db8790eba21da0b60d865e} 
+battery\+\_\+droop.\+Battery.\+droop\+\_\+gain (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{refresh}{ = {\ttfamily False}}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return droop gain, caching after first measurement. Set refresh=True to re-measure.\end{DoxyVerb}
+ \Hypertarget{classbattery__droop_1_1_battery_a4791387d7a6c45e8921b389ec7510e15}\index{battery\_droop.Battery@{battery\_droop.Battery}!read\_voltage@{read\_voltage}}
+\index{read\_voltage@{read\_voltage}!battery\_droop.Battery@{battery\_droop.Battery}}
+\doxysubsubsection{\texorpdfstring{read\_voltage()}{read\_voltage()}}
+{\footnotesize\ttfamily \label{classbattery__droop_1_1_battery_a4791387d7a6c45e8921b389ec7510e15} 
+battery\+\_\+droop.\+Battery.\+read\+\_\+voltage (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Reads the raw ADC value and computes the actual battery voltage.\end{DoxyVerb}
+ \Hypertarget{classbattery__droop_1_1_battery_a8bea6b482e879248fdc42465481db225}\index{battery\_droop.Battery@{battery\_droop.Battery}!refresh@{refresh}}
+\index{refresh@{refresh}!battery\_droop.Battery@{battery\_droop.Battery}}
+\doxysubsubsection{\texorpdfstring{refresh()}{refresh()}}
+{\footnotesize\ttfamily \label{classbattery__droop_1_1_battery_a8bea6b482e879248fdc42465481db225} 
+battery\+\_\+droop.\+Battery.\+refresh (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Force a new calculation of droop gain.\end{DoxyVerb}
+ 
+
+\label{doc-variable-members}
+\Hypertarget{classbattery__droop_1_1_battery_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{classbattery__droop_1_1_battery_a4955d2df2c6f37a2dc325e562686349e}\index{battery\_droop.Battery@{battery\_droop.Battery}!\_cached\_gain@{\_cached\_gain}}
+\index{\_cached\_gain@{\_cached\_gain}!battery\_droop.Battery@{battery\_droop.Battery}}
+\doxysubsubsection{\texorpdfstring{\_cached\_gain}{\_cached\_gain}}
+{\footnotesize\ttfamily \label{classbattery__droop_1_1_battery_a4955d2df2c6f37a2dc325e562686349e} 
+float battery\+\_\+droop.\+Battery.\+\_\+cached\+\_\+gain = None\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{classbattery__droop_1_1_battery_a426e5ca4ccac20975fd94d6fae71f3c2}\index{battery\_droop.Battery@{battery\_droop.Battery}!\_cached\_voltage@{\_cached\_voltage}}
+\index{\_cached\_voltage@{\_cached\_voltage}!battery\_droop.Battery@{battery\_droop.Battery}}
+\doxysubsubsection{\texorpdfstring{\_cached\_voltage}{\_cached\_voltage}}
+{\footnotesize\ttfamily \label{classbattery__droop_1_1_battery_a426e5ca4ccac20975fd94d6fae71f3c2} 
+battery\+\_\+droop.\+Battery.\+\_\+cached\+\_\+voltage = None\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{classbattery__droop_1_1_battery_ac839b7de9eec3239935e6af1a6da31a4}\index{battery\_droop.Battery@{battery\_droop.Battery}!adc@{adc}}
+\index{adc@{adc}!battery\_droop.Battery@{battery\_droop.Battery}}
+\doxysubsubsection{\texorpdfstring{adc}{adc}}
+{\footnotesize\ttfamily \label{classbattery__droop_1_1_battery_ac839b7de9eec3239935e6af1a6da31a4} 
+battery\+\_\+droop.\+Battery.\+adc = ADC(Pin(adc\+\_\+pin))}
+
+\Hypertarget{classbattery__droop_1_1_battery_ac1bd2c1b1b8bd8710e5c31da73600116}\index{battery\_droop.Battery@{battery\_droop.Battery}!LOW\_BATT\_THRESHOLD@{LOW\_BATT\_THRESHOLD}}
+\index{LOW\_BATT\_THRESHOLD@{LOW\_BATT\_THRESHOLD}!battery\_droop.Battery@{battery\_droop.Battery}}
+\doxysubsubsection{\texorpdfstring{LOW\_BATT\_THRESHOLD}{LOW\_BATT\_THRESHOLD}}
+{\footnotesize\ttfamily \label{classbattery__droop_1_1_battery_ac1bd2c1b1b8bd8710e5c31da73600116} 
+float battery\+\_\+droop.\+Battery.\+LOW\+\_\+\+BATT\+\_\+\+THRESHOLD = 6.\+0\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{classbattery__droop_1_1_battery_a08d1d7de9bdcefbf0552f100039c346c}\index{battery\_droop.Battery@{battery\_droop.Battery}!R\_1\_OHM@{R\_1\_OHM}}
+\index{R\_1\_OHM@{R\_1\_OHM}!battery\_droop.Battery@{battery\_droop.Battery}}
+\doxysubsubsection{\texorpdfstring{R\_1\_OHM}{R\_1\_OHM}}
+{\footnotesize\ttfamily \label{classbattery__droop_1_1_battery_a08d1d7de9bdcefbf0552f100039c346c} 
+float battery\+\_\+droop.\+Battery.\+R\+\_\+1\+\_\+\+OHM = 9.\+98e3\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{classbattery__droop_1_1_battery_a05cfaa71915ee96051bcd1b4ba31ea92}\index{battery\_droop.Battery@{battery\_droop.Battery}!R\_2\_OHM@{R\_2\_OHM}}
+\index{R\_2\_OHM@{R\_2\_OHM}!battery\_droop.Battery@{battery\_droop.Battery}}
+\doxysubsubsection{\texorpdfstring{R\_2\_OHM}{R\_2\_OHM}}
+{\footnotesize\ttfamily \label{classbattery__droop_1_1_battery_a05cfaa71915ee96051bcd1b4ba31ea92} 
+float battery\+\_\+droop.\+Battery.\+R\+\_\+2\+\_\+\+OHM = 4.\+712e3\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{classbattery__droop_1_1_battery_a88bac1c8265326738d9d18a111465424}\index{battery\_droop.Battery@{battery\_droop.Battery}!scale@{scale}}
+\index{scale@{scale}!battery\_droop.Battery@{battery\_droop.Battery}}
+\doxysubsubsection{\texorpdfstring{scale}{scale}}
+{\footnotesize\ttfamily \label{classbattery__droop_1_1_battery_a88bac1c8265326738d9d18a111465424} 
+tuple battery\+\_\+droop.\+Battery.\+scale = (self.\+R\+\_\+1\+\_\+\+OHM + self.\+R\+\_\+2\+\_\+\+OHM) / self.\+R\+\_\+2\+\_\+\+OHM}
+
+\Hypertarget{classbattery__droop_1_1_battery_a2e0b97ca4f6ee22f4909e8d2090beb0b}\index{battery\_droop.Battery@{battery\_droop.Battery}!V\_NOM\_SINGLE@{V\_NOM\_SINGLE}}
+\index{V\_NOM\_SINGLE@{V\_NOM\_SINGLE}!battery\_droop.Battery@{battery\_droop.Battery}}
+\doxysubsubsection{\texorpdfstring{V\_NOM\_SINGLE}{V\_NOM\_SINGLE}}
+{\footnotesize\ttfamily \label{classbattery__droop_1_1_battery_a2e0b97ca4f6ee22f4909e8d2090beb0b} 
+float battery\+\_\+droop.\+Battery.\+V\+\_\+\+NOM\+\_\+\+SINGLE = 1.\+3\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{classbattery__droop_1_1_battery_a82d9bfe00507436c6afad8231ebbe1ea}\index{battery\_droop.Battery@{battery\_droop.Battery}!V\_NOM\_TOTAL@{V\_NOM\_TOTAL}}
+\index{V\_NOM\_TOTAL@{V\_NOM\_TOTAL}!battery\_droop.Battery@{battery\_droop.Battery}}
+\doxysubsubsection{\texorpdfstring{V\_NOM\_TOTAL}{V\_NOM\_TOTAL}}
+{\footnotesize\ttfamily \label{classbattery__droop_1_1_battery_a82d9bfe00507436c6afad8231ebbe1ea} 
+int battery\+\_\+droop.\+Battery.\+V\+\_\+\+NOM\+\_\+\+TOTAL = 6\texorpdfstring{$\ast$}{*}\mbox{\hyperlink{classbattery__droop_1_1_battery_a2e0b97ca4f6ee22f4909e8d2090beb0b}{V\+\_\+\+NOM\+\_\+\+SINGLE}}\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{classbattery__droop_1_1_battery_a5d238f7a7b8ad32d5936ec6cf40f9a3e}\index{battery\_droop.Battery@{battery\_droop.Battery}!V\_REF@{V\_REF}}
+\index{V\_REF@{V\_REF}!battery\_droop.Battery@{battery\_droop.Battery}}
+\doxysubsubsection{\texorpdfstring{V\_REF}{V\_REF}}
+{\footnotesize\ttfamily \label{classbattery__droop_1_1_battery_a5d238f7a7b8ad32d5936ec6cf40f9a3e} 
+float battery\+\_\+droop.\+Battery.\+V\+\_\+\+REF = 3.\+3\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{classbattery__droop_1_1_battery_a770e046bea540d32d79faa560ecfa51c}\index{battery\_droop.Battery@{battery\_droop.Battery}!warned@{warned}}
+\index{warned@{warned}!battery\_droop.Battery@{battery\_droop.Battery}}
+\doxysubsubsection{\texorpdfstring{warned}{warned}}
+{\footnotesize\ttfamily \label{classbattery__droop_1_1_battery_a770e046bea540d32d79faa560ecfa51c} 
+bool battery\+\_\+droop.\+Battery.\+warned = False}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\mbox{\hyperlink{battery__droop_8py}{battery\+\_\+droop.\+py}}\end{DoxyCompactItemize}
